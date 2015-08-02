@@ -1,0 +1,47 @@
+SetEnv PLANEL_APPLICATION_ENV "development"
+
+# remove headers
+Header unset X-Powered-By
+
+Options -Indexes
+
+# deny .phtml files
+<Files *.phtml>
+    Order Deny,Allow
+    Deny from all
+</Files>
+
+# do not execute PHP files, except...
+<Files *.php>
+    Order Deny,Allow
+    Deny from all
+</Files>
+
+# ... index.php
+<Files index.php>
+    Order Allow,Deny
+    Allow from all
+</Files>
+
+# deny JSON config files
+<Files *.json>
+    Order Deny,Allow
+    Deny from all
+</Files>
+
+# deny XML config files
+<Files *.xml>
+    Order Deny,Allow
+    Deny from all
+</Files>
+
+# deny INI config files
+<Files *.ini>
+    Order Deny,Allow
+    Deny from all
+</Files>
+
+RewriteEngine On
+RewriteRule ^(favicon)(\.)(ico)$ $1.$3 [L]
+RewriteRule ^(img|font|js|css|api)(\/)(.*)$ $0 [QSA,L]
+RewriteRule ^(.*)$ index.php?CE4EBCB3=$1 [QSA,L]

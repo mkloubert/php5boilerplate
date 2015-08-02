@@ -1,0 +1,14 @@
+{
+  "modules": {
+    "actions": {
+        "source": ["post", "request", "get"],
+        "var": "action"
+    },
+    "default": "index",
+    "methods": {
+      "render": "render",
+      "updateContext": "updateContext"
+    },
+    "var": "CE4EBCB3"
+  }
+}

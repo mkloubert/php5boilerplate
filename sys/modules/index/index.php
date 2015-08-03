@@ -34,35 +34,40 @@ use \php5bp\Modules\Execution\ContextInterface as ModuleExecutionContext;
  */
 class IndexModule extends ModuleBase {
     protected function execute(ModuleExecutionContext $ctx) {
-        $conf1 = \php5bp::conf('test.test1');
-        // $conf2 = \php5bp::conf('test.test2');
-        $conf3 = \php5bp::conf('test.test3');
+        ?>
 
-        $h = \php5bp::cache()->hasItem('PZ');
-        if (!$h) {
-            \php5bp::cache()->setItem('PZ', '19861222');
-            \php5bp::cache()->setItem('MK', '19790923');
-            \php5bp::cache()->setItem('TM', '19790905');
-        }
-
-        $h = \php5bp::cache()->hasItem('PZ');
-        if ($h) {
-            \php5bp::cache()->removeItem('PZ');
-        }
-
-        $h = \php5bp::cache()->hasItem('MK');
-        if ($h) {
-            \php5bp::cache()->removeItem('MK');
-        }
-
-        $h1 = \php5bp::cache()->hasItem('PZ');
-        $h2 = \php5bp::cache()->hasItem('MK');
-        $h3 = \php5bp::cache()->hasItem('TM');
-        if (!$h1 && !$h2 && $h3) {
-            if ($ctx != null) {
-
+        <style type="text/css">
+            .col {
+                min-width: 100px;
             }
-        }
+        </style>
+
+        <div class="row" id="wurst">
+            <div class="col col-1">1</div>
+            <div class="col col-1">2</div>
+            <div class="col col-1">3</div>
+            <div class="col col-1">4</div>
+            <div class="col col-1">5</div>
+            <div class="col col-1">6</div>
+            <div class="col col-1">7</div>
+            <div class="col col-1">8</div>
+            <div class="col col-1">9</div>
+            <div class="col col-1">10</div>
+            <div class="col col-1">11</div>
+            <div class="col col-1">12</div>
+        </div>
+
+        <script type="text/javascript">
+
+            $php5bp.page.addElements('wurstColumns', '#wurst .col');
+
+            $php5bp.page.addOnLoaded(function() {
+                alert(' abcdee  '.trim().length);
+            });
+
+        </script>
+
+        <?php
     }
 
     public function testAction(ModuleExecutionContext $ctx) {

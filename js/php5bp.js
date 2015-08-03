@@ -22,7 +22,7 @@ if ('undefined' === typeof Array.prototype.isEmpty) {
     /**
      * Checks if that array is empty or not.
      *
-     * @method IsEmpty
+     * @property isEmpty
      *
      * @return {Boolean} Is empty or not.
      */
@@ -37,7 +37,7 @@ if ('undefined' === typeof Array.prototype.isNotEmpty) {
     /**
      * Checks if that array is NOT empty.
      *
-     * @method isNotEmpty
+     * @property isNotEmpty
      *
      * @return {Boolean} Is empty (false) or not (true).
      */
@@ -46,6 +46,25 @@ if ('undefined' === typeof Array.prototype.isNotEmpty) {
             return this.length > 0;
         }
     });
+}
+
+if ('undefined' === typeof String.prototype.endsWith) {
+    /**
+     * Checks if that string ends with an expression.
+     *
+     * @param {String} s The expression.
+     *
+     * @return {Boolean} Ends with expression or not.
+     */
+    String.prototype.endsWith = function(s) {
+        if (null == s) {
+            s = '';
+        }
+
+        return ('' == s) ||
+               (this.indexOf(s,
+                             this.length - s.length) > -1);
+    };
 }
 
 if ('undefined' === typeof String.prototype.format) {
@@ -86,17 +105,65 @@ if ('undefined' === typeof String.prototype.formatArray) {
     };
 }
 
+if ('undefined' === typeof String.prototype.isEmpty) {
+    /**
+     * Checks if that string is empty or not.
+     *
+     * @property isEmpty
+     *
+     * @return {Boolean} Is empty or not.
+     */
+    Object.defineProperty(String.prototype, 'isEmpty', {
+        get: function() {
+            return this.length < 1;
+        }
+    });
+}
+
+if ('undefined' === typeof String.prototype.isNotEmpty) {
+    /**
+     * Checks if that string is NOT empty.
+     *
+     * @property isNotEmpty
+     *
+     * @return {Boolean} Is empty (false) or not (true).
+     */
+    Object.defineProperty(String.prototype, 'isNotEmpty', {
+        get: function() {
+            return this.length > 0;
+        }
+    });
+}
+
 if ('undefined' === typeof String.isNullOrWhitespace) {
     /**
      * Check if a string is (null) or contains whitespaces only.
      *
-     * @param {String} The string to check.
+     * @param {String} s The string to check.
      *
      * @return {Boolean} Is (null) or contains whitespaces only.
      */
     String.isNullOrWhitespace = function(s) {
-        return (s == null) ||
-               (jQuery.trim(s).length < 1);
+        return (null == s) ||
+               (s.replace(/^\s+|\s+$/g, '').length < 1);
+    };
+}
+
+if ('undefined' === typeof String.prototype.startsWith) {
+    /**
+     * Checks if that string starts with an expression.
+     *
+     * @param {String} s The expression.
+     *
+     * @return {Boolean} Starts with expression or not.
+     */
+    String.prototype.startsWith = function(s) {
+        if (null == s) {
+            s = '';
+        }
+
+        return ('' == s) ||
+               (0 == this.indexOf(s));
     };
 }
 
@@ -107,7 +174,29 @@ if ('undefined' === typeof String.prototype.trim) {
      * @return {String} The new string.
      */
     String.prototype.trim = function() {
-        return jQuery.trim(this);
+        return this.replace(/^\s+|\s+$/g, '');
+    };
+}
+
+if ('undefined' === typeof String.prototype.trimLeft) {
+    /**
+     * Removes whitespaces at the beginning.
+     *
+     * @return {String} The new string.
+     */
+    String.prototype.trimLeft = function() {
+        return this.replace(/^\s+/, '');
+    };
+}
+
+if ('undefined' === typeof String.prototype.trimRight) {
+    /**
+     * Removes ending whitespaces.
+     *
+     * @return {String} The new string.
+     */
+    String.prototype.trimRight = function() {
+        return this.replace(/\s+$/, '');
     };
 }
 

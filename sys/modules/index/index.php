@@ -62,7 +62,7 @@ class IndexModule extends ModuleBase {
             $php5bp.page.addElements('wurstColumns', '#wurst .col');
 
             $php5bp.page.addOnLoaded(function() {
-                alert(' abcdee  '.trim().length);
+                alert('abc def e'.ucwords());
             });
 
         </script>

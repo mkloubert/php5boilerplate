@@ -212,43 +212,16 @@
   .row {
     .phpbp-device-grid(tiny);
   }
-
-  .show-on-tiny-and-up-only { .phpbp-show(); }
-  .show-on-small-and-up-only { .phpbp-show(); }
-  .show-on-medium-and-up-only { .phpbp-show(); }
-  .show-on-large-and-up-only { .phpbp-show(); }
-  .show-on-hd-and-up-only { .phpbp-show(); }
-  .show-on-hdplus-and-up-only { .phpbp-show(); }
-  .show-on-fullhd-and-up-only { .phpbp-show(); }
-  .show-on-wqxga-and-up-only { .phpbp-show(); }
 }
 
 // tiny (max)
 @media only screen and (max-width: @phpbp-size-tiny-max) {
   .phpbp-on-device-and-down(tiny);
-
-  .show-on-tiny-and-down-only { .phpbp-show(); }
-  .show-on-small-and-down-only { .phpbp-hide(); }
-  .show-on-medium-and-down-only { .phpbp-hide(); }
-  .show-on-large-and-down-only { .phpbp-hide(); }
-  .show-on-hd-and-down-only { .phpbp-hide(); }
-  .show-on-hdplus-and-down-only { .phpbp-hide(); }
-  .show-on-fullhd-and-down-only { .phpbp-hide(); }
-  .show-on-wqxga-and-down-only { .phpbp-hide(); }
 }
 
 // tiny (explicit)
 @media only screen and (max-width: @phpbp-size-tiny-max) {
   .phpbp-on-device(tiny);
-
-  .show-on-tiny-only { .phpbp-show(); }
-  .show-on-small-only { .phpbp-hide(); }
-  .show-on-medium-only { .phpbp-hide(); }
-  .show-on-large-only { .phpbp-hide(); }
-  .show-on-hd-only { .phpbp-hide(); }
-  .show-on-hdplus-only { .phpbp-hide(); }
-  .show-on-fullhd-only { .phpbp-hide(); }
-  .show-on-wqxga-only { .phpbp-hide(); }
 }
 
 // small (min)
@@ -258,43 +231,16 @@
   .row {
     .phpbp-device-grid(small);
   }
-
-  .show-on-tiny-and-up-only { .phpbp-hide(); }
-  .show-on-small-and-up-only { .phpbp-show(); }
-  .show-on-medium-and-up-only { .phpbp-show(); }
-  .show-on-large-and-up-only { .phpbp-show(); }
-  .show-on-hd-and-up-only { .phpbp-show(); }
-  .show-on-hdplus-and-up-only { .phpbp-show(); }
-  .show-on-fullhd-and-up-only { .phpbp-show(); }
-  .show-on-wqxga-and-up-only { .phpbp-show(); }
 }
 
 // small (max)
 @media only screen and (max-width: @phpbp-size-small-max) {
   .phpbp-on-device-and-down(small);
-
-  .show-on-tiny-and-down-only { .phpbp-show(); }
-  .show-on-small-and-down-only { .phpbp-show(); }
-  .show-on-medium-and-down-only { .phpbp-hide(); }
-  .show-on-large-and-down-only { .phpbp-hide(); }
-  .show-on-hd-and-down-only { .phpbp-hide(); }
-  .show-on-hdplus-and-down-only { .phpbp-hide(); }
-  .show-on-fullhd-and-down-only { .phpbp-hide(); }
-  .show-on-wqxga-and-down-only { .phpbp-hide(); }
 }
 
 // small (explicit)
 @media only screen and (min-width: @phpbp-size-small-min) and (max-width: @phpbp-size-small-max) {
   .phpbp-on-device(small);
-
-  .show-on-tiny-only { .phpbp-hide(); }
-  .show-on-small-only { .phpbp-show(); }
-  .show-on-medium-only { .phpbp-hide(); }
-  .show-on-large-only { .phpbp-hide(); }
-  .show-on-hd-only { .phpbp-hide(); }
-  .show-on-hdplus-only { .phpbp-hide(); }
-  .show-on-fullhd-only { .phpbp-hide(); }
-  .show-on-wqxga-only { .phpbp-hide(); }
 }
 
 // medium (min)
@@ -304,43 +250,16 @@
   .row {
     .phpbp-device-grid(medium);
   }
-
-  .show-on-tiny-and-up-only { .phpbp-hide(); }
-  .show-on-small-and-up-only { .phpbp-hide(); }
-  .show-on-medium-and-up-only { .phpbp-show(); }
-  .show-on-large-and-up-only { .phpbp-show(); }
-  .show-on-hd-and-up-only { .phpbp-show(); }
-  .show-on-hdplus-and-up-only { .phpbp-show(); }
-  .show-on-fullhd-and-up-only { .phpbp-show(); }
-  .show-on-wqxga-and-up-only { .phpbp-show(); }
 }
 
 // medium (max)
 @media only screen and (max-width: @phpbp-size-medium-max) {
   .phpbp-on-device-and-down(medium);
-
-  .show-on-tiny-and-down-only { .phpbp-show(); }
-  .show-on-small-and-down-only { .phpbp-show(); }
-  .show-on-medium-and-down-only { .phpbp-show(); }
-  .show-on-large-and-down-only { .phpbp-hide(); }
-  .show-on-hd-and-down-only { .phpbp-hide(); }
-  .show-on-hdplus-and-down-only { .phpbp-hide(); }
-  .show-on-fullhd-and-down-only { .phpbp-hide(); }
-  .show-on-wqxga-and-down-only { .phpbp-hide(); }
 }
 
 // medium (explicit)
 @media only screen and (min-width: @phpbp-size-medium-min) and (max-width: @phpbp-size-medium-max) {
   .phpbp-on-device(medium);
-
-  .show-on-tiny-only { .phpbp-hide(); }
-  .show-on-small-only { .phpbp-hide(); }
-  .show-on-medium-only { .phpbp-show(); }
-  .show-on-large-only { .phpbp-hide(); }
-  .show-on-hd-only { .phpbp-hide(); }
-  .show-on-hdplus-only { .phpbp-hide(); }
-  .show-on-fullhd-only { .phpbp-hide(); }
-  .show-on-wqxga-only { .phpbp-hide(); }
 }
 
 // large (min)
@@ -350,43 +269,16 @@
   .row {
     .phpbp-device-grid(large);
   }
-
-  .show-on-tiny-and-up-only { .phpbp-hide(); }
-  .show-on-small-and-up-only { .phpbp-hide(); }
-  .show-on-medium-and-up-only { .phpbp-hide(); }
-  .show-on-large-and-up-only { .phpbp-show(); }
-  .show-on-hd-and-up-only { .phpbp-show(); }
-  .show-on-hdplus-and-up-only { .phpbp-show(); }
-  .show-on-fullhd-and-up-only { .phpbp-show(); }
-  .show-on-wqxga-and-up-only { .phpbp-show(); }
 }
 
 // large (max)
 @media only screen and (max-width: @phpbp-size-large-max) {
   .phpbp-on-device-and-down(large);
-
-  .show-on-tiny-and-down-only { .phpbp-show(); }
-  .show-on-small-and-down-only { .phpbp-show(); }
-  .show-on-medium-and-down-only { .phpbp-show(); }
-  .show-on-large-and-down-only { .phpbp-show(); }
-  .show-on-hd-and-down-only { .phpbp-hide(); }
-  .show-on-hdplus-and-down-only { .phpbp-hide(); }
-  .show-on-fullhd-and-down-only { .phpbp-hide(); }
-  .show-on-wqxga-and-down-only { .phpbp-hide(); }
 }
 
 // large (explicit)
 @media only screen and (min-width: @phpbp-size-large-min) and (max-width: @phpbp-size-large-max) {
   .phpbp-on-device(large);
-
-  .show-on-tiny-only { .phpbp-hide(); }
-  .show-on-small-only { .phpbp-hide(); }
-  .show-on-medium-only { .phpbp-hide(); }
-  .show-on-large-only { .phpbp-show(); }
-  .show-on-hd-only { .phpbp-hide(); }
-  .show-on-hdplus-only { .phpbp-hide(); }
-  .show-on-fullhd-only { .phpbp-hide(); }
-  .show-on-wqxga-only { .phpbp-hide(); }
 }
 
 // HD (min)
@@ -396,43 +288,16 @@
   .row {
     .phpbp-device-grid(hd);
   }
-
-  .show-on-tiny-and-up-only { .phpbp-hide(); }
-  .show-on-small-and-up-only { .phpbp-hide(); }
-  .show-on-medium-and-up-only { .phpbp-hide(); }
-  .show-on-large-and-up-only { .phpbp-hide(); }
-  .show-on-hd-and-up-only { .phpbp-show(); }
-  .show-on-hdplus-and-up-only { .phpbp-show(); }
-  .show-on-fullhd-and-up-only { .phpbp-show(); }
-  .show-on-wqxga-and-up-only { .phpbp-show(); }
 }
 
 // HD (max)
 @media only screen and (max-width: @phpbp-size-hd-max) {
   .phpbp-on-device-and-down(hd);
-
-  .show-on-tiny-and-down-only { .phpbp-show(); }
-  .show-on-small-and-down-only { .phpbp-show(); }
-  .show-on-medium-and-down-only { .phpbp-show(); }
-  .show-on-large-and-down-only { .phpbp-show(); }
-  .show-on-hd-and-down-only { .phpbp-show(); }
-  .show-on-hdplus-and-down-only { .phpbp-hide(); }
-  .show-on-fullhd-and-down-only { .phpbp-hide(); }
-  .show-on-wqxga-and-down-only { .phpbp-hide(); }
 }
 
 // HD (explicit)
 @media only screen and (min-width: @phpbp-size-hd-min) and (max-width: @phpbp-size-hd-max) {
   .phpbp-on-device(hd);
-
-  .show-on-tiny-only { .phpbp-hide(); }
-  .show-on-small-only { .phpbp-hide(); }
-  .show-on-medium-only { .phpbp-hide(); }
-  .show-on-large-only { .phpbp-hide(); }
-  .show-on-hd-only { .phpbp-show(); }
-  .show-on-hdplus-only { .phpbp-hide(); }
-  .show-on-fullhd-only { .phpbp-hide(); }
-  .show-on-wqxga-only { .phpbp-hide(); }
 }
 
 // HD+ (min)
@@ -442,43 +307,16 @@
   .row {
     .phpbp-device-grid(hdplus);
   }
-
-  .show-on-tiny-and-up-only { .phpbp-hide(); }
-  .show-on-small-and-up-only { .phpbp-hide(); }
-  .show-on-medium-and-up-only { .phpbp-hide(); }
-  .show-on-large-and-up-only { .phpbp-hide(); }
-  .show-on-hd-and-up-only { .phpbp-hide(); }
-  .show-on-hdplus-and-up-only { .phpbp-show(); }
-  .show-on-fullhd-and-up-only { .phpbp-show(); }
-  .show-on-wqxga-and-up-only { .phpbp-show(); }
 }
 
 // HD+ (max)
 @media only screen and (max-width: @phpbp-size-hdplus-max) {
   .phpbp-on-device-and-down(hdplus);
-
-  .show-on-tiny-and-down-only { .phpbp-show(); }
-  .show-on-small-and-down-only { .phpbp-show(); }
-  .show-on-medium-and-down-only { .phpbp-show(); }
-  .show-on-large-and-down-only { .phpbp-show(); }
-  .show-on-hd-and-down-only { .phpbp-show(); }
-  .show-on-hdplus-and-down-only { .phpbp-show(); }
-  .show-on-fullhd-and-down-only { .phpbp-hide(); }
-  .show-on-wqxga-and-down-only { .phpbp-hide(); }
 }
 
 // HD+ (explicit)
 @media only screen and (min-width: @phpbp-size-hdplus-min) and (max-width: @phpbp-size-hdplus-max) {
   .phpbp-on-device(hdplus);
-
-  .show-on-tiny-only { .phpbp-hide(); }
-  .show-on-small-only { .phpbp-hide(); }
-  .show-on-medium-only { .phpbp-hide(); }
-  .show-on-large-only { .phpbp-hide(); }
-  .show-on-hd-only { .phpbp-hide(); }
-  .show-on-hdplus-only { .phpbp-show(); }
-  .show-on-fullhd-only { .phpbp-hide(); }
-  .show-on-wqxga-only { .phpbp-hide(); }
 }
 
 // Full HD (min)
@@ -488,43 +326,16 @@
   .row {
     .phpbp-device-grid(fullhd);
   }
-
-  .show-on-tiny-and-up-only { .phpbp-hide(); }
-  .show-on-small-and-up-only { .phpbp-hide(); }
-  .show-on-medium-and-up-only { .phpbp-hide(); }
-  .show-on-large-and-up-only { .phpbp-hide(); }
-  .show-on-hd-and-up-only { .phpbp-hide(); }
-  .show-on-hdplus-and-up-only { .phpbp-hide(); }
-  .show-on-fullhd-and-up-only { .phpbp-show(); }
-  .show-on-wqxga-and-up-only { .phpbp-show(); }
 }
 
 // Full HD (max)
 @media only screen and (max-width: @phpbp-size-fullhd-max) {
   .phpbp-on-device-and-down(fullhd);
-
-  .show-on-tiny-and-down-only { .phpbp-show(); }
-  .show-on-small-and-down-only { .phpbp-show(); }
-  .show-on-medium-and-down-only { .phpbp-show(); }
-  .show-on-large-and-down-only { .phpbp-show(); }
-  .show-on-hd-and-down-only { .phpbp-show(); }
-  .show-on-hdplus-and-down-only { .phpbp-show(); }
-  .show-on-fullhd-and-down-only { .phpbp-show(); }
-  .show-on-wqxga-and-down-only { .phpbp-hide(); }
 }
 
 // Full HD (explicit)
 @media only screen and (min-width: @phpbp-size-fullhd-min) and (max-width: @phpbp-size-fullhd-max) {
   .phpbp-on-device(fullhd);
-
-  .show-on-tiny-only { .phpbp-hide(); }
-  .show-on-small-only { .phpbp-hide(); }
-  .show-on-medium-only { .phpbp-hide(); }
-  .show-on-large-only { .phpbp-hide(); }
-  .show-on-hd-only { .phpbp-hide(); }
-  .show-on-hdplus-only { .phpbp-hide(); }
-  .show-on-fullhd-only { .phpbp-show(); }
-  .show-on-wqxga-only { .phpbp-hide(); }
 }
 
 // WQXGA (min)
@@ -534,41 +345,14 @@
   .row {
     .phpbp-device-grid(wqxga);
   }
-
-  .show-on-tiny-and-up-only { .phpbp-hide(); }
-  .show-on-small-and-up-only { .phpbp-hide(); }
-  .show-on-medium-and-up-only { .phpbp-hide(); }
-  .show-on-large-and-up-only { .phpbp-hide(); }
-  .show-on-hd-and-up-only { .phpbp-hide(); }
-  .show-on-hdplus-and-up-only { .phpbp-hide(); }
-  .show-on-fullhd-and-up-only { .phpbp-hide(); }
-  .show-on-wqxga-and-up-only { .phpbp-show(); }
 }
 
 // WQXGA (max)
-@media only screen and (max-width: @phpbp-size-wqxga-min) {
+@media only screen {
   .phpbp-on-device-and-down(wqxga);
-
-  .show-on-tiny-and-down-only { .phpbp-show(); }
-  .show-on-small-and-down-only { .phpbp-show(); }
-  .show-on-medium-and-down-only { .phpbp-show(); }
-  .show-on-large-and-down-only { .phpbp-show(); }
-  .show-on-hd-and-down-only { .phpbp-show(); }
-  .show-on-hdplus-and-down-only { .phpbp-show(); }
-  .show-on-fullhd-and-down-only { .phpbp-show(); }
-  .show-on-wqxga-and-down-only { .phpbp-show(); }
 }
 
 // WQXGA (explicit)
 @media only screen and (min-width: @phpbp-size-wqxga-min) {
   .phpbp-on-device(wqxga);
-
-  .show-on-tiny-only { .phpbp-hide(); }
-  .show-on-small-only { .phpbp-hide(); }
-  .show-on-medium-only { .phpbp-hide(); }
-  .show-on-large-only { .phpbp-hide(); }
-  .show-on-hd-only { .phpbp-hide(); }
-  .show-on-hdplus-only { .phpbp-hide(); }
-  .show-on-fullhd-only { .phpbp-hide(); }
-  .show-on-wqxga-only { .phpbp-show(); }
 }

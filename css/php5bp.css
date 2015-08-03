@@ -260,30 +260,6 @@
   .row .col.tiny-offset-12 {
     margin-left: 100%;
   }
-  .show-on-tiny-and-up-only {
-    display: initial !important;
-  }
-  .show-on-small-and-up-only {
-    display: initial !important;
-  }
-  .show-on-medium-and-up-only {
-    display: initial !important;
-  }
-  .show-on-large-and-up-only {
-    display: initial !important;
-  }
-  .show-on-hd-and-up-only {
-    display: initial !important;
-  }
-  .show-on-hdplus-and-up-only {
-    display: initial !important;
-  }
-  .show-on-fullhd-and-up-only {
-    display: initial !important;
-  }
-  .show-on-wqxga-and-up-only {
-    display: initial !important;
-  }
 }
 @media only screen and (max-width: 218px) {
   .center-on-tiny-and-down {
@@ -301,30 +277,6 @@
   .show-on-tiny-and-down {
     display: initial !important;
   }
-  .show-on-tiny-and-down-only {
-    display: initial !important;
-  }
-  .show-on-small-and-down-only {
-    display: none !important;
-  }
-  .show-on-medium-and-down-only {
-    display: none !important;
-  }
-  .show-on-large-and-down-only {
-    display: none !important;
-  }
-  .show-on-hd-and-down-only {
-    display: none !important;
-  }
-  .show-on-hdplus-and-down-only {
-    display: none !important;
-  }
-  .show-on-fullhd-and-down-only {
-    display: none !important;
-  }
-  .show-on-wqxga-and-down-only {
-    display: none !important;
-  }
 }
 @media only screen and (max-width: 218px) {
   .center-on-tiny {
@@ -341,30 +293,6 @@
   }
   .show-on-tiny {
     display: initial !important;
-  }
-  .show-on-tiny-only {
-    display: initial !important;
-  }
-  .show-on-small-only {
-    display: none !important;
-  }
-  .show-on-medium-only {
-    display: none !important;
-  }
-  .show-on-large-only {
-    display: none !important;
-  }
-  .show-on-hd-only {
-    display: none !important;
-  }
-  .show-on-hdplus-only {
-    display: none !important;
-  }
-  .show-on-fullhd-only {
-    display: none !important;
-  }
-  .show-on-wqxga-only {
-    display: none !important;
   }
 }
 @media only screen and (min-width: 219px) {
@@ -467,30 +395,6 @@
   .row .col.small-offset-12 {
     margin-left: 100%;
   }
-  .show-on-tiny-and-up-only {
-    display: none !important;
-  }
-  .show-on-small-and-up-only {
-    display: initial !important;
-  }
-  .show-on-medium-and-up-only {
-    display: initial !important;
-  }
-  .show-on-large-and-up-only {
-    display: initial !important;
-  }
-  .show-on-hd-and-up-only {
-    display: initial !important;
-  }
-  .show-on-hdplus-and-up-only {
-    display: initial !important;
-  }
-  .show-on-fullhd-and-up-only {
-    display: initial !important;
-  }
-  .show-on-wqxga-and-up-only {
-    display: initial !important;
-  }
 }
 @media only screen and (max-width: 600px) {
   .center-on-small-and-down {
@@ -508,30 +412,6 @@
   .show-on-small-and-down {
     display: initial !important;
   }
-  .show-on-tiny-and-down-only {
-    display: initial !important;
-  }
-  .show-on-small-and-down-only {
-    display: initial !important;
-  }
-  .show-on-medium-and-down-only {
-    display: none !important;
-  }
-  .show-on-large-and-down-only {
-    display: none !important;
-  }
-  .show-on-hd-and-down-only {
-    display: none !important;
-  }
-  .show-on-hdplus-and-down-only {
-    display: none !important;
-  }
-  .show-on-fullhd-and-down-only {
-    display: none !important;
-  }
-  .show-on-wqxga-and-down-only {
-    display: none !important;
-  }
 }
 @media only screen and (min-width: 219px) and (max-width: 600px) {
   .center-on-small {
@@ -548,30 +428,6 @@
   }
   .show-on-small {
     display: initial !important;
-  }
-  .show-on-tiny-only {
-    display: none !important;
-  }
-  .show-on-small-only {
-    display: initial !important;
-  }
-  .show-on-medium-only {
-    display: none !important;
-  }
-  .show-on-large-only {
-    display: none !important;
-  }
-  .show-on-hd-only {
-    display: none !important;
-  }
-  .show-on-hdplus-only {
-    display: none !important;
-  }
-  .show-on-fullhd-only {
-    display: none !important;
-  }
-  .show-on-wqxga-only {
-    display: none !important;
   }
 }
 @media only screen and (min-width: 601px) {
@@ -674,30 +530,6 @@
   .row .col.medium-offset-12 {
     margin-left: 100%;
   }
-  .show-on-tiny-and-up-only {
-    display: none !important;
-  }
-  .show-on-small-and-up-only {
-    display: none !important;
-  }
-  .show-on-medium-and-up-only {
-    display: initial !important;
-  }
-  .show-on-large-and-up-only {
-    display: initial !important;
-  }
-  .show-on-hd-and-up-only {
-    display: initial !important;
-  }
-  .show-on-hdplus-and-up-only {
-    display: initial !important;
-  }
-  .show-on-fullhd-and-up-only {
-    display: initial !important;
-  }
-  .show-on-wqxga-and-up-only {
-    display: initial !important;
-  }
 }
 @media only screen and (max-width: 992px) {
   .center-on-medium-and-down {
@@ -715,30 +547,6 @@
   .show-on-medium-and-down {
     display: initial !important;
   }
-  .show-on-tiny-and-down-only {
-    display: initial !important;
-  }
-  .show-on-small-and-down-only {
-    display: initial !important;
-  }
-  .show-on-medium-and-down-only {
-    display: initial !important;
-  }
-  .show-on-large-and-down-only {
-    display: none !important;
-  }
-  .show-on-hd-and-down-only {
-    display: none !important;
-  }
-  .show-on-hdplus-and-down-only {
-    display: none !important;
-  }
-  .show-on-fullhd-and-down-only {
-    display: none !important;
-  }
-  .show-on-wqxga-and-down-only {
-    display: none !important;
-  }
 }
 @media only screen and (min-width: 601px) and (max-width: 992px) {
   .center-on-medium {
@@ -755,30 +563,6 @@
   }
   .show-on-medium {
     display: initial !important;
-  }
-  .show-on-tiny-only {
-    display: none !important;
-  }
-  .show-on-small-only {
-    display: none !important;
-  }
-  .show-on-medium-only {
-    display: initial !important;
-  }
-  .show-on-large-only {
-    display: none !important;
-  }
-  .show-on-hd-only {
-    display: none !important;
-  }
-  .show-on-hdplus-only {
-    display: none !important;
-  }
-  .show-on-fullhd-only {
-    display: none !important;
-  }
-  .show-on-wqxga-only {
-    display: none !important;
   }
 }
 @media only screen and (min-width: 993px) {
@@ -881,30 +665,6 @@
   .row .col.large-offset-12 {
     margin-left: 100%;
   }
-  .show-on-tiny-and-up-only {
-    display: none !important;
-  }
-  .show-on-small-and-up-only {
-    display: none !important;
-  }
-  .show-on-medium-and-up-only {
-    display: none !important;
-  }
-  .show-on-large-and-up-only {
-    display: initial !important;
-  }
-  .show-on-hd-and-up-only {
-    display: initial !important;
-  }
-  .show-on-hdplus-and-up-only {
-    display: initial !important;
-  }
-  .show-on-fullhd-and-up-only {
-    display: initial !important;
-  }
-  .show-on-wqxga-and-up-only {
-    display: initial !important;
-  }
 }
 @media only screen and (max-width: 1359px) {
   .center-on-large-and-down {
@@ -922,30 +682,6 @@
   .show-on-large-and-down {
     display: initial !important;
   }
-  .show-on-tiny-and-down-only {
-    display: initial !important;
-  }
-  .show-on-small-and-down-only {
-    display: initial !important;
-  }
-  .show-on-medium-and-down-only {
-    display: initial !important;
-  }
-  .show-on-large-and-down-only {
-    display: initial !important;
-  }
-  .show-on-hd-and-down-only {
-    display: none !important;
-  }
-  .show-on-hdplus-and-down-only {
-    display: none !important;
-  }
-  .show-on-fullhd-and-down-only {
-    display: none !important;
-  }
-  .show-on-wqxga-and-down-only {
-    display: none !important;
-  }
 }
 @media only screen and (min-width: 993px) and (max-width: 1359px) {
   .center-on-large {
@@ -962,30 +698,6 @@
   }
   .show-on-large {
     display: initial !important;
-  }
-  .show-on-tiny-only {
-    display: none !important;
-  }
-  .show-on-small-only {
-    display: none !important;
-  }
-  .show-on-medium-only {
-    display: none !important;
-  }
-  .show-on-large-only {
-    display: initial !important;
-  }
-  .show-on-hd-only {
-    display: none !important;
-  }
-  .show-on-hdplus-only {
-    display: none !important;
-  }
-  .show-on-fullhd-only {
-    display: none !important;
-  }
-  .show-on-wqxga-only {
-    display: none !important;
   }
 }
 @media only screen and (min-width: 1360px) {
@@ -1088,30 +800,6 @@
   .row .col.hd-offset-12 {
     margin-left: 100%;
   }
-  .show-on-tiny-and-up-only {
-    display: none !important;
-  }
-  .show-on-small-and-up-only {
-    display: none !important;
-  }
-  .show-on-medium-and-up-only {
-    display: none !important;
-  }
-  .show-on-large-and-up-only {
-    display: none !important;
-  }
-  .show-on-hd-and-up-only {
-    display: initial !important;
-  }
-  .show-on-hdplus-and-up-only {
-    display: initial !important;
-  }
-  .show-on-fullhd-and-up-only {
-    display: initial !important;
-  }
-  .show-on-wqxga-and-up-only {
-    display: initial !important;
-  }
 }
 @media only screen and (max-width: 1599px) {
   .center-on-hd-and-down {
@@ -1129,30 +817,6 @@
   .show-on-hd-and-down {
     display: initial !important;
   }
-  .show-on-tiny-and-down-only {
-    display: initial !important;
-  }
-  .show-on-small-and-down-only {
-    display: initial !important;
-  }
-  .show-on-medium-and-down-only {
-    display: initial !important;
-  }
-  .show-on-large-and-down-only {
-    display: initial !important;
-  }
-  .show-on-hd-and-down-only {
-    display: initial !important;
-  }
-  .show-on-hdplus-and-down-only {
-    display: none !important;
-  }
-  .show-on-fullhd-and-down-only {
-    display: none !important;
-  }
-  .show-on-wqxga-and-down-only {
-    display: none !important;
-  }
 }
 @media only screen and (min-width: 1360px) and (max-width: 1599px) {
   .center-on-hd {
@@ -1169,30 +833,6 @@
   }
   .show-on-hd {
     display: initial !important;
-  }
-  .show-on-tiny-only {
-    display: none !important;
-  }
-  .show-on-small-only {
-    display: none !important;
-  }
-  .show-on-medium-only {
-    display: none !important;
-  }
-  .show-on-large-only {
-    display: none !important;
-  }
-  .show-on-hd-only {
-    display: initial !important;
-  }
-  .show-on-hdplus-only {
-    display: none !important;
-  }
-  .show-on-fullhd-only {
-    display: none !important;
-  }
-  .show-on-wqxga-only {
-    display: none !important;
   }
 }
 @media only screen and (min-width: 1600px) {
@@ -1295,30 +935,6 @@
   .row .col.hdplus-offset-12 {
     margin-left: 100%;
   }
-  .show-on-tiny-and-up-only {
-    display: none !important;
-  }
-  .show-on-small-and-up-only {
-    display: none !important;
-  }
-  .show-on-medium-and-up-only {
-    display: none !important;
-  }
-  .show-on-large-and-up-only {
-    display: none !important;
-  }
-  .show-on-hd-and-up-only {
-    display: none !important;
-  }
-  .show-on-hdplus-and-up-only {
-    display: initial !important;
-  }
-  .show-on-fullhd-and-up-only {
-    display: initial !important;
-  }
-  .show-on-wqxga-and-up-only {
-    display: initial !important;
-  }
 }
 @media only screen and (max-width: 1919px) {
   .center-on-hdplus-and-down {
@@ -1336,30 +952,6 @@
   .show-on-hdplus-and-down {
     display: initial !important;
   }
-  .show-on-tiny-and-down-only {
-    display: initial !important;
-  }
-  .show-on-small-and-down-only {
-    display: initial !important;
-  }
-  .show-on-medium-and-down-only {
-    display: initial !important;
-  }
-  .show-on-large-and-down-only {
-    display: initial !important;
-  }
-  .show-on-hd-and-down-only {
-    display: initial !important;
-  }
-  .show-on-hdplus-and-down-only {
-    display: initial !important;
-  }
-  .show-on-fullhd-and-down-only {
-    display: none !important;
-  }
-  .show-on-wqxga-and-down-only {
-    display: none !important;
-  }
 }
 @media only screen and (min-width: 1600px) and (max-width: 1919px) {
   .center-on-hdplus {
@@ -1376,30 +968,6 @@
   }
   .show-on-hdplus {
     display: initial !important;
-  }
-  .show-on-tiny-only {
-    display: none !important;
-  }
-  .show-on-small-only {
-    display: none !important;
-  }
-  .show-on-medium-only {
-    display: none !important;
-  }
-  .show-on-large-only {
-    display: none !important;
-  }
-  .show-on-hd-only {
-    display: none !important;
-  }
-  .show-on-hdplus-only {
-    display: initial !important;
-  }
-  .show-on-fullhd-only {
-    display: none !important;
-  }
-  .show-on-wqxga-only {
-    display: none !important;
   }
 }
 @media only screen and (min-width: 1920px) {
@@ -1502,30 +1070,6 @@
   .row .col.fullhd-offset-12 {
     margin-left: 100%;
   }
-  .show-on-tiny-and-up-only {
-    display: none !important;
-  }
-  .show-on-small-and-up-only {
-    display: none !important;
-  }
-  .show-on-medium-and-up-only {
-    display: none !important;
-  }
-  .show-on-large-and-up-only {
-    display: none !important;
-  }
-  .show-on-hd-and-up-only {
-    display: none !important;
-  }
-  .show-on-hdplus-and-up-only {
-    display: none !important;
-  }
-  .show-on-fullhd-and-up-only {
-    display: initial !important;
-  }
-  .show-on-wqxga-and-up-only {
-    display: initial !important;
-  }
 }
 @media only screen and (max-width: 2559px) {
   .center-on-fullhd-and-down {
@@ -1543,30 +1087,6 @@
   .show-on-fullhd-and-down {
     display: initial !important;
   }
-  .show-on-tiny-and-down-only {
-    display: initial !important;
-  }
-  .show-on-small-and-down-only {
-    display: initial !important;
-  }
-  .show-on-medium-and-down-only {
-    display: initial !important;
-  }
-  .show-on-large-and-down-only {
-    display: initial !important;
-  }
-  .show-on-hd-and-down-only {
-    display: initial !important;
-  }
-  .show-on-hdplus-and-down-only {
-    display: initial !important;
-  }
-  .show-on-fullhd-and-down-only {
-    display: initial !important;
-  }
-  .show-on-wqxga-and-down-only {
-    display: none !important;
-  }
 }
 @media only screen and (min-width: 1920px) and (max-width: 2559px) {
   .center-on-fullhd {
@@ -1583,30 +1103,6 @@
   }
   .show-on-fullhd {
     display: initial !important;
-  }
-  .show-on-tiny-only {
-    display: none !important;
-  }
-  .show-on-small-only {
-    display: none !important;
-  }
-  .show-on-medium-only {
-    display: none !important;
-  }
-  .show-on-large-only {
-    display: none !important;
-  }
-  .show-on-hd-only {
-    display: none !important;
-  }
-  .show-on-hdplus-only {
-    display: none !important;
-  }
-  .show-on-fullhd-only {
-    display: initial !important;
-  }
-  .show-on-wqxga-only {
-    display: none !important;
   }
 }
 @media only screen and (min-width: 2560px) {
@@ -1709,32 +1205,8 @@
   .row .col.wqxga-offset-12 {
     margin-left: 100%;
   }
-  .show-on-tiny-and-up-only {
-    display: none !important;
-  }
-  .show-on-small-and-up-only {
-    display: none !important;
-  }
-  .show-on-medium-and-up-only {
-    display: none !important;
-  }
-  .show-on-large-and-up-only {
-    display: none !important;
-  }
-  .show-on-hd-and-up-only {
-    display: none !important;
-  }
-  .show-on-hdplus-and-up-only {
-    display: none !important;
-  }
-  .show-on-fullhd-and-up-only {
-    display: none !important;
-  }
-  .show-on-wqxga-and-up-only {
-    display: initial !important;
-  }
 }
-@media only screen and (max-width: 2560px) {
+@media only screen {
   .center-on-wqxga-and-down {
     text-align: center;
   }
@@ -1748,30 +1220,6 @@
     text-align: right !important;
   }
   .show-on-wqxga-and-down {
-    display: initial !important;
-  }
-  .show-on-tiny-and-down-only {
-    display: initial !important;
-  }
-  .show-on-small-and-down-only {
-    display: initial !important;
-  }
-  .show-on-medium-and-down-only {
-    display: initial !important;
-  }
-  .show-on-large-and-down-only {
-    display: initial !important;
-  }
-  .show-on-hd-and-down-only {
-    display: initial !important;
-  }
-  .show-on-hdplus-and-down-only {
-    display: initial !important;
-  }
-  .show-on-fullhd-and-down-only {
-    display: initial !important;
-  }
-  .show-on-wqxga-and-down-only {
     display: initial !important;
   }
 }
@@ -1789,30 +1237,6 @@
     text-align: right !important;
   }
   .show-on-wqxga {
-    display: initial !important;
-  }
-  .show-on-tiny-only {
-    display: none !important;
-  }
-  .show-on-small-only {
-    display: none !important;
-  }
-  .show-on-medium-only {
-    display: none !important;
-  }
-  .show-on-large-only {
-    display: none !important;
-  }
-  .show-on-hd-only {
-    display: none !important;
-  }
-  .show-on-hdplus-only {
-    display: none !important;
-  }
-  .show-on-fullhd-only {
-    display: none !important;
-  }
-  .show-on-wqxga-only {
     display: initial !important;
   }
 }

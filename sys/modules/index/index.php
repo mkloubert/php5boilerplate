@@ -34,16 +34,34 @@ use \php5bp\Modules\Execution\ContextInterface as ModuleExecutionContext;
  */
 class IndexModule extends ModuleBase {
     protected function execute(ModuleExecutionContext $ctx) {
-        $var = $ctx->getVar('wurst', null, $has);
-        $has2 = $ctx->hasVar('wurst');
-        $ctx->setVar('Wurst', 666);
-        $var = $ctx->getVar('WuRsT', null, $has);
-        $has2 = $ctx->hasVar('wUrSt');
-        $has2 = $ctx->clearVars()
-                    ->hasVar('wUrSt');
+        $conf1 = \php5bp::conf('test.test1');
+        // $conf2 = \php5bp::conf('test.test2');
+        $conf3 = \php5bp::conf('test.test3');
 
-        if ($ctx != null) {
+        $h = \php5bp::cache()->hasItem('PZ');
+        if (!$h) {
+            \php5bp::cache()->setItem('PZ', '19861222');
+            \php5bp::cache()->setItem('MK', '19790923');
+            \php5bp::cache()->setItem('TM', '19790905');
+        }
 
+        $h = \php5bp::cache()->hasItem('PZ');
+        if ($h) {
+            \php5bp::cache()->removeItem('PZ');
+        }
+
+        $h = \php5bp::cache()->hasItem('MK');
+        if ($h) {
+            \php5bp::cache()->removeItem('MK');
+        }
+
+        $h1 = \php5bp::cache()->hasItem('PZ');
+        $h2 = \php5bp::cache()->hasItem('MK');
+        $h3 = \php5bp::cache()->hasItem('TM');
+        if (!$h1 && !$h2 && $h3) {
+            if ($ctx != null) {
+
+            }
         }
     }
 

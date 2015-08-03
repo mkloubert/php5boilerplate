@@ -1,4 +1,5 @@
 {
+  "debug": true,
   "modules": {
     "actions": {
         "source": ["post", "request", "get"],

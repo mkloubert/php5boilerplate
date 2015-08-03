@@ -1,0 +1,15 @@
+<cache>
+    <adapter>
+        <name>memory</name>
+
+        <options>
+            <ttl>7200</ttl>
+        </options>
+    </adapter>
+
+    <plugins>
+        <exception_handler>
+            <throw_exceptions>false</throw_exceptions>
+        </exception_handler>
+    </plugins>
+</cache>

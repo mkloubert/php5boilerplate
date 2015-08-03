@@ -33,6 +33,10 @@ final class php5bp {
      */
     private static $_app;
     /**
+     * @var \Zend\Cache\Storage\StorageInterface
+     */
+    private static $_cache;
+    /**
      * @var array
      */
     private static $_configExtensions = array(
@@ -40,6 +44,9 @@ final class php5bp {
         'php'  => '\php5bp\Config\Reader\PhpArray',
         'xml'  => '\Zend\Config\Reader\Xml',
         'ini'  => '\Zend\Config\Reader\Ini',
+        'yml'  => '\Zend\Config\Reader\Yaml',
+        'yaml'  => '\Zend\Config\Reader\Yaml',
+        'properties'  => '\Zend\Config\Reader\JavaProperties',
     );
     /**
      * @var DateTime
@@ -72,6 +79,31 @@ final class php5bp {
      */
     public static function appConf() {
         return self::conf('app');
+    }
+
+    /**
+     * Returns a (new) cache adapter.
+     *
+     * @param string $name The name of the configuration storage.
+     *
+     * @return \Zend\Cache\Storage\StorageInterface The adapter or (false) if input data is invalid.
+     */
+    public static function cache($name = 'main') {
+        $name = trim($name);
+        if ('' == $name) {
+            return false;
+        }
+
+        if (is_null(self::$_cache)) {
+            $cacheConf = self::conf('cache.' . $name);
+            if (!is_array($cacheConf)) {
+                $cacheConf = array();
+            }
+
+            self::$_cache = \Zend\Cache\StorageFactory::factory($cacheConf);
+        }
+
+        return self::$_cache;
     }
 
     /**
@@ -133,6 +165,28 @@ final class php5bp {
     }
 
     /**
+     * Returns a new database adapter.
+     *
+     * @param string $name The name of the configuration storage.
+     *
+     * @return \php5bp\Db\Adapter The new connection.
+     *                            (false) indicates that name is invalid.
+     */
+    public static function db($name = 'main') {
+        $name = trim($name);
+        if ('' == $name) {
+            return false;
+        }
+
+        $dbConf = self::conf('db.' . $name);
+        if (!is_array($dbConf)) {
+            $dbConf = array();
+        }
+
+        return new \php5bp\Db\Adapter($dbConf);
+    }
+
+    /**
      * Checks if a string ends with a specific expression.
      *
      * @param string $str The string to search in.
@@ -148,6 +202,20 @@ final class php5bp {
                (($temp = strlen($str) - strlen($expr)) >= 0 &&
                 call_user_func($func,
                                $str, $expr, $temp) !== false);
+    }
+
+    /**
+     * Gets if the application runs in debug mode or not.
+     *
+     * @return bool Runs in debug mode or not.
+     */
+    public static function isDebug() {
+        $appConf = self::appConf();
+        if (array_key_exists('debug', $appConf)) {
+            return boolval($appConf['debug']);
+        }
+
+        return false;
     }
 
     /**
@@ -197,5 +265,12 @@ final class php5bp {
 
         return 0 === call_user_func($func,
                                     $str, $expr);
+    }
+
+    /**
+     * @see \php5bp\Db\TableGateway
+     */
+    public static function table($table, $adapter = null, $features = null, \Zend\Db\ResultSet\ResultSetInterface $resultSetPrototype = null, \Zend\Db\Sql\Sql $sql = null) {
+        return new \php5bp\Db\TableGateway($table, $adapter, $features, $resultSetPrototype, $sql);
     }
 }

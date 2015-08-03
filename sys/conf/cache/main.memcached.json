@@ -1,0 +1,22 @@
+{
+  "adapter": {
+    "name": "memcached",
+    "options": {
+      "ttl": 7200,
+      "namespace": "php5boilerplate",
+      "servers": [
+        ["127.0.0.1", 11211]
+      ],
+      "liboptions": {
+        "COMPRESSION": true,
+        "binary_protocol": true,
+        "no_block": true
+      }
+    }
+  },
+  "plugins": {
+    "exception_handler": {
+      "throw_exceptions": false
+    }
+  }
+}

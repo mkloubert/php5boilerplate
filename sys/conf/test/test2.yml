@@ -1,0 +1,8 @@
+webhost: www.example.com
+database:
+    adapter: pdo_mysql
+    params:
+      host:     db.example.com
+      username: dbuser
+      password: secret
+      dbname:   dbproduction

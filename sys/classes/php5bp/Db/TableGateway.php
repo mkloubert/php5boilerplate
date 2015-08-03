@@ -19,49 +19,46 @@
  * License along with this software.                                                                                  *
  **********************************************************************************************************************/
 
-?>
-<!DOCTYPE HTML>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+namespace php5bp\Db;
 
-        <title><?= \htmlentities((!$this->debug ? '' : '[DEBUG] ') . $this->title) ?></title>
+use \Zend\Db\Adapter\AdapterInterface;
+use \Zend\Db\ResultSet\ResultSetInterface;
+use \Zend\Db\Sql\Sql;
+use \Zend\Db\Sql\TableIdentifier;
+use \Zend\Db\TableGateway\Exception\InvalidArgumentException;
+use \Zend\Db\TableGateway\Feature\AbstractFeature;
+use \Zend\Db\TableGateway\Feature\FeatureSet;
 
-        <link rel="stylesheet" href="css/normalize-3.0.3.css">
-<?php if (!$this->debug): ?>
-        <link rel="stylesheet" href="css/php5bp.min.css">
-<?php else: ?>
-        <link rel="stylesheet" href="css/php5bp.css">
-<?php endif; ?>
 
-<?php if (!$this->debug): ?>
-        <script type="text/javascript" src="js/jquery.min.js"></script>
-<?php else: ?>
-        <script type="text/javascript" src="js/jquery-2.1.4.js"></script>
-<?php endif; ?>
-<?php if (!$this->debug): ?>
-        <script type="text/javascript" src="js/angular.min.js"></script>
-<?php else: ?>
-        <script type="text/javascript" src="js/angular-1.4.3.js"></script>
-<?php endif; ?>
+/**
+ * Extension of \Zend\Db\TableGateway\TableGateway class.
+ *
+ * @package php5bp\Db
+ * @author Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
+ */
+class TableGateway extends \Zend\Db\TableGateway\TableGateway {
+    /**
+     * Initializes a new instance of that class.
+     *
+     * @param string|TableIdentifier|array $table
+     * @param AdapterInterface|string $adapter
+     * @param AbstractFeature|FeatureSet|AbstractFeature[]|null $features
+     * @param ResultSetInterface|null $resultSetPrototype
+     * @param Sql|null $sql
+     *
+     * @throws InvalidArgumentException
+     */
+    public function __construct($table, $adapter = null, $features = null, ResultSetInterface $resultSetPrototype = null, Sql $sql = null) {
+        if (\is_null($adapter)) {
+            // create default instance
+            $adapter = \php5bp::db();
+        }
 
-        <!-- this should be included as last script -->
-<?php if (!$this->debug): ?>
-        <script type="text/javascript" src="js/php5bp.min.js"></script>
-<?php else: ?>
-        <script type="text/javascript" src="js/php5bp.js"></script>
-<?php endif; ?>
-    </head>
+        if (!$adapter instanceof AdapterInterface) {
+            // use $adapter as config storage name
+            $adapter = \php5bp::db($adapter);
+        }
 
-    <body>
-        <?= $this->content ?>
-
-        <!-- this should be executed as last script -->
-        <script type="text/javascript">
-            jQuery(function() {
-                $php5bp.page.processOnLoadedActions();
-            });
-        </script>
-    </body>
-</html>
+        parent::__construct($table, $adapter, $features, $resultSetPrototype, $sql);
+    }
+}

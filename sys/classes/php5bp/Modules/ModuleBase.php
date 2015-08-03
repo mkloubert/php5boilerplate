@@ -453,6 +453,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                 // initialize with defaults
                 $view->__set('action'  , $execCtx->getAction());
                 $view->__set('content' , $result);
+                $view->__set('debug'   , \php5bp::isDebug());
                 $view->__set('request' , $execCtx->request());
                 $view->__set('response', $execCtx->response());
 

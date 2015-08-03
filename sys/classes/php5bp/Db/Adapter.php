@@ -21,6 +21,9 @@
 
 namespace php5bp\Db;
 
+use \Zend\Db\ResultSet\ResultSetInterface;
+use \Zend\Db\Sql\Sql;
+
 
 /**
  * Extension of \Zend\Db\Adapter\Adapter class.
@@ -41,5 +44,12 @@ class Adapter extends \Zend\Db\Adapter\Adapter {
      */
     public function qi($identifier) {
         return $this->platform->quoteIdentifier($identifier);
+    }
+
+    /**
+     * @see TableGateway
+     */
+    public function table($table, $features = null, ResultSetInterface $resultSetPrototype = null, Sql $sql = null) {
+        return new TableGateway($table, $this, $features, $resultSetPrototype, $sql);
     }
 }

@@ -10,5 +10,10 @@
       "updateContext": "updateContext"
     },
     "var": "CE4EBCB3"
+  },
+  "views": {
+    "default": "main",
+    "json": "json",
+    "null": "null"
   }
 }

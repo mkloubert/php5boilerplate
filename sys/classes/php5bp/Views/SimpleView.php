@@ -19,49 +19,89 @@
  * License along with this software.                                                                                  *
  **********************************************************************************************************************/
 
-
-namespace php5bp\Modules\Impl;
-
-use \php5bp\Modules\ModuleBase;
-use \php5bp\Modules\Execution\ContextInterface as ModuleExecutionContext;
+namespace php5bp\Views;
 
 
 /**
- * The index / default module.
+ * A simple view.
  *
- * @package php5bp\Modules\Impl
+ * @package php5bp\Views
  * @author Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
  */
-class IndexModule extends ModuleBase {
-    protected function execute(ModuleExecutionContext $ctx) {
-        $var = $ctx->getVar('wurst', null, $has);
-        $has2 = $ctx->hasVar('wurst');
-        $ctx->setVar('Wurst', 666);
-        $var = $ctx->getVar('WuRsT', null, $has);
-        $has2 = $ctx->hasVar('wUrSt');
-        $has2 = $ctx->clearVars()
-                    ->hasVar('wUrSt');
+class SimpleView extends ViewBase {
+    /**
+     * The name of a template file.
+     */
+    const TEMPLATE_FILENAME = 'index.phtml';
 
-        if ($ctx != null) {
 
+    /**
+     * @var string
+     */
+    protected $_dir;
+
+
+    /**
+     * Initializes a new instance of that class.
+     *
+     * @param string $dir The custom root directory of the views.
+     */
+    public function __construct($dir = null) {
+        $dir = \trim($dir);
+        if ('' == $dir) {
+            $dir = \PHP5BP_DIR_VIEWS;
         }
+
+        $this->_dir = \realpath($dir);
     }
 
-    public function testAction(ModuleExecutionContext $ctx) {
-        if ($ctx != null) {
 
-        }
+    /**
+     * Gets the directory.
+     *
+     * @return string The directory.
+     */
+    public function dir() {
+        return $this->_dir;
     }
 
-    public function test2Action(ModuleExecutionContext $ctx) {
-        if ($ctx != null) {
 
+    /**
+     * Renders a view.
+     *
+     * @param string $name The name of the view (script).
+     *                     An empty value indicates that no script should
+     *                     be executed.
+     *
+     * @return mixed The rendered result of the view script.
+     *               (false) indicates that there is no data to output.
+     */
+    public function render($name) {
+        $result = false;
+
+        $dir = \str_replace('.', \DIRECTORY_SEPARATOR, \trim($name));
+        if ('' != $dir) {
+            $dir = \realpath($this->dir() . \DIRECTORY_SEPARATOR . $dir);
+            if (false !== $dir) {
+                // renderer
+                $renderer = new PhpRenderer($dir);
+                $renderer->resolver()->addPaths(array(
+                    $dir,
+                ));
+
+                // ViewModel
+                $vm = new ViewModel();
+                $vm->setTemplate(static::TEMPLATE_FILENAME);
+
+                // set variables
+                foreach ($this->_vars as $n => $v) {
+                    $vm->setVariable($n, $v);
+                }
+
+                $result = $renderer->render($vm);
+            }
         }
-    }
 
-    public function test3Action(ModuleExecutionContext $ctx) {
-        if ($ctx != null) {
-
-        }
+        return $result;
     }
 }

@@ -1,0 +1,574 @@
+/**********************************************************************************************************************
+ * php5boilerplate (https://github.com/mkloubert/php5boilerplate)                                                     *
+ * Copyright (c) Marcel Joachim Kloubert <marcel.kloubert@gmx.net>, All rights reserved.                              *
+ *                                                                                                                    *
+ *                                                                                                                    *
+ * This software is free software; you can redistribute it and/or                                                     *
+ * modify it under the terms of the GNU Lesser General Public                                                         *
+ * License as published by the Free Software Foundation; either                                                       *
+ * version 3.0 of the License, or (at your option) any later version.                                                 *
+ *                                                                                                                    *
+ * This software is distributed in the hope that it will be useful,                                                   *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of                                                     *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU                                                  *
+ * Lesser General Public License for more details.                                                                    *
+ *                                                                                                                    *
+ * You should have received a copy of the GNU Lesser General Public                                                   *
+ * License along with this software.                                                                                  *
+ **********************************************************************************************************************/
+
+
+@phpbp-size-tiny-max: 218px;
+@phpbp-size-small-min: (@phpbp-size-tiny-max + 1px);
+@phpbp-size-small-max: 600px;
+@phpbp-size-medium-min: (@phpbp-size-small-max + 1px);
+@phpbp-size-medium-max: 992px;
+@phpbp-size-large-min: (@phpbp-size-medium-max + 1px);
+@phpbp-size-large-max: 1359px;
+@phpbp-size-hd-min: (@phpbp-size-large-max + 1px);
+@phpbp-size-hd-max: 1599px;
+@phpbp-size-hdplus-min: (@phpbp-size-hd-max + 1px);
+@phpbp-size-hdplus-max: 1919px;
+@phpbp-size-fullhd-min: (@phpbp-size-hdplus-max + 1px);
+@phpbp-size-fullhd-max: 2559px;
+@phpbp-size-wqxga-min: (@phpbp-size-fullhd-max + 1px);
+
+
+.phpbp-center () {
+  text-align: center;
+}
+
+.phpbp-device-grid (@device) {
+  .col.@{device}-1 { .phpbp-grid(1); }
+  .col.@{device}-2 { .phpbp-grid(2); }
+  .col.@{device}-3 { .phpbp-grid(3); }
+  .col.@{device}-4 { .phpbp-grid(4); }
+  .col.@{device}-5 { .phpbp-grid(5); }
+  .col.@{device}-6 { .phpbp-grid(6); }
+  .col.@{device}-7 { .phpbp-grid(7); }
+  .col.@{device}-8 { .phpbp-grid(8); }
+  .col.@{device}-9 { .phpbp-grid(9); }
+  .col.@{device}-10 { .phpbp-grid(10); }
+  .col.@{device}-11 { .phpbp-grid(11); }
+  .col.@{device}-12 { .phpbp-grid(12); }
+
+  .col.@{device}-offset-1 { .phpbp-grid-offset(1); }
+  .col.@{device}-offset-2 { .phpbp-grid-offset(2); }
+  .col.@{device}-offset-3 { .phpbp-grid-offset(3); }
+  .col.@{device}-offset-4 { .phpbp-grid-offset(4); }
+  .col.@{device}-offset-5 { .phpbp-grid-offset(5); }
+  .col.@{device}-offset-6 { .phpbp-grid-offset(6); }
+  .col.@{device}-offset-7 { .phpbp-grid-offset(7); }
+  .col.@{device}-offset-8 { .phpbp-grid-offset(8); }
+  .col.@{device}-offset-9 { .phpbp-grid-offset(9); }
+  .col.@{device}-offset-10 { .phpbp-grid-offset(10); }
+  .col.@{device}-offset-11 { .phpbp-grid-offset(11); }
+  .col.@{device}-offset-12 { .phpbp-grid-offset(12); }
+}
+
+.phpbp-grid (@blocks) {
+  width: percentage(@blocks / 12);
+  margin-left: 0;
+}
+
+.phpbp-grid-offset (@blocks) {
+  margin-left: percentage(@blocks / 12);
+}
+
+.phpbp-hide () {
+  display: none !important;
+}
+
+.phpbp-left () {
+  text-align: left !important;
+}
+
+.phpbp-on-device (@device) {
+  .center-on-@{device} { .phpbp-center(); }
+  .hide-on-@{device} { .phpbp-hide(); }
+  .left-on-@{device} { .phpbp-left(); }
+  .right-on-@{device} { .phpbp-right(); }
+  .show-on-@{device} { .phpbp-show(); }
+}
+
+.phpbp-on-device-and-down (@device) {
+  .center-on-@{device}-and-down { .phpbp-center(); }
+  .hide-on-@{device}-and-down { .phpbp-hide(); }
+  .left-on-@{device}-and-down { .phpbp-left(); }
+  .right-on-@{device}-and-down { .phpbp-right(); }
+  .show-on-@{device}-and-down { .phpbp-show(); }
+}
+
+.phpbp-on-device-and-up (@device) {
+  .center-on-@{device}-and-up { .phpbp-center(); }
+  .hide-on-@{device}-and-up { .phpbp-hide(); }
+  .left-on-@{device}-and-up { .phpbp-left(); }
+  .right-on-@{device}-and-up { .phpbp-right(); }
+  .show-on-@{device}-and-up { .phpbp-show(); }
+}
+
+.phpbp-right () {
+  text-align: right !important;
+}
+
+.phpbp-show () {
+  display: initial !important;
+}
+
+
+.center, .center-align { .phpbp-center(); }
+
+.center-block {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.clearfix {
+  clear: both;
+}
+
+.no-margin {
+  margin: 0 !important;
+}
+
+.no-padding {
+  padding: 0 !important;
+}
+
+.hide { .phpbp-hide(); }
+
+.left, .left-align { .phpbp-left(); }
+
+.right, .right-align { .phpbp-right(); }
+
+.row {
+  :after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 1rem;
+
+  .col {
+    float: left;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 0 0.75rem;
+  }
+
+  // default / tiny
+  .col-1 { .phpbp-grid(1); }
+  .col-2 { .phpbp-grid(2); }
+  .col-3 { .phpbp-grid(3); }
+  .col-4 { .phpbp-grid(4); }
+  .col-5 { .phpbp-grid(5); }
+  .col-6 { .phpbp-grid(6); }
+  .col-7 { .phpbp-grid(7); }
+  .col-8 { .phpbp-grid(8); }
+  .col-9 { .phpbp-grid(9); }
+  .col-10 { .phpbp-grid(10); }
+  .col-11 { .phpbp-grid(11); }
+  .col-12 { .phpbp-grid(12); }
+
+  .col-offset-1 { .phpbp-grid-offset(1); }
+  .col-offset-2 { .phpbp-grid-offset(2); }
+  .col-offset-3 { .phpbp-grid-offset(3); }
+  .col-offset-4 { .phpbp-grid-offset(4); }
+  .col-offset-5 { .phpbp-grid-offset(5); }
+  .col-offset-6 { .phpbp-grid-offset(6); }
+  .col-offset-7 { .phpbp-grid-offset(7); }
+  .col-offset-8 { .phpbp-grid-offset(8); }
+  .col-offset-9 { .phpbp-grid-offset(9); }
+  .col-offset-10 { .phpbp-grid-offset(10); }
+  .col-offset-11 { .phpbp-grid-offset(11); }
+  .col-offset-12 { .phpbp-grid-offset(12); }
+}
+
+.valign-wrapper {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+
+  .valign {
+    display: block;
+  }
+}
+
+// tiny (min)
+@media only screen and (max-width: @phpbp-size-tiny-max) {
+  .phpbp-on-device-and-up(tiny);
+
+  .row {
+    .phpbp-device-grid(tiny);
+  }
+
+  .show-on-tiny-and-up-only { .phpbp-show(); }
+  .show-on-small-and-up-only { .phpbp-show(); }
+  .show-on-medium-and-up-only { .phpbp-show(); }
+  .show-on-large-and-up-only { .phpbp-show(); }
+  .show-on-hd-and-up-only { .phpbp-show(); }
+  .show-on-hdplus-and-up-only { .phpbp-show(); }
+  .show-on-fullhd-and-up-only { .phpbp-show(); }
+  .show-on-wqxga-and-up-only { .phpbp-show(); }
+}
+
+// tiny (max)
+@media only screen and (max-width: @phpbp-size-tiny-max) {
+  .phpbp-on-device-and-down(tiny);
+
+  .show-on-tiny-and-down-only { .phpbp-show(); }
+  .show-on-small-and-down-only { .phpbp-hide(); }
+  .show-on-medium-and-down-only { .phpbp-hide(); }
+  .show-on-large-and-down-only { .phpbp-hide(); }
+  .show-on-hd-and-down-only { .phpbp-hide(); }
+  .show-on-hdplus-and-down-only { .phpbp-hide(); }
+  .show-on-fullhd-and-down-only { .phpbp-hide(); }
+  .show-on-wqxga-and-down-only { .phpbp-hide(); }
+}
+
+// tiny (explicit)
+@media only screen and (max-width: @phpbp-size-tiny-max) {
+  .phpbp-on-device(tiny);
+
+  .show-on-tiny-only { .phpbp-show(); }
+  .show-on-small-only { .phpbp-hide(); }
+  .show-on-medium-only { .phpbp-hide(); }
+  .show-on-large-only { .phpbp-hide(); }
+  .show-on-hd-only { .phpbp-hide(); }
+  .show-on-hdplus-only { .phpbp-hide(); }
+  .show-on-fullhd-only { .phpbp-hide(); }
+  .show-on-wqxga-only { .phpbp-hide(); }
+}
+
+// small (min)
+@media only screen and (min-width: @phpbp-size-small-min) {
+  .phpbp-on-device-and-up(small);
+
+  .row {
+    .phpbp-device-grid(small);
+  }
+
+  .show-on-tiny-and-up-only { .phpbp-hide(); }
+  .show-on-small-and-up-only { .phpbp-show(); }
+  .show-on-medium-and-up-only { .phpbp-show(); }
+  .show-on-large-and-up-only { .phpbp-show(); }
+  .show-on-hd-and-up-only { .phpbp-show(); }
+  .show-on-hdplus-and-up-only { .phpbp-show(); }
+  .show-on-fullhd-and-up-only { .phpbp-show(); }
+  .show-on-wqxga-and-up-only { .phpbp-show(); }
+}
+
+// small (max)
+@media only screen and (max-width: @phpbp-size-small-max) {
+  .phpbp-on-device-and-down(small);
+
+  .show-on-tiny-and-down-only { .phpbp-show(); }
+  .show-on-small-and-down-only { .phpbp-show(); }
+  .show-on-medium-and-down-only { .phpbp-hide(); }
+  .show-on-large-and-down-only { .phpbp-hide(); }
+  .show-on-hd-and-down-only { .phpbp-hide(); }
+  .show-on-hdplus-and-down-only { .phpbp-hide(); }
+  .show-on-fullhd-and-down-only { .phpbp-hide(); }
+  .show-on-wqxga-and-down-only { .phpbp-hide(); }
+}
+
+// small (explicit)
+@media only screen and (min-width: @phpbp-size-small-min) and (max-width: @phpbp-size-small-max) {
+  .phpbp-on-device(small);
+
+  .show-on-tiny-only { .phpbp-hide(); }
+  .show-on-small-only { .phpbp-show(); }
+  .show-on-medium-only { .phpbp-hide(); }
+  .show-on-large-only { .phpbp-hide(); }
+  .show-on-hd-only { .phpbp-hide(); }
+  .show-on-hdplus-only { .phpbp-hide(); }
+  .show-on-fullhd-only { .phpbp-hide(); }
+  .show-on-wqxga-only { .phpbp-hide(); }
+}
+
+// medium (min)
+@media only screen and (min-width: @phpbp-size-medium-min) {
+  .phpbp-on-device-and-up(medium);
+
+  .row {
+    .phpbp-device-grid(medium);
+  }
+
+  .show-on-tiny-and-up-only { .phpbp-hide(); }
+  .show-on-small-and-up-only { .phpbp-hide(); }
+  .show-on-medium-and-up-only { .phpbp-show(); }
+  .show-on-large-and-up-only { .phpbp-show(); }
+  .show-on-hd-and-up-only { .phpbp-show(); }
+  .show-on-hdplus-and-up-only { .phpbp-show(); }
+  .show-on-fullhd-and-up-only { .phpbp-show(); }
+  .show-on-wqxga-and-up-only { .phpbp-show(); }
+}
+
+// medium (max)
+@media only screen and (max-width: @phpbp-size-medium-max) {
+  .phpbp-on-device-and-down(medium);
+
+  .show-on-tiny-and-down-only { .phpbp-show(); }
+  .show-on-small-and-down-only { .phpbp-show(); }
+  .show-on-medium-and-down-only { .phpbp-show(); }
+  .show-on-large-and-down-only { .phpbp-hide(); }
+  .show-on-hd-and-down-only { .phpbp-hide(); }
+  .show-on-hdplus-and-down-only { .phpbp-hide(); }
+  .show-on-fullhd-and-down-only { .phpbp-hide(); }
+  .show-on-wqxga-and-down-only { .phpbp-hide(); }
+}
+
+// medium (explicit)
+@media only screen and (min-width: @phpbp-size-medium-min) and (max-width: @phpbp-size-medium-max) {
+  .phpbp-on-device(medium);
+
+  .show-on-tiny-only { .phpbp-hide(); }
+  .show-on-small-only { .phpbp-hide(); }
+  .show-on-medium-only { .phpbp-show(); }
+  .show-on-large-only { .phpbp-hide(); }
+  .show-on-hd-only { .phpbp-hide(); }
+  .show-on-hdplus-only { .phpbp-hide(); }
+  .show-on-fullhd-only { .phpbp-hide(); }
+  .show-on-wqxga-only { .phpbp-hide(); }
+}
+
+// large (min)
+@media only screen and (min-width: @phpbp-size-large-min) {
+  .phpbp-on-device-and-up(large);
+
+  .row {
+    .phpbp-device-grid(large);
+  }
+
+  .show-on-tiny-and-up-only { .phpbp-hide(); }
+  .show-on-small-and-up-only { .phpbp-hide(); }
+  .show-on-medium-and-up-only { .phpbp-hide(); }
+  .show-on-large-and-up-only { .phpbp-show(); }
+  .show-on-hd-and-up-only { .phpbp-show(); }
+  .show-on-hdplus-and-up-only { .phpbp-show(); }
+  .show-on-fullhd-and-up-only { .phpbp-show(); }
+  .show-on-wqxga-and-up-only { .phpbp-show(); }
+}
+
+// large (max)
+@media only screen and (max-width: @phpbp-size-large-max) {
+  .phpbp-on-device-and-down(large);
+
+  .show-on-tiny-and-down-only { .phpbp-show(); }
+  .show-on-small-and-down-only { .phpbp-show(); }
+  .show-on-medium-and-down-only { .phpbp-show(); }
+  .show-on-large-and-down-only { .phpbp-show(); }
+  .show-on-hd-and-down-only { .phpbp-hide(); }
+  .show-on-hdplus-and-down-only { .phpbp-hide(); }
+  .show-on-fullhd-and-down-only { .phpbp-hide(); }
+  .show-on-wqxga-and-down-only { .phpbp-hide(); }
+}
+
+// large (explicit)
+@media only screen and (min-width: @phpbp-size-large-min) and (max-width: @phpbp-size-large-max) {
+  .phpbp-on-device(large);
+
+  .show-on-tiny-only { .phpbp-hide(); }
+  .show-on-small-only { .phpbp-hide(); }
+  .show-on-medium-only { .phpbp-hide(); }
+  .show-on-large-only { .phpbp-show(); }
+  .show-on-hd-only { .phpbp-hide(); }
+  .show-on-hdplus-only { .phpbp-hide(); }
+  .show-on-fullhd-only { .phpbp-hide(); }
+  .show-on-wqxga-only { .phpbp-hide(); }
+}
+
+// HD (min)
+@media only screen and (min-width: @phpbp-size-hd-min) {
+  .phpbp-on-device-and-up(hd);
+
+  .row {
+    .phpbp-device-grid(hd);
+  }
+
+  .show-on-tiny-and-up-only { .phpbp-hide(); }
+  .show-on-small-and-up-only { .phpbp-hide(); }
+  .show-on-medium-and-up-only { .phpbp-hide(); }
+  .show-on-large-and-up-only { .phpbp-hide(); }
+  .show-on-hd-and-up-only { .phpbp-show(); }
+  .show-on-hdplus-and-up-only { .phpbp-show(); }
+  .show-on-fullhd-and-up-only { .phpbp-show(); }
+  .show-on-wqxga-and-up-only { .phpbp-show(); }
+}
+
+// HD (max)
+@media only screen and (max-width: @phpbp-size-hd-max) {
+  .phpbp-on-device-and-down(hd);
+
+  .show-on-tiny-and-down-only { .phpbp-show(); }
+  .show-on-small-and-down-only { .phpbp-show(); }
+  .show-on-medium-and-down-only { .phpbp-show(); }
+  .show-on-large-and-down-only { .phpbp-show(); }
+  .show-on-hd-and-down-only { .phpbp-show(); }
+  .show-on-hdplus-and-down-only { .phpbp-hide(); }
+  .show-on-fullhd-and-down-only { .phpbp-hide(); }
+  .show-on-wqxga-and-down-only { .phpbp-hide(); }
+}
+
+// HD (explicit)
+@media only screen and (min-width: @phpbp-size-hd-min) and (max-width: @phpbp-size-hd-max) {
+  .phpbp-on-device(hd);
+
+  .show-on-tiny-only { .phpbp-hide(); }
+  .show-on-small-only { .phpbp-hide(); }
+  .show-on-medium-only { .phpbp-hide(); }
+  .show-on-large-only { .phpbp-hide(); }
+  .show-on-hd-only { .phpbp-show(); }
+  .show-on-hdplus-only { .phpbp-hide(); }
+  .show-on-fullhd-only { .phpbp-hide(); }
+  .show-on-wqxga-only { .phpbp-hide(); }
+}
+
+// HD+ (min)
+@media only screen and (min-width: @phpbp-size-hdplus-min) {
+  .phpbp-on-device-and-up(hdplus);
+
+  .row {
+    .phpbp-device-grid(hdplus);
+  }
+
+  .show-on-tiny-and-up-only { .phpbp-hide(); }
+  .show-on-small-and-up-only { .phpbp-hide(); }
+  .show-on-medium-and-up-only { .phpbp-hide(); }
+  .show-on-large-and-up-only { .phpbp-hide(); }
+  .show-on-hd-and-up-only { .phpbp-hide(); }
+  .show-on-hdplus-and-up-only { .phpbp-show(); }
+  .show-on-fullhd-and-up-only { .phpbp-show(); }
+  .show-on-wqxga-and-up-only { .phpbp-show(); }
+}
+
+// HD+ (max)
+@media only screen and (max-width: @phpbp-size-hdplus-max) {
+  .phpbp-on-device-and-down(hdplus);
+
+  .show-on-tiny-and-down-only { .phpbp-show(); }
+  .show-on-small-and-down-only { .phpbp-show(); }
+  .show-on-medium-and-down-only { .phpbp-show(); }
+  .show-on-large-and-down-only { .phpbp-show(); }
+  .show-on-hd-and-down-only { .phpbp-show(); }
+  .show-on-hdplus-and-down-only { .phpbp-show(); }
+  .show-on-fullhd-and-down-only { .phpbp-hide(); }
+  .show-on-wqxga-and-down-only { .phpbp-hide(); }
+}
+
+// HD+ (explicit)
+@media only screen and (min-width: @phpbp-size-hdplus-min) and (max-width: @phpbp-size-hdplus-max) {
+  .phpbp-on-device(hdplus);
+
+  .show-on-tiny-only { .phpbp-hide(); }
+  .show-on-small-only { .phpbp-hide(); }
+  .show-on-medium-only { .phpbp-hide(); }
+  .show-on-large-only { .phpbp-hide(); }
+  .show-on-hd-only { .phpbp-hide(); }
+  .show-on-hdplus-only { .phpbp-show(); }
+  .show-on-fullhd-only { .phpbp-hide(); }
+  .show-on-wqxga-only { .phpbp-hide(); }
+}
+
+// Full HD (min)
+@media only screen and (min-width: @phpbp-size-fullhd-min) {
+  .phpbp-on-device-and-up(fullhd);
+
+  .row {
+    .phpbp-device-grid(fullhd);
+  }
+
+  .show-on-tiny-and-up-only { .phpbp-hide(); }
+  .show-on-small-and-up-only { .phpbp-hide(); }
+  .show-on-medium-and-up-only { .phpbp-hide(); }
+  .show-on-large-and-up-only { .phpbp-hide(); }
+  .show-on-hd-and-up-only { .phpbp-hide(); }
+  .show-on-hdplus-and-up-only { .phpbp-hide(); }
+  .show-on-fullhd-and-up-only { .phpbp-show(); }
+  .show-on-wqxga-and-up-only { .phpbp-show(); }
+}
+
+// Full HD (max)
+@media only screen and (max-width: @phpbp-size-fullhd-max) {
+  .phpbp-on-device-and-down(fullhd);
+
+  .show-on-tiny-and-down-only { .phpbp-show(); }
+  .show-on-small-and-down-only { .phpbp-show(); }
+  .show-on-medium-and-down-only { .phpbp-show(); }
+  .show-on-large-and-down-only { .phpbp-show(); }
+  .show-on-hd-and-down-only { .phpbp-show(); }
+  .show-on-hdplus-and-down-only { .phpbp-show(); }
+  .show-on-fullhd-and-down-only { .phpbp-show(); }
+  .show-on-wqxga-and-down-only { .phpbp-hide(); }
+}
+
+// Full HD (explicit)
+@media only screen and (min-width: @phpbp-size-fullhd-min) and (max-width: @phpbp-size-fullhd-max) {
+  .phpbp-on-device(fullhd);
+
+  .show-on-tiny-only { .phpbp-hide(); }
+  .show-on-small-only { .phpbp-hide(); }
+  .show-on-medium-only { .phpbp-hide(); }
+  .show-on-large-only { .phpbp-hide(); }
+  .show-on-hd-only { .phpbp-hide(); }
+  .show-on-hdplus-only { .phpbp-hide(); }
+  .show-on-fullhd-only { .phpbp-show(); }
+  .show-on-wqxga-only { .phpbp-hide(); }
+}
+
+// WQXGA (min)
+@media only screen and (min-width: @phpbp-size-wqxga-min) {
+  .phpbp-on-device-and-up(wqxga);
+
+  .row {
+    .phpbp-device-grid(wqxga);
+  }
+
+  .show-on-tiny-and-up-only { .phpbp-hide(); }
+  .show-on-small-and-up-only { .phpbp-hide(); }
+  .show-on-medium-and-up-only { .phpbp-hide(); }
+  .show-on-large-and-up-only { .phpbp-hide(); }
+  .show-on-hd-and-up-only { .phpbp-hide(); }
+  .show-on-hdplus-and-up-only { .phpbp-hide(); }
+  .show-on-fullhd-and-up-only { .phpbp-hide(); }
+  .show-on-wqxga-and-up-only { .phpbp-show(); }
+}
+
+// WQXGA (max)
+@media only screen and (max-width: @phpbp-size-wqxga-min) {
+  .phpbp-on-device-and-down(wqxga);
+
+  .show-on-tiny-and-down-only { .phpbp-show(); }
+  .show-on-small-and-down-only { .phpbp-show(); }
+  .show-on-medium-and-down-only { .phpbp-show(); }
+  .show-on-large-and-down-only { .phpbp-show(); }
+  .show-on-hd-and-down-only { .phpbp-show(); }
+  .show-on-hdplus-and-down-only { .phpbp-show(); }
+  .show-on-fullhd-and-down-only { .phpbp-show(); }
+  .show-on-wqxga-and-down-only { .phpbp-show(); }
+}
+
+// WQXGA (explicit)
+@media only screen and (min-width: @phpbp-size-wqxga-min) {
+  .phpbp-on-device(wqxga);
+
+  .show-on-tiny-only { .phpbp-hide(); }
+  .show-on-small-only { .phpbp-hide(); }
+  .show-on-medium-only { .phpbp-hide(); }
+  .show-on-large-only { .phpbp-hide(); }
+  .show-on-hd-only { .phpbp-hide(); }
+  .show-on-hdplus-only { .phpbp-hide(); }
+  .show-on-fullhd-only { .phpbp-hide(); }
+  .show-on-wqxga-only { .phpbp-show(); }
+}

@@ -30,6 +30,13 @@ namespace php5bp\Modules;
  */
 interface ContextInterface extends \php5bp\ObjectInterface {
     /**
+     * Gets the full path of the root directory.
+     *
+     * @return string The module's directory.
+     */
+    function dir();
+
+    /**
      * Gets the meta data.
      *
      * @return array The meta data.

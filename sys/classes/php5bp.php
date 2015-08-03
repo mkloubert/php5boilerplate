@@ -28,13 +28,23 @@ use \System\Linq\Enumerable;
  * @author Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
  */
 final class php5bp {
+    /**
+     * @var \php5bp\Application
+     */
     private static $_app;
+    /**
+     * @var array
+     */
     private static $_configExtensions = array(
         'json' => '\Zend\Config\Reader\Json',
         'php'  => '\php5bp\Config\Reader\PhpArray',
         'xml'  => '\Zend\Config\Reader\Xml',
         'ini'  => '\Zend\Config\Reader\Ini',
     );
+    /**
+     * @var DateTime
+     */
+    private static $_now;
 
 
     private function __construct() {
@@ -48,6 +58,7 @@ final class php5bp {
      */
     public static function app() {
         if (is_null(self::$_app)) {
+            // initialize
             self::$_app = new \php5bp\Application();
         }
 
@@ -133,7 +144,7 @@ final class php5bp {
     public static function endsWith($str, $expr, $ignoreCase = false) {
         $func = !$ignoreCase ? 'strpos' : 'stripos';
 
-        return ('' === $expr) ||
+        return self::isNullOrEmpty($expr) ||
                (($temp = strlen($str) - strlen($expr)) >= 0 &&
                 call_user_func($func,
                                $str, $expr, $temp) !== false);
@@ -149,6 +160,27 @@ final class php5bp {
     public static function isNullOrEmpty($str) {
         return is_null($str) ||
                ('' == strval($str));
+    }
+
+    /**
+     * Gets the current time.
+     *
+     * @return DateTime The current time.
+     */
+    public static function now() {
+        if (is_null(self::$_now)) {
+            self::$_now = new \DateTime();
+
+            if (array_key_exists('REQUEST_TIME', $_SERVER)) {
+                self::$_now->setTimestamp($_SERVER['REQUEST_TIME']);
+            }
+        }
+
+        // create copy
+        $result = new \DateTime();
+        $result->setTimestamp(self::$_now->getTimestamp());
+
+        return $result;
     }
 
     /**

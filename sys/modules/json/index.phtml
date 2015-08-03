@@ -20,48 +20,4 @@
  **********************************************************************************************************************/
 
 
-namespace php5bp\Modules\Impl;
-
-use \php5bp\Modules\ModuleBase;
-use \php5bp\Modules\Execution\ContextInterface as ModuleExecutionContext;
-
-
-/**
- * The index / default module.
- *
- * @package php5bp\Modules\Impl
- * @author Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
- */
-class IndexModule extends ModuleBase {
-    protected function execute(ModuleExecutionContext $ctx) {
-        $var = $ctx->getVar('wurst', null, $has);
-        $has2 = $ctx->hasVar('wurst');
-        $ctx->setVar('Wurst', 666);
-        $var = $ctx->getVar('WuRsT', null, $has);
-        $has2 = $ctx->hasVar('wUrSt');
-        $has2 = $ctx->clearVars()
-                    ->hasVar('wUrSt');
-
-        if ($ctx != null) {
-
-        }
-    }
-
-    public function testAction(ModuleExecutionContext $ctx) {
-        if ($ctx != null) {
-
-        }
-    }
-
-    public function test2Action(ModuleExecutionContext $ctx) {
-        if ($ctx != null) {
-
-        }
-    }
-
-    public function test3Action(ModuleExecutionContext $ctx) {
-        if ($ctx != null) {
-
-        }
-    }
-}
+echo \json_encode($this->content);

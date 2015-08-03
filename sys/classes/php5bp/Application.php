@@ -21,6 +21,8 @@
 
 namespace php5bp;
 
+use \System\Linq\Enumerable;
+
 
 /**
  * The application.
@@ -41,6 +43,14 @@ class Application extends Object {
      * The name of the default module.
      */
     const DEFAULT_MODULE_NAME = 'index';
+    /**
+     * Expression for module name separator.
+     */
+    const MODULE_NAME_SEPARATOR = '/';
+    /**
+     * The name of a module script file.
+     */
+    const MODULE_SCRIPT_FILENAME = 'index.php';
 
 
     /**
@@ -82,23 +92,40 @@ class Application extends Object {
      * @return string The parsed value.
      */
     protected static function normalizeModuleName($moduleName) {
-        $moduleName = \trim($moduleName);
-        $moduleName = \str_replace(' ' , '_', $moduleName);
-        $moduleName = \str_replace('\\', '/', $moduleName);
-        $moduleName = \str_replace('.' , '' , $moduleName);
+        $chars = Enumerable::create(\trim($moduleName));
 
-        // normalize duplicate / chars
-        while (false !== \strpos($moduleName, '//')) {
-            $moduleName = \str_replace('//', '/', $moduleName);
+        $moduleName = '';
+        foreach ($chars as $c) {
+            // a-z
+            // A-Z
+            // 0-9
+            // _
+            // /
+            $appendChar = ((\ord($c) >= \ord('a')) && (\ord($c) <= \ord('z'))) ||
+                          ((\ord($c) >= \ord('A')) && (\ord($c) <= \ord('Z'))) ||
+                          ((\ord($c) >= \ord('0')) && (\ord($c) <= \ord('9'))) ||
+                          ($c == '_') ||
+                          ($c == static::MODULE_NAME_SEPARATOR);
+
+            if ($appendChar) {
+                $moduleName .= $c;
+            }
         }
 
-        // remove leading / chars
-        while (\php5bp::startsWith($moduleName, '/')) {
+        // normalize duplicate separator chars
+        while (false !== \strpos($moduleName, static::MODULE_NAME_SEPARATOR . static::MODULE_NAME_SEPARATOR)) {
+            $moduleName = \str_replace(static::MODULE_NAME_SEPARATOR . static::MODULE_NAME_SEPARATOR,
+                                       static::MODULE_NAME_SEPARATOR,
+                                       $moduleName);
+        }
+
+        // remove leading separator chars
+        while (\php5bp::startsWith($moduleName, static::MODULE_NAME_SEPARATOR)) {
             $moduleName = \trim(\substr($moduleName, 1));
         }
 
-        // remove ending / chars
-        while (\php5bp::endsWith($moduleName, '/')) {
+        // remove ending separator chars
+        while (\php5bp::endsWith($moduleName, static::MODULE_NAME_SEPARATOR)) {
             $moduleName = \trim(\substr($moduleName, 0, \strlen($moduleName) - 1));
         }
 
@@ -120,12 +147,18 @@ class Application extends Object {
 
     /**
      * Runs the application.
+     *
+     * @return bool Operation was successful or not.
+     *
+     * @throws \Exception An error occurred.
      */
     public function run() {
         $appConf = \php5bp::appConf();
 
+        // custom module variable
         $moduleVar = null;
         if (\array_key_exists('modules', $appConf)) {
+            // $appConf['modules']['var']
             if (\array_key_exists('var', $appConf['modules'])) {
                 $moduleVar = $appConf['modules']['var'];
             }
@@ -133,26 +166,30 @@ class Application extends Object {
 
         $moduleVar = \trim($moduleVar);
         if ('' == $moduleVar) {
+            // set default
             $moduleVar = 'module';
         }
 
         $moduleName = null;
-        if (\array_key_exists($moduleVar, $_REQUEST)) {
-            $moduleName = $_REQUEST[$moduleVar];
+        if (\array_key_exists($moduleVar, $_GET)) {
+            $moduleName = $_GET[$moduleVar];
         }
 
-        $moduleName = \trim(static::normalizeModuleName($moduleName));
+        $moduleName = static::normalizeModuleName($moduleName);
         if ('' == $moduleName) {
             $defaultModuleName = null;
+
+            // try get custom default module
             if (\array_key_exists('modules', $appConf)) {
+                // $appConf['modules']['default']
                 if (\array_key_exists('default', $appConf['modules'])) {
                     $defaultModuleName = $appConf['modules']['default'];
                 }
             }
 
-            $defaultModuleName = \trim(static::normalizeModuleName($defaultModuleName));  // custom default?
+            $defaultModuleName = static::normalizeModuleName($defaultModuleName);  // custom default?
             if ('' == $defaultModuleName) {
-                // no, you system default
+                // use system default
                 $defaultModuleName = static::DEFAULT_MODULE_NAME;
             }
 
@@ -162,22 +199,26 @@ class Application extends Object {
         $found = false;
 
         $modulePath = \realpath(\PHP5BP_DIR_MODULES .
-                                \str_replace('/', \DIRECTORY_SEPARATOR, $moduleName));
+                                \str_replace(static::MODULE_NAME_SEPARATOR, \DIRECTORY_SEPARATOR, $moduleName));
         if (false !== $modulePath) {
-            $moduleScriptPath = \realpath($modulePath . \DIRECTORY_SEPARATOR . 'index.php');
+            $moduleScriptPath = \realpath($modulePath . \DIRECTORY_SEPARATOR . static::MODULE_SCRIPT_FILENAME);
             if (false !== $moduleScriptPath) {
                 $moduleMeta = \php5bp::conf('meta', $modulePath);
 
                 if (!\is_array($moduleMeta)) {
+                    // set default
                     $moduleMeta = array();
                 }
 
+                // module class defined?
                 $moduleClass = null;
                 if (\array_key_exists('class', $moduleMeta)) {
-                    $moduleClass = \trim($moduleMeta['class']);
+                    $moduleClass = $moduleMeta['class'];
                 }
 
+                //TODO: read constructor arguments from meta file
                 $moduleClass = \trim($moduleClass);
+                $moduleConstructorArgs = array();
 
                 require_once $moduleScriptPath;
 
@@ -185,12 +226,10 @@ class Application extends Object {
                     if (\class_exists($moduleClass)) {
                         $mc = new \ReflectionClass($moduleClass);
 
-                        //TODO: read from meta file
-                        $moduleConstructorArgs = array();
-
                         $module = $mc->newInstanceArgs($moduleConstructorArgs);
 
                         $moduleCtx         = new \php5bp\Modules\Context();
+                        $moduleCtx->Dir    = $modulePath;
                         $moduleCtx->Meta   = $moduleMeta;
                         $moduleCtx->Module = $module;
                         $moduleCtx->Name   = $moduleName;
@@ -200,11 +239,14 @@ class Application extends Object {
 
                         // try get custom methods from app config
                         if (\array_key_exists('modules', $appConf)) {
+                            // $appConf['modules']['methods']
                             if (\array_key_exists('methods', $appConf['modules'])) {
+                                // $appConf['modules']['methods']['render']
                                 if (\array_key_exists('render', $appConf['modules']['methods'])) {
                                     $renderMethod = $appConf['modules']['methods']['render'];
                                 }
 
+                                // $appConf['modules']['methods']['updateContext']
                                 if (\array_key_exists('updateContext', $appConf['modules']['methods'])) {
                                     $updateContextMethod = $appConf['modules']['methods']['updateContext'];
                                 }
@@ -213,10 +255,12 @@ class Application extends Object {
 
                         // try get custom methods from meta data
                         if (\array_key_exists('methods', $moduleMeta)) {
+                            // $moduleMeta['methods']['render']
                             if (\array_key_exists('render', $moduleMeta['methods'])) {
                                 $renderMethod = $moduleMeta['methods']['render'];
                             }
 
+                            // $moduleMeta['methods']['updateContext']
                             if (\array_key_exists('updateContext', $moduleMeta['methods'])) {
                                 $updateContextMethod = $moduleMeta['methods']['updateContext'];
                             }
@@ -224,12 +268,14 @@ class Application extends Object {
 
                         $renderMethod = \trim($renderMethod);
                         if ('' == $renderMethod) {
-                            $renderMethod = 'render';
+                            // set default
+                            $renderMethod = static::DEFAULT_MODULE_METHOD_RENDER;
                         }
 
                         $updateContextMethod = \trim($updateContextMethod);
-                        if ('' == $updateContextMethod) {
-                            $updateContextMethod = 'updateContext';
+                        if ('' != $updateContextMethod) {
+                            // default
+                            $updateContextMethod = static::DEFAULT_MODULE_METHOD_UPDATECONTEXT;
                         }
 
                         // update module context
@@ -242,12 +288,14 @@ class Application extends Object {
                         if (\method_exists($module, $renderMethod)) {
                             $found = true;
 
-                            $result = \call_user_func(array($module, $renderMethod));
+                            $result = \call_user_func(array($module, $renderMethod),
+                                                      $moduleCtx);
 
                             if (!$result instanceof \Exception) {
                                 echo $result;
                             }
                             else {
+                                // rethrow
                                 throw $result;
                             }
                         }

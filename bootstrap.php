@@ -33,8 +33,9 @@ define('PHP5BP_DIR_SYSTEM'   , PHP5BP_DIR_ROOT . 'sys' . DIRECTORY_SEPARATOR    
 define('PHP5BP_DIR_BOOTSTRAP', PHP5BP_DIR_SYSTEM . 'bootstrap' . DIRECTORY_SEPARATOR, false);
 define('PHP5BP_DIR_CLASSES'  , PHP5BP_DIR_SYSTEM . 'classes' . DIRECTORY_SEPARATOR  , false);
 define('PHP5BP_DIR_CONFIG'   , PHP5BP_DIR_SYSTEM . 'conf' . DIRECTORY_SEPARATOR     , false);
-define('PHP5BP_DIR_MODULES' , PHP5BP_DIR_SYSTEM . 'modules' . DIRECTORY_SEPARATOR   , false);
+define('PHP5BP_DIR_MODULES'  , PHP5BP_DIR_SYSTEM . 'modules' . DIRECTORY_SEPARATOR  , false);
 define('PHP5BP_DIR_SHUTDOWN' , PHP5BP_DIR_SYSTEM . 'shutdown' . DIRECTORY_SEPARATOR , false);
+define('PHP5BP_DIR_VIEWS'    , PHP5BP_DIR_SYSTEM . 'views' . DIRECTORY_SEPARATOR    , false);
 
 // update include paths
 set_include_path(get_include_path() .

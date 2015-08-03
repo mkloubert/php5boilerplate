@@ -37,6 +37,10 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
      */
     const DEFAULT_VAR_NAME_ACTION = 'action';
     /**
+     * Name of the default view.
+     */
+    const DEFAULT_VIEW = 'main';
+    /**
      * List separator expression.
      */
     const LIST_SEPARATOR = ';';
@@ -82,6 +86,17 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
      */
     protected abstract function execute(ModuleExecutionContext $ctx);
 
+    /**
+     * Returns the default HTTP response code.
+     *
+     * @param ModuleExecutionContext $ctx The underlying execution context.
+     *
+     * @return int The response code.
+     */
+    protected function getDefaultHttpResponseCode(ModuleExecutionContext $ctx) {
+        return 200;
+    }
+
     public final function render() {
         $result = null;
 
@@ -110,7 +125,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
 
             $allowedActionVarSources = null;
 
-            // $appConf['modules']
+            // get module default settings from app config
             if (\array_key_exists('modules', $appConf)) {
                 // $appConf['modules']['actions']
                 if (\array_key_exists('actions', $appConf['modules'])) {
@@ -126,7 +141,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                 }
             }
 
-            // $meta['module']
+            // get module default settings from module meta
             if (\array_key_exists('module', $meta)) {
                 // $meta['module']['actions']
                 if (\array_key_exists('actions', $meta['module'])) {
@@ -187,6 +202,16 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                     break;
                 }
             }
+
+            $initialView = static::DEFAULT_VIEW;
+
+            if (\array_key_exists('views', $appConf)) {
+                if (\array_key_exists('default', $appConf['views'])) {
+                    $initialView = $appConf['views']['default'];
+                }
+            }
+
+            $execCtx->setView($initialView);
 
             $execCtx->setAction($actionName);
             $execCtx->setVar('module', $this);
@@ -397,6 +422,23 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
             }
             finally {
                 $this->afterExecution($execCtx, $wasExecuted, $exception);
+
+                // response code
+                {
+                    $respCode = $execCtx->response()->getCode();
+                    if (\is_null($respCode)) {
+                        $respCode = $this->getDefaultHttpResponseCode($execCtx);
+                    }
+
+                    if (!\is_null($respCode)) {
+                        \header(':', true, $respCode);
+                    }
+                }
+
+                // headers
+                foreach ($execCtx->response()->headers() as $hn => $hv) {
+                    \header($hn . ': ' . \strval($hv), true);
+                }
             }
 
             $buffer = \ob_get_contents();
@@ -406,7 +448,20 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
 
             $viewName = \trim($execCtx->getView());
             if ('' != $viewName) {
+                $view = new \php5bp\Views\SimpleView();
 
+                // initialize with defaults
+                $view->__set('action'  , $execCtx->getAction());
+                $view->__set('content' , $result);
+                $view->__set('request' , $execCtx->request());
+                $view->__set('response', $execCtx->response());
+
+                // overwrite/fill with values from execution content
+                foreach ($execCtx->vars() as $vn => $vv) {
+                    $view->__set($vn, $vv);
+                }
+
+                $result = $view->render($viewName);
             }
 
             return $result;

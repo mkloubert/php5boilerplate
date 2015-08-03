@@ -19,49 +19,30 @@
  * License along with this software.                                                                                  *
  **********************************************************************************************************************/
 
+?>
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-namespace php5bp\Modules\Impl;
+        <link rel="stylesheet" href="css/normalize-3.0.3.css">
+        <link rel="stylesheet" href="css/php5bp.css">
 
-use \php5bp\Modules\ModuleBase;
-use \php5bp\Modules\Execution\ContextInterface as ModuleExecutionContext;
+        <script type="text/javascript" src="js/jquery-2.1.4.js"></script>
+        <script type="text/javascript" src="js/angular-1.4.3.js"></script>
+        <!-- this should be included as last script -->
+        <script type="text/javascript" src="js/php5bp.js"></script>
+    </head>
 
+    <body>
+        <?= $this->content ?>
 
-/**
- * The index / default module.
- *
- * @package php5bp\Modules\Impl
- * @author Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
- */
-class IndexModule extends ModuleBase {
-    protected function execute(ModuleExecutionContext $ctx) {
-        $var = $ctx->getVar('wurst', null, $has);
-        $has2 = $ctx->hasVar('wurst');
-        $ctx->setVar('Wurst', 666);
-        $var = $ctx->getVar('WuRsT', null, $has);
-        $has2 = $ctx->hasVar('wUrSt');
-        $has2 = $ctx->clearVars()
-                    ->hasVar('wUrSt');
-
-        if ($ctx != null) {
-
-        }
-    }
-
-    public function testAction(ModuleExecutionContext $ctx) {
-        if ($ctx != null) {
-
-        }
-    }
-
-    public function test2Action(ModuleExecutionContext $ctx) {
-        if ($ctx != null) {
-
-        }
-    }
-
-    public function test3Action(ModuleExecutionContext $ctx) {
-        if ($ctx != null) {
-
-        }
-    }
-}
+        <!-- this should be executed as last script -->
+        <script type="text/javascript">
+            jQuery(function() {
+                $php5bp.page.processOnLoadedActions();
+            });
+        </script>
+    </body>
+</html>

@@ -30,6 +30,10 @@ namespace php5bp\Modules;
  */
 class Context extends \php5bp\Object implements ContextInterface {
     /**
+     * @var string
+     */
+    public $Dir;
+    /**
      * @var array
      */
     public $Meta;
@@ -42,6 +46,10 @@ class Context extends \php5bp\Object implements ContextInterface {
      */
     public $Name;
 
+
+    public function dir() {
+        return $this->Dir;
+    }
 
     public function meta() {
         return $this->Meta;

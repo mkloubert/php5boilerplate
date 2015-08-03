@@ -20,6 +20,8 @@
  **********************************************************************************************************************/
 
 namespace php5bp\Modules\Execution;
+
+use \php5bp\Modules\ModuleInterface;
 use \System\Linq\Enumerable;
 
 
@@ -41,6 +43,18 @@ class Context extends \php5bp\Object implements ContextInterface {
 
 
     /**
+     * @var string
+     */
+    protected $_action;
+    /**
+     * @var array
+     */
+    protected $_vars;
+    /**
+     * @var string
+     */
+    protected $_view;
+    /**
      * @var array
      */
     public $Config;
@@ -53,9 +67,9 @@ class Context extends \php5bp\Object implements ContextInterface {
      */
     public $Response;
     /**
-     * @var array
+     * @var string
      */
-    protected $_vars;
+    public $View;
 
 
     /**
@@ -77,7 +91,7 @@ class Context extends \php5bp\Object implements ContextInterface {
     }
 
     public function getAction() {
-        return $this->getVar(static::VAR_NAME_ACTION);
+        return $this->_action;
     }
 
     public function getConfig($name, $defaultValue = null, &$found = null) {
@@ -113,7 +127,7 @@ class Context extends \php5bp\Object implements ContextInterface {
     }
 
     public function getView() {
-        return $this->getVar(static::VAR_NAME_VIEW);
+        return $this->_view;
     }
 
     public function hasConfig($name) {
@@ -134,7 +148,7 @@ class Context extends \php5bp\Object implements ContextInterface {
      * @return string The parsed value.
      */
     public static function normalizeConfigName($name) {
-        return \trim(strtolower($name));
+        return \trim($name);
     }
 
     /**
@@ -144,8 +158,8 @@ class Context extends \php5bp\Object implements ContextInterface {
      *
      * @return string The parsed value.
      */
-    protected static function normalizeVarName($name) {
-        return \trim(strtolower($name));
+    public static function normalizeVarName($name) {
+        return \trim($name);
     }
 
     public function request() {
@@ -162,7 +176,8 @@ class Context extends \php5bp\Object implements ContextInterface {
             $actionName = null;
         }
 
-        return $this->setVar(static::VAR_NAME_ACTION, $actionName);
+        $this->_action = $actionName;
+        return $this;
     }
 
     public function setVar($name, $value) {
@@ -173,8 +188,13 @@ class Context extends \php5bp\Object implements ContextInterface {
     }
 
     public function setView($viewName) {
-        return $this->setVar(static::VAR_NAME_VIEW,
-                             \trim($viewName));
+        $viewName = \trim($viewName);
+        if ('' == $viewName) {
+            $viewName = null;
+        }
+
+        $this->_view = $viewName;
+        return $this;
     }
 
     public function unsetVar($name) {

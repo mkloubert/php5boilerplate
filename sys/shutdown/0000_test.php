@@ -22,5 +22,5 @@
 defined('PHP5BP_SHUTDOWN') or die();
 
 
-echo "SHUTDOWN! ";
+// echo "SHUTDOWN! ";
 

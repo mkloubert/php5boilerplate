@@ -22,5 +22,5 @@
 defined('PHP5BP_BOOTSTRAP') or die();
 
 
-echo "bootstrap! ";
+// echo "bootstrap! ";
 

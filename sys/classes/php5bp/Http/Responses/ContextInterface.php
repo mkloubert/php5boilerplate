@@ -29,4 +29,73 @@ namespace php5bp\Http\Responses;
  * @author Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
  */
 interface ContextInterface extends \php5bp\ObjectInterface {
+    /**
+     * Removes all headers.
+     *
+     * @return $this
+     */
+    function clearHeaders();
+
+    /**
+     * Gets the HTTP reponse code.
+     *
+     * @return int The code or (null) to define that the system should select the response code.
+     */
+    function getCode();
+
+    /**
+     * Returns the value of a HTTP header.
+     *
+     * @param string $name The name of the header.
+     * @param mixed $defaultValue The default value if $name was not found.
+     * @param bool $found The variable that stores if value was found or not.
+     *
+     * @return mixed The value.
+     */
+    function getHeader($name, $defaultValue = null, &$found = null);
+
+    /**
+     * Checks if a HTTP header is defined.
+     *
+     * @param string $name The name of the header.
+     *
+     * @return mixed Is defined or not.
+     */
+    function hasHeader($name);
+
+    /**
+     * Returns all headers.
+     *
+     * @return array The headers.
+     */
+    function headers();
+
+    /**
+     * Sets the HTTP response code.
+     *
+     * @param int $code The new code or (null) to define that the system should
+     *                  select the response code automatically.
+     *
+     * @return $this
+     */
+    function setCode($code);
+
+    /**
+     * Sets a HTTP header.
+     *
+     * @param string $name The name of the header.
+     * @param string $value The (new) value.
+     *
+     * @return $this
+     */
+    function setHeader($name, $value);
+
+    /**
+     * Removes a HTTP header.
+     *
+     * @param string $name The name of the header.
+     *
+     * @return $this
+     */
+    function unsetHeader($name);
 }

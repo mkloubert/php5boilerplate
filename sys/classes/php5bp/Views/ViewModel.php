@@ -19,49 +19,23 @@
  * License along with this software.                                                                                  *
  **********************************************************************************************************************/
 
-
-namespace php5bp\Modules\Impl;
-
-use \php5bp\Modules\ModuleBase;
-use \php5bp\Modules\Execution\ContextInterface as ModuleExecutionContext;
+namespace php5bp\Views;
 
 
 /**
- * The index / default module.
+ * Extension of \Zend\View\Model\ViewModel class.
  *
- * @package php5bp\Modules\Impl
+ * @package php5bp\Views
  * @author Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
  */
-class IndexModule extends ModuleBase {
-    protected function execute(ModuleExecutionContext $ctx) {
-        $var = $ctx->getVar('wurst', null, $has);
-        $has2 = $ctx->hasVar('wurst');
-        $ctx->setVar('Wurst', 666);
-        $var = $ctx->getVar('WuRsT', null, $has);
-        $has2 = $ctx->hasVar('wUrSt');
-        $has2 = $ctx->clearVars()
-                    ->hasVar('wUrSt');
-
-        if ($ctx != null) {
-
-        }
-    }
-
-    public function testAction(ModuleExecutionContext $ctx) {
-        if ($ctx != null) {
-
-        }
-    }
-
-    public function test2Action(ModuleExecutionContext $ctx) {
-        if ($ctx != null) {
-
-        }
-    }
-
-    public function test3Action(ModuleExecutionContext $ctx) {
-        if ($ctx != null) {
-
-        }
+class ViewModel extends \Zend\View\Model\ViewModel {
+    /**
+     * Initializes a new instance of that class.
+     *
+     * @param  null|array|Traversable $variables
+     * @param  array|Traversable $options
+     */
+    public function __construct($variables = null, $options = null) {
+        parent::__construct($variables, $options);
     }
 }

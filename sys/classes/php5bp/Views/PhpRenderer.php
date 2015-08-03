@@ -19,49 +19,41 @@
  * License along with this software.                                                                                  *
  **********************************************************************************************************************/
 
-
-namespace php5bp\Modules\Impl;
-
-use \php5bp\Modules\ModuleBase;
-use \php5bp\Modules\Execution\ContextInterface as ModuleExecutionContext;
+namespace php5bp\Views;
 
 
 /**
- * The index / default module.
+ * Extension of \Zend\View\Renderer\PhpRenderer class.
  *
- * @package php5bp\Modules\Impl
+ * @package php5bp\Views
  * @author Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
  */
-class IndexModule extends ModuleBase {
-    protected function execute(ModuleExecutionContext $ctx) {
-        $var = $ctx->getVar('wurst', null, $has);
-        $has2 = $ctx->hasVar('wurst');
-        $ctx->setVar('Wurst', 666);
-        $var = $ctx->getVar('WuRsT', null, $has);
-        $has2 = $ctx->hasVar('wUrSt');
-        $has2 = $ctx->clearVars()
-                    ->hasVar('wUrSt');
+class PhpRenderer extends \Zend\View\Renderer\PhpRenderer {
+    /**
+     * @var string
+     */
+    protected $_dir;
 
-        if ($ctx != null) {
 
-        }
+    /**
+     * Initializes a new instance of that class.
+     *
+     * @param string $dir
+     * @param array $config
+     */
+    public function __construct($dir, $config = array()) {
+        $this->_dir = \realpath($dir) . DIRECTORY_SEPARATOR;
+
+        parent::__construct($config);
     }
 
-    public function testAction(ModuleExecutionContext $ctx) {
-        if ($ctx != null) {
 
-        }
-    }
-
-    public function test2Action(ModuleExecutionContext $ctx) {
-        if ($ctx != null) {
-
-        }
-    }
-
-    public function test3Action(ModuleExecutionContext $ctx) {
-        if ($ctx != null) {
-
-        }
+    /**
+     * Gets the root directory.
+     *
+     * @return string The root directory.
+     */
+    public function dir() {
+        return $this->_dir;
     }
 }

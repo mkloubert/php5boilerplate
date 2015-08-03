@@ -19,49 +19,80 @@
  * License along with this software.                                                                                  *
  **********************************************************************************************************************/
 
-
-namespace php5bp\Modules\Impl;
-
-use \php5bp\Modules\ModuleBase;
-use \php5bp\Modules\Execution\ContextInterface as ModuleExecutionContext;
+namespace php5bp\Views;
 
 
 /**
- * The index / default module.
+ * A basic view.
  *
- * @package php5bp\Modules\Impl
+ * @package php5bp\Views
  * @author Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
  */
-class IndexModule extends ModuleBase {
-    protected function execute(ModuleExecutionContext $ctx) {
-        $var = $ctx->getVar('wurst', null, $has);
-        $has2 = $ctx->hasVar('wurst');
-        $ctx->setVar('Wurst', 666);
-        $var = $ctx->getVar('WuRsT', null, $has);
-        $has2 = $ctx->hasVar('wUrSt');
-        $has2 = $ctx->clearVars()
-                    ->hasVar('wUrSt');
+abstract class ViewBase extends \php5bp\Object {
+    /**
+     * @var array
+     */
+    protected $_vars = array();
 
-        if ($ctx != null) {
 
-        }
+    /**
+     * Gets a property value.
+     *
+     * @param string $name The name of the property.
+     *
+     * @return mixed The value of the property.
+     */
+    public function __get($name) {
+        return $this->_vars[static::normalizeVarName($name)];
     }
 
-    public function testAction(ModuleExecutionContext $ctx) {
-        if ($ctx != null) {
-
-        }
+    /**
+     * Checks if a property is set.
+     *
+     * @param string $name The name of the property.
+     *
+     * @return boolean Is set or not.
+     */
+    public function __isset($name) {
+        return isset($this->_vars[static::normalizeVarName($name)]);
     }
 
-    public function test2Action(ModuleExecutionContext $ctx) {
-        if ($ctx != null) {
-
-        }
+    /**
+     * Sets a property value.
+     *
+     * @param string $name The name of the property.
+     */
+    public function __set($name, $value) {
+        $this->_vars[static::normalizeVarName($name)] = $value;
     }
 
-    public function test3Action(ModuleExecutionContext $ctx) {
-        if ($ctx != null) {
+    /**
+     * Unsets a property.
+     *
+     * @param string $name The name of the property.
+     */
+    public function __unset($name) {
+        unset($this->_vars[static::normalizeVarName($name)]);
+    }
 
-        }
+
+    /**
+     * Normalizes a variable name.
+     *
+     * @param string $name The input name.
+     *
+     * @return string The normalized / parsed name.
+     */
+    public static function normalizeVarName($name) {
+        return \trim($name);
+    }
+
+    /**
+     * Gets the list of all vars.
+     *
+     * @return array The vars.
+     */
+    public function vars() {
+        return $this->_vars;
     }
 }

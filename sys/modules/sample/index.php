@@ -20,54 +20,29 @@
  **********************************************************************************************************************/
 
 
-namespace php5bp\Modules\Impl;
+namespace php5bp\Modules\Impl\Samples;
 
 use \php5bp\Modules\ModuleBase;
 use \php5bp\Modules\Execution\ContextInterface as ModuleExecutionContext;
 
 
 /**
- * The index / default module.
+ * A sample module.
  *
- * @package php5bp\Modules\Impl
+ * @package php5bp\Modules\Impl\Samples\SampleModule
  * @author Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
  */
-class IndexModule extends ModuleBase {
+class SampleModule extends ModuleBase {
+    /**
+     * @see ModuleBase::execute()
+     */
     protected function execute(ModuleExecutionContext $ctx) {
-        $ctx->setupForHtml()
-            ->setDefaultView();
-
         ?>
-            <script type="text/javascript">
-
-                $php5bp.page.addOnLoaded(function() {
-                    var b = $php5bp.createBatch({
-                        'initialResult': 1
-                    });
-
-                    b = $php5bp.createFunctionIterator();
-
-                    var i = 3;
-
-                    b.add(function() {
-                        i *= 100;
-                        alert('a');
-                    });
-
-                    b.add(function() {
-                        i -= 13;
-                        alert('b');
-                    });
-
-                    // b.run();
-                    while(b.invokeNext()) {
-                        alert(b.isLast);
-                    }
-
-                    alert(i);
-                });
-
-            </script>
+            <div class="container">
+                <div class="row">
+                    SAMPLE
+                </div>
+            </div>
         <?php
     }
 }

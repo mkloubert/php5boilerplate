@@ -79,6 +79,10 @@
   display: none !important;
 }
 
+.phpbp-justify () {
+  text-align: justify !important;
+}
+
 .phpbp-left () {
   text-align: left !important;
 }
@@ -86,6 +90,7 @@
 .phpbp-on-device (@device) {
   .center-on-@{device} { .phpbp-center(); }
   .hide-on-@{device} { .phpbp-hide(); }
+  .justify-on-@{device} { .phpbp-justify(); }
   .left-on-@{device} { .phpbp-left(); }
   .right-on-@{device} { .phpbp-right(); }
   .show-on-@{device} { .phpbp-show(); }
@@ -94,6 +99,7 @@
 .phpbp-on-device-and-down (@device) {
   .center-on-@{device}-and-down { .phpbp-center(); }
   .hide-on-@{device}-and-down { .phpbp-hide(); }
+  .justify-on-@{device}-and-down { .phpbp-justify(); }
   .left-on-@{device}-and-down { .phpbp-left(); }
   .right-on-@{device}-and-down { .phpbp-right(); }
   .show-on-@{device}-and-down { .phpbp-show(); }
@@ -102,6 +108,7 @@
 .phpbp-on-device-and-up (@device) {
   .center-on-@{device}-and-up { .phpbp-center(); }
   .hide-on-@{device}-and-up { .phpbp-hide(); }
+  .justify-on-@{device}-and-up { .phpbp-justify(); }
   .left-on-@{device}-and-up { .phpbp-left(); }
   .right-on-@{device}-and-up { .phpbp-right(); }
   .show-on-@{device}-and-up { .phpbp-show(); }
@@ -128,6 +135,16 @@
   clear: both;
 }
 
+.container {
+  margin: 0 auto;
+  width: 90%;
+
+  .row {
+    margin-left: -0.75rem;
+    margin-right: -0.75rem;
+  }
+}
+
 .no-margin {
   margin: 0 !important;
 }
@@ -137,6 +154,8 @@
 }
 
 .hide { .phpbp-hide(); }
+
+.justify, .justify-align { .phpbp-justify(); }
 
 .left, .left-align { .phpbp-left(); }
 

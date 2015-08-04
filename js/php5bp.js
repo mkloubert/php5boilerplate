@@ -417,7 +417,7 @@ $MJK_PHP5_BOILERPLATE.events = {};
     $MJK_PHP5_BOILERPLATE.events.pageLoaded = $MJK_PHP5_BOILERPLATE.events.__defaultPageLoaded;
 }
 
-$MJK_PHP5_BOILERPLATE.funcs = {};
+// functions
 {
     /**
      * Keeps sure to return an object as (getter) function.
@@ -426,7 +426,7 @@ $MJK_PHP5_BOILERPLATE.funcs = {};
      *
      * @return {function} The object as function.
      */
-    $MJK_PHP5_BOILERPLATE.funcs.asFunc = function(obj) {
+    $MJK_PHP5_BOILERPLATE.asFunc = function(obj) {
         var result = obj;
         if (!this.isFunc(result)) {
             result = function() {
@@ -444,7 +444,7 @@ $MJK_PHP5_BOILERPLATE.funcs = {};
      *
      * @return {jQuery} The jQuery object.
      */
-    $MJK_PHP5_BOILERPLATE.funcs.asJQuery = function(obj) {
+    $MJK_PHP5_BOILERPLATE.asJQuery = function(obj) {
         if (!this.isJQuery(obj)) {
             obj = jQuery(obj);
         }
@@ -455,12 +455,15 @@ $MJK_PHP5_BOILERPLATE.funcs = {};
     /**
      * Creates an object for batch operations.
      *
-     * @param {Object} opts Additional options.
+     * @param {Object} [opts] Additional options.
      *
      * @return {Object} The created object.
      */
-    $MJK_PHP5_BOILERPLATE.funcs.createBatch = function(opts) {
+    $MJK_PHP5_BOILERPLATE.createBatch = function(opts) {
         opts = jQuery.extend({
+            'initialResult': null,
+            'initialPrevValue': null,
+            'initialValue': null,
             'state': null,
             'stopOnFirstError': true
         }, opts);
@@ -554,8 +557,7 @@ $MJK_PHP5_BOILERPLATE.funcs = {};
         result.invoke = function(index) {
             var item = batchItems[index];
 
-            return $MJK_PHP5_BOILERPLATE.funcs
-                                        .invokeArray(item.func, item.args);
+            return $MJK_PHP5_BOILERPLATE.invokeArray(item.func, item.args);
         };
 
         /**
@@ -591,9 +593,9 @@ $MJK_PHP5_BOILERPLATE.funcs = {};
                 'state': opts.state
             };
 
-            var prevValue = null;
-            var allResult = null;
-            var value = null;
+            var prevValue = opts.initialPrevValue;
+            var allResult = opts.initialResult;
+            var value = opts.initialValue;
             for (var i = 0; i < batchItems.length; i++) {
                 var item = batchItems[i];
 
@@ -730,7 +732,7 @@ $MJK_PHP5_BOILERPLATE.funcs = {};
         result.wrap = function() {
             var wrappedFuncs = this.wrapArray(arguments);
 
-            if (1 == wrappedFuncs) {
+            if (1 == wrappedFuncs.length) {
                 return wrappedFuncs[0];
             }
 
@@ -768,13 +770,12 @@ $MJK_PHP5_BOILERPLATE.funcs = {};
 
             var createFuncWrapper = function(item) {
                 return function() {
-                    return $MJK_PHP5_BOILERPLATE.funcs
-                                                .invokeArray(item.func, item.args);
+                    return $MJK_PHP5_BOILERPLATE.invokeArray(item.func, item.args);
                 };
             };
 
             for (var i = 0; i < indexes.length; i++) {
-                wrappedFuncs.push(createFuncWrapper(batchItems[i]));
+                wrappedFuncs.push(createFuncWrapper(batchItems[indexes[i]]));
             }
 
             return wrappedFuncs;
@@ -788,7 +789,7 @@ $MJK_PHP5_BOILERPLATE.funcs = {};
      *
      * @returns {Object} The created iterator.
      */
-    $MJK_PHP5_BOILERPLATE.funcs.createFunctionIterator = function() {
+    $MJK_PHP5_BOILERPLATE.createFunctionIterator = function() {
         var result = {};
 
         var iteratorItems = [];
@@ -912,8 +913,7 @@ $MJK_PHP5_BOILERPLATE.funcs = {};
             }
 
             var item = iteratorItems[currentIndex];
-            var funcResult = $MJK_PHP5_BOILERPLATE.funcs
-                                                  .invokeArray(item.func, item.args);
+            var funcResult = $MJK_PHP5_BOILERPLATE.invokeArray(item.func, item.args);
 
             if (opts2.moveNext) {
                 ++currentIndex;
@@ -1081,7 +1081,7 @@ $MJK_PHP5_BOILERPLATE.funcs = {};
         result.wrap = function() {
             var wrappedFuncs = this.wrapArray(arguments);
 
-            if (1 == wrappedFuncs) {
+            if (1 == wrappedFuncs.length) {
                 return wrappedFuncs[0];
             }
 
@@ -1119,13 +1119,12 @@ $MJK_PHP5_BOILERPLATE.funcs = {};
 
             var createFuncWrapper = function(item) {
                 return function() {
-                    return $MJK_PHP5_BOILERPLATE.funcs
-                                                .invokeArray(item.func, item.args);
+                    return $MJK_PHP5_BOILERPLATE.invokeArray(item.func, item.args);
                 };
             };
 
             for (var i = 0; i < indexes.length; i++) {
-                wrappedFuncs.push(createFuncWrapper(batchItems[i]));
+                wrappedFuncs.push(createFuncWrapper(batchItems[indexes[i]]));
             }
 
             return wrappedFuncs;
@@ -1160,7 +1159,7 @@ $MJK_PHP5_BOILERPLATE.funcs = {};
         /**
          * Gets the iterator has reached the end or not.
          *
-         * @property EOF
+         * @property eof
          * @type Boolean
          * @readonly
          */
@@ -1179,7 +1178,7 @@ $MJK_PHP5_BOILERPLATE.funcs = {};
          */
         Object.defineProperty(result, 'hasNext', {
             get: function () {
-                return !this.EOF;
+                return !this.eof;
             }
         });
 
@@ -1232,7 +1231,7 @@ $MJK_PHP5_BOILERPLATE.funcs = {};
      *
      * @return {mixed} The result of the execution.
      */
-    $MJK_PHP5_BOILERPLATE.funcs.eval = function(code) {
+    $MJK_PHP5_BOILERPLATE.eval = function(code) {
         return jQuery.globalEval(code);
     };
 
@@ -1244,7 +1243,7 @@ $MJK_PHP5_BOILERPLATE.funcs = {};
      *
      * @return {Object} The result object of the invocation.
      */
-    $MJK_PHP5_BOILERPLATE.funcs.invoke = function(fn) {
+    $MJK_PHP5_BOILERPLATE.invoke = function(fn) {
         var args = [];
         for (var i = 1; i < arguments.length; i++) {
             args.push(arguments[i]);
@@ -1262,7 +1261,7 @@ $MJK_PHP5_BOILERPLATE.funcs = {};
      *
      * @return {Object} The result object of the invocation.
      */
-    $MJK_PHP5_BOILERPLATE.funcs.invokeArray = function(fn, args, opts) {
+    $MJK_PHP5_BOILERPLATE.invokeArray = function(fn, args, opts) {
         if (fn) {
             fn = this.asFunc(fn);
         }
@@ -1272,13 +1271,19 @@ $MJK_PHP5_BOILERPLATE.funcs = {};
         }
 
         opts = jQuery.extend({
-            'state': null
+            'state': null,
+            'throwOnError': false
         }, opts);
 
         var result = {
             'args': args,
             'hasBeenInvoked': false,
-            'state': opts.state
+            'state': opts.state,
+            'throwOnError': function() {
+                if (this.hasFailed) {
+                    throw this.error;
+                }
+            }
         };
 
         Object.defineProperty(result, 'duration', {
@@ -1318,6 +1323,10 @@ $MJK_PHP5_BOILERPLATE.funcs = {};
             result.error = e;
         }
 
+        if (opts.throwOnError) {
+            result.throwOnError();
+        }
+
         return result;
     };
 
@@ -1328,7 +1337,7 @@ $MJK_PHP5_BOILERPLATE.funcs = {};
      *
      * @return {Boolean} Is a function or not.
      */
-    $MJK_PHP5_BOILERPLATE.funcs.isFunc = function(obj) {
+    $MJK_PHP5_BOILERPLATE.isFunc = function(obj) {
         return jQuery.isFunction(obj);
     };
 
@@ -1339,7 +1348,7 @@ $MJK_PHP5_BOILERPLATE.funcs = {};
      *
      * @return {Boolean} Is a jQuery object or not.
      */
-    $MJK_PHP5_BOILERPLATE.funcs.isJQuery = function(obj) {
+    $MJK_PHP5_BOILERPLATE.isJQuery = function(obj) {
         return obj instanceof jQuery;
     };
 }
@@ -1450,10 +1459,9 @@ $MJK_PHP5_BOILERPLATE.page = {};
         }, opts);
 
         var getSelector;
-        if (!$MJK_PHP5_BOILERPLATE.funcs.isJQuery(selector)) {
+        if (!$MJK_PHP5_BOILERPLATE.isJQuery(selector)) {
             getSelector = function() {
-                return $MJK_PHP5_BOILERPLATE.funcs
-                                            .asJQuery(selector);
+                return $MJK_PHP5_BOILERPLATE.asJQuery(selector);
             };
         }
         else {
@@ -1495,8 +1503,7 @@ $MJK_PHP5_BOILERPLATE.page = {};
                               jQuery.trim(name),
                               {
                                   get: function() {
-                                      return $MJK_PHP5_BOILERPLATE.funcs
-                                                                  .asFunc(func);
+                                      return $MJK_PHP5_BOILERPLATE.asFunc(func);
                                   }
                               });
 
@@ -1516,8 +1523,7 @@ $MJK_PHP5_BOILERPLATE.page = {};
         Object.defineProperty(this.vars,
                               jQuery.trim(name),
                               {
-                                  get: $MJK_PHP5_BOILERPLATE.funcs
-                                                            .asFunc(value)
+                                  get: $MJK_PHP5_BOILERPLATE.asFunc(value)
                               });
 
         return this;

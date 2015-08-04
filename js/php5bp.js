@@ -769,7 +769,7 @@ $MJK_PHP5_BOILERPLATE.funcs = {};
             var createFuncWrapper = function(item) {
                 return function() {
                     return $MJK_PHP5_BOILERPLATE.funcs
-                                                .invokeArray(item.func, item.args);;
+                                                .invokeArray(item.func, item.args);
                 };
             };
 
@@ -1120,7 +1120,7 @@ $MJK_PHP5_BOILERPLATE.funcs = {};
             var createFuncWrapper = function(item) {
                 return function() {
                     return $MJK_PHP5_BOILERPLATE.funcs
-                                                .invokeArray(item.func, item.args);;
+                                                .invokeArray(item.func, item.args);
                 };
             };
 

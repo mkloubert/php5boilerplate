@@ -18,6 +18,49 @@
  **********************************************************************************************************************/
 
 
+if ('undefined' === typeof Array.prototype.contains) {
+    /**
+     * Checks if that array contains an item or not.
+     *
+     * @param {mixed} item The item to search for.
+     * @param {Function} [equalFunc] The function that compares two items.
+     *
+     * @return {Boolean} Exists or not.
+     */
+    Array.prototype.contains = function(item, equalFunc) {
+        if (!equalFunc) {
+            equalFunc = function(x, y) {
+                return x == y;
+            };
+        }
+
+        for (var i = 0; i < this.length; i++) {
+            var arrItem = this[i];
+
+            if (equalFunc(arrItem, item)) {
+                return true;
+            }
+        }
+
+        return false;
+    };
+}
+
+if ('undefined' === typeof Array.prototype.count) {
+    /**
+     * Gets the number of elements.
+     *
+     * @property count
+     * @type Number
+     * @readOnly
+     */
+    Object.defineProperty(Array.prototype, 'count', {
+        get: function() {
+            return this.length;
+        }
+    });
+}
+
 if ('undefined' === typeof Array.prototype.isEmpty) {
     /**
      * Checks if that array is empty or not.
@@ -46,6 +89,89 @@ if ('undefined' === typeof Array.prototype.isNotEmpty) {
             return this.length > 0;
         }
     });
+}
+
+if ('undefined' === typeof Array.prototype.remove) {
+    /**
+     * Removes an item.
+     *
+     * @param {mixed} item The item to remove.
+     * @param {Function} [equalFunc] The function that compares two items.
+     *
+     * @return {Number} If removed this is the index where the item was remove.
+     *                  Otherwise (null) is returned.
+     */
+    Array.prototype.remove = function(item, equalFunc) {
+        if (!equalFunc) {
+            equalFunc = function(x, y) {
+                return x == y;
+            };
+        }
+
+        for (var i = 0; i < this.length; i++) {
+            var arrItem = this[i];
+
+            if (equalFunc(arrItem, item)) {
+                this.splice(i, 1);
+                return i;
+            }
+        }
+
+        return null;
+    };
+}
+
+if ('undefined' === typeof Array.prototype.removeAll) {
+    /**
+     * Removes all items.
+     *
+     * @param {mixed} item The items to remove.
+     * @param {Function} [equalFunc] The function that compares two items.
+     *
+     * @return {Array} The indexes of removed items.
+     */
+    Array.prototype.remove = function(item, equalFunc) {
+        if (!equalFunc) {
+            equalFunc = function(x, y) {
+                return x == y;
+            };
+        }
+
+        var result = [];
+
+        for (var i = 0; i < this.length;) {
+            var arrItem = this[i];
+
+            if (equalFunc(arrItem, item)) {
+                this.splice(i, 1);
+                result.push(i);
+
+                continue;
+            }
+
+            ++i;
+        }
+
+        return result;
+    };
+}
+
+if ('undefined' === typeof Array.prototype.removeAt) {
+    /**
+     * Removes an item at a specific position.
+     *
+     * @param {Number} index The zero based index.
+     *
+     * @return {Boolean} Item was removed or not.
+     */
+    Array.prototype.removeAt = function(index) {
+        if ((index >= 0) && (index < this.length)) {
+            this.splice(index, 1);
+            return true;
+        }
+
+        return false;
+    };
 }
 
 if ('undefined' === typeof String.prototype.endsWith) {
@@ -276,10 +402,16 @@ $MJK_PHP5_BOILERPLATE.events = {};
         }
 
         if (errors.length > 0) {
-            if ($MJK_PHP5_BOILERPLATE.page.onHandleLoadedErrors) {
-                $MJK_PHP5_BOILERPLATE.page.onHandleLoadedErrors(errors);
+            if ($MJK_PHP5_BOILERPLATE.events.handleLoadedErrors) {
+                $MJK_PHP5_BOILERPLATE.events.handleLoadedErrors({
+                    'errors': errors
+                });
             }
         }
+    };
+
+    $MJK_PHP5_BOILERPLATE.events.handleLoadedErrors = function(e) {
+        // replace with own code
     };
 
     $MJK_PHP5_BOILERPLATE.events.pageLoaded = $MJK_PHP5_BOILERPLATE.events.__defaultPageLoaded;
@@ -321,6 +453,779 @@ $MJK_PHP5_BOILERPLATE.funcs = {};
     };
 
     /**
+     * Creates an object for batch operations.
+     *
+     * @param {Object} opts Additional options.
+     *
+     * @return {Object} The created object.
+     */
+    $MJK_PHP5_BOILERPLATE.funcs.createBatch = function(opts) {
+        opts = jQuery.extend({
+            'state': null,
+            'stopOnFirstError': true
+        }, opts);
+
+        var result = {};
+
+        var batchItems = [];
+
+        /**
+         * Adds a new batch item.
+         *
+         * @param {Function} fn The function to invoke.
+         * @param {mixed} [...arg] The arguments for the function.
+         *
+         * @chainable
+         */
+        result.add = function(fn) {
+            var args = [];
+            for (var i = 1; i < arguments.length; i++) {
+                args.push(arguments[i]);
+            }
+
+            return this.addArray(fn, args);
+        };
+
+        /**
+         * Adds a new batch item.
+         *
+         * @param {Function} fn The function to invoke.
+         * @param {Array} args The arguments for the function.
+         *
+         * @chainable
+         */
+        result.addArray = function(fn, args) {
+            if (!args) {
+                args = [];
+            }
+
+            var newItem = {
+                'args': args,
+                'func': fn
+            };
+
+            batchItems.push(newItem);
+            return this;
+        };
+
+        /**
+         * Removes all items.
+         *
+         * @chainable
+         */
+        result.clear = function() {
+            batchItems = [];
+            return this;
+        };
+
+        /**
+         * Gets the number of batch items.
+         *
+         * @property count
+         * @type Number
+         * @readonly
+         */
+        Object.defineProperty(result, 'count', {
+            get: function () {
+                return this.length;
+            }
+        });
+
+        /**
+         * Gets the number of batch items.
+         *
+         * @property length
+         * @type Number
+         * @readonly
+         */
+        Object.defineProperty(result, 'length', {
+            get: function () {
+                return batchItems.length;
+            }
+        });
+
+        /**
+         * Invokes a specific item.
+         *
+         * @param {Number} index The zero based index.
+         *
+         * @returns {Object} The result.
+         */
+        result.invoke = function(index) {
+            var item = batchItems[index];
+
+            return $MJK_PHP5_BOILERPLATE.funcs
+                                        .invokeArray(item.func, item.args);
+        };
+
+        /**
+         * Removes a specific batch item.
+         *
+         * @param {Number} index The zero based index.
+         *
+         * @chainable
+         */
+        result.removeAt = function(index) {
+            batchItems.splice(index, 1);
+
+            return this;
+        };
+
+        /**
+         * Runs all batch items.
+         *
+         * @param {Object} [opts2] Additional options.
+         *
+         * @returns {Object} The result.
+         */
+        result.run = function(opts2) {
+            opts2 = jQuery.extend({
+                'stopOnFirstError': !!opts.stopOnFirstError
+            }, opts2);
+
+            var batchResult = {
+                'batch': result,
+                'hasBeenCanceled': false,
+                'hasFailed': false,
+                'results': [],
+                'state': opts.state
+            };
+
+            var prevValue = null;
+            var allResult = null;
+            var value = null;
+            for (var i = 0; i < batchItems.length; i++) {
+                var item = batchItems[i];
+
+                var ctx = {
+                    'args': item.args,
+                    'batch': result,
+                    'batchResult': allResult,
+                    'cancel': false,
+                    'func': item.func,
+                    'prevValue': prevValue,
+                    'nextValue': null,
+                    'skip': false,
+                    'state': opts.state,
+                    'value': value
+                };
+
+                var updateAllResult = function() {
+                    allResult = ctx.batchResult;
+                };
+
+                /**
+                 * Gets the zero based index of the item.
+                 *
+                 * @property index
+                 * @type Number
+                 * @readonly
+                 */
+                Object.defineProperty(ctx, 'index', {
+                   get: function() {
+                       return i;
+                   }
+                });
+
+                /**
+                 * Gets if this is the first item or not.
+                 *
+                 * @property index
+                 * @type Boolean
+                 * @readonly
+                 */
+                Object.defineProperty(ctx, 'isFirst', {
+                    get: function() {
+                        return 0 == this.index;
+                    }
+                });
+
+                /**
+                 * Gets if this is the last item or not.
+                 *
+                 * @property index
+                 * @type Boolean
+                 * @readonly
+                 */
+                Object.defineProperty(ctx, 'isLast', {
+                    get: function() {
+                        return (batchItems.length - 1) == this.index;
+                    }
+                });
+
+                if (opts.beforeExecute) {
+                    opts.beforeExecute(ctx);
+                }
+
+                if (ctx.cancel) {
+                    batchResult.hasBeenCanceled = true;
+
+                    updateAllResult();
+                    break;
+                }
+
+                if (ctx.skip) {
+                    updateAllResult();
+                    continue;
+                }
+
+                var func = this.wrap(i);
+
+                var r = func();
+                batchResult.results.push(r);
+
+                ctx.result = r;
+
+                if (!r.hasFailed) {
+                    if (opts.onSuccess) {
+                        opts.onSuccess(ctx);
+                    }
+                }
+                else {
+                    ctx.error = r.error;
+                    ctx.errorHandled = false;
+
+                    if (opts.onError) {
+                        opts.onError(ctx);
+                    }
+
+                    if (!ctx.errorHandled && opts2.stopOnFirstError) {
+                        batchResult.hasFailed = true;
+
+                        updateAllResult();
+                        break;
+                    }
+                }
+
+                if (opts.onComplete) {
+                    opts.onComplete(ctx);
+                }
+
+                if (ctx.cancel) {
+                    batchResult.hasBeenCanceled = true;
+
+                    updateAllResult();
+                    break;
+                }
+
+                prevValue = ctx.nextValue;
+                value = ctx.value;
+
+                updateAllResult();
+            }
+
+            batchResult.allResult = allResult;
+
+            return batchResult;
+        };
+
+        /**
+         * Wraps one or more batch items to simple functions.
+         *
+         * @param {Number} [...index] One or more zero based indexes.
+         *
+         * @returns {mixed} If there is only one index defined, the function is returned.
+         *                  Otherwise an array with functions.
+         */
+        result.wrap = function() {
+            var wrappedFuncs = this.wrapArray(arguments);
+
+            if (1 == wrappedFuncs) {
+                return wrappedFuncs[0];
+            }
+
+            return wrappedFuncs;
+        };
+
+        /**
+         * Wraps all batch items to simple functions.
+         *
+         * @returns {Array} The functions.
+         */
+        result.wrapAll = function() {
+            var wrappedFuncs = [];
+            for (var i = 0; i < this.length; i++) {
+                wrappedFuncs.push(this.wrap(i));
+            }
+
+            return wrappedFuncs;
+        };
+
+        /**
+         * Wraps one or more batch items to simple functions.
+         *
+         * @param {Array} [indexes] One or more zero based indexes.
+         *
+         * @returns {mixed} If there is only one index defined, the function is returned.
+         *                  Otherwise an array with functions.
+         */
+        result.wrapArray = function(indexes) {
+            if (!indexes) {
+                indexes = [];
+            }
+
+            var wrappedFuncs = [];
+
+            var createFuncWrapper = function(item) {
+                return function() {
+                    return $MJK_PHP5_BOILERPLATE.funcs
+                                                .invokeArray(item.func, item.args);;
+                };
+            };
+
+            for (var i = 0; i < indexes.length; i++) {
+                wrappedFuncs.push(createFuncWrapper(batchItems[i]));
+            }
+
+            return wrappedFuncs;
+        };
+
+        return result;
+    };
+
+    /**
+     * Creates a function iterator.
+     *
+     * @returns {Object} The created iterator.
+     */
+    $MJK_PHP5_BOILERPLATE.funcs.createFunctionIterator = function() {
+        var result = {};
+
+        var iteratorItems = [];
+        var currentIndex = 0;
+
+        var repairCurrentIndex = function() {
+            if (currentIndex >= iteratorItems.length) {
+                currentIndex = iteratorItems.length - 1;
+            }
+
+            if (currentIndex < 0) {
+                currentIndex = 0;
+            }
+        };
+
+        /**
+         * Adds a new iterator item.
+         *
+         * @param {Function} fn The function to invoke.
+         * @param {mixed} [...arg] The arguments for the function.
+         *
+         * @chainable
+         */
+        result.add = function(fn) {
+            var args = [];
+            for (var i = 1; i < arguments.length; i++) {
+                args.push(arguments[i]);
+            }
+
+            return this.addArray(fn, args);
+        };
+
+        /**
+         * Adds a new iterator item.
+         *
+         * @param {Function} fn The function to invoke.
+         * @param {Array} args The arguments for the function.
+         *
+         * @chainable
+         */
+        result.addArray = function(fn, args) {
+            if (!args) {
+                args = [];
+            }
+
+            var newItem = {
+                'args': args,
+                'func': fn
+            };
+
+            iteratorItems.push(newItem);
+            return this;
+        };
+
+        /**
+         * Removes all iterator items and resets the iterator.
+         *
+         * @chainable
+         */
+        result.clear = function() {
+            iteratorItems = [];
+            this.reset();
+
+            return this;
+        };
+
+        /**
+         * Goes to the first item.
+         *
+         * @chainable
+         */
+        result.gotoFirst = function() {
+            return this.reset();
+        };
+
+        /**
+         * Goes to the last item.
+         *
+         * @chainable
+         */
+        result.gotoLast = function() {
+            currentIndex = this.length - 1;
+
+            repairCurrentIndex();
+            return this;
+        };
+
+        /**
+         * Invokes all functions from the beginning to the end.
+         *
+         * @param {Object} [opts2] Additional options.
+         *
+         * @returns {Array} The list of results.
+         */
+        result.invokeAll = function(opts2) {
+            opts2 = jQuery.extend({
+                'restoreIndex': true
+            }, opts2);
+
+            this.reset();
+
+            return this.invokeRest({
+                'restoreIndex': opts2.restoreIndex
+            });
+        };
+
+        /**
+         * Invokes the next item.
+         *
+         * @param {Object} [opts2] Additional options.
+         *
+         * @returns {Object} The result or (false) if there are no more item.
+         */
+        result.invokeNext = function(opts2) {
+            opts2 = jQuery.extend({
+                'moveNext': true
+            }, opts2);
+
+            if (!this.hasNext) {
+                return false;
+            }
+
+            var item = iteratorItems[currentIndex];
+            var funcResult = $MJK_PHP5_BOILERPLATE.funcs
+                                                  .invokeArray(item.func, item.args);
+
+            if (opts2.moveNext) {
+                ++currentIndex;
+            }
+
+            return funcResult;
+        };
+
+        /**
+         * Invokes all functions from the current position to the end.
+         *
+         * @param {Object} [opts2] Additional options.
+         *
+         * @returns {Array} The list of results.
+         */
+        result.invokeRest = function(opts2) {
+            opts2 = jQuery.extend({
+                'restoreIndex': false
+            }, opts2);
+
+            var indexToRestore = currentIndex;
+
+            var results = [];
+
+            while (!this.eof) {
+                results.push(this.invokeNext());
+            }
+
+            if (opts2.restoreIndex) {
+                currentIndex = indexToRestore;
+            }
+
+            return results;
+        };
+
+        /**
+         * Invokes the first function and removes it by restoring the
+         * last index.
+         *
+         * @param {Object} [opts2] Additional options.
+         *
+         * @returns {Object} The result or (false) if there are no more item.
+         */
+        result.popFirst = function(opts2) {
+            opts2 = jQuery.extend({
+                'removeOnError': true,
+                'restoreIndex': true
+            }, opts2);
+
+            var indexToRestore = currentIndex;
+
+            this.reset();
+
+            var funcResult = this.invokeNext({
+                'moveNext': false
+            });
+
+            if (funcResult) {
+                var removeItem = true;
+
+                if (funcResult.hasFailed) {
+                    removeItem = !!opts2.removeOnError;
+                }
+
+                if (removeItem) {
+                    this.removeFirst();
+                }
+            }
+
+            if (opts2.restoreIndex) {
+                currentIndex = indexToRestore - 1;
+            }
+
+            repairCurrentIndex();
+
+            return funcResult;
+        };
+
+        /**
+         * Invokes the current function and removes it.
+         *
+         * @param {Object} [opts2] Additional options.
+         *
+         * @returns {Object} The result or (false) if there are no more item.
+         */
+        result.popNext = function(opts2) {
+            opts2 = jQuery.extend({
+                'removeOnError': true
+            }, opts2);
+
+            var funcResult = this.invokeNext({
+                'moveNext': false
+            });
+
+            if (funcResult) {
+                var removeItem = true;
+
+                if (funcResult.hasFailed) {
+                    removeItem = !!opts2.removeOnError;
+                }
+
+                if (removeItem) {
+                    this.removeCurrent();
+                }
+            }
+
+            return funcResult;
+        };
+
+        /**
+         * Removes a specific iterator item.
+         *
+         * @param {Number} index The zero based index.
+         *
+         * @chainable
+         */
+        result.removeAt = function(index) {
+            if ((index >= 0) && (index < this.length)) {
+                iteratorItems.splice(index, 1);
+            }
+
+            repairCurrentIndex();
+
+            return this;
+        };
+
+        /**
+         * Removes a the current item.
+         *
+         * @chainable
+         */
+        result.removeCurrent = function() {
+            return this.removeAt(currentIndex);
+        };
+
+        /**
+         * Removes a specific iterator item.
+         *
+         * @param {Number} index The zero based index.
+         *
+         * @chainable
+         */
+        result.removeFirst = function() {
+            return this.removeAt(0);
+        };
+
+        /**
+         * Resets the iterator.
+         *
+         * @chainable
+         */
+        result.reset = function() {
+            currentIndex = 0;
+            return this;
+        };
+
+        /**
+         * Wraps one or more iterator items to simple functions.
+         *
+         * @param {Number} [...index] One or more zero based indexes.
+         *
+         * @returns {mixed} If there is only one index defined, the function is returned.
+         *                  Otherwise an array with functions.
+         */
+        result.wrap = function() {
+            var wrappedFuncs = this.wrapArray(arguments);
+
+            if (1 == wrappedFuncs) {
+                return wrappedFuncs[0];
+            }
+
+            return wrappedFuncs;
+        };
+
+        /**
+         * Wraps all iterator items to simple functions.
+         *
+         * @returns {Array} The functions.
+         */
+        result.wrapAll = function() {
+            var wrappedFuncs = [];
+            for (var i = 0; i < this.length; i++) {
+                wrappedFuncs.push(this.wrap(i));
+            }
+
+            return wrappedFuncs;
+        };
+
+        /**
+         * Wraps one or more iterator items to simple functions.
+         *
+         * @param {Array} [indexes] One or more zero based indexes.
+         *
+         * @returns {mixed} If there is only one index defined, the function is returned.
+         *                  Otherwise an array with functions.
+         */
+        result.wrapArray = function(indexes) {
+            if (!indexes) {
+                indexes = [];
+            }
+
+            var wrappedFuncs = [];
+
+            var createFuncWrapper = function(item) {
+                return function() {
+                    return $MJK_PHP5_BOILERPLATE.funcs
+                                                .invokeArray(item.func, item.args);;
+                };
+            };
+
+            for (var i = 0; i < indexes.length; i++) {
+                wrappedFuncs.push(createFuncWrapper(batchItems[i]));
+            }
+
+            return wrappedFuncs;
+        };
+
+        /**
+         * Gets the number of iterator items.
+         *
+         * @property count
+         * @type Number
+         * @readonly
+         */
+        Object.defineProperty(result, 'count', {
+            get: function () {
+                return this.length;
+            }
+        });
+
+        /**
+         * Gets the current index.
+         *
+         * @property currentIndex
+         * @type Number
+         * @readonly
+         */
+        Object.defineProperty(result, 'currentIndex', {
+            get: function () {
+                return currentIndex;
+            }
+        });
+
+        /**
+         * Gets the iterator has reached the end or not.
+         *
+         * @property EOF
+         * @type Boolean
+         * @readonly
+         */
+        Object.defineProperty(result, 'eof', {
+            get: function () {
+                return this.currentIndex >= this.length;
+            }
+        });
+
+        /**
+         * Gets the iterator has currently an item to invoke or not.
+         *
+         * @property hasNext
+         * @type Boolean
+         * @readonly
+         */
+        Object.defineProperty(result, 'hasNext', {
+            get: function () {
+                return !this.EOF;
+            }
+        });
+
+        /**
+         * Gets if the iterator is at the beginning or not.
+         *
+         * @property isFirst
+         * @type Boolean
+         * @readonly
+         */
+        Object.defineProperty(result, 'isFirst', {
+            get: function () {
+                return 0 == this.currentIndex;
+            }
+        });
+
+        /**
+         * Gets if the iterator is at the end or not.
+         *
+         * @property isLast
+         * @type Boolean
+         * @readonly
+         */
+        Object.defineProperty(result, 'isLast', {
+            get: function () {
+                return (this.length - 1) == this.currentIndex;
+            }
+        });
+
+        /**
+         * Gets the number of iterator items.
+         *
+         * @property length
+         * @type Number
+         * @readonly
+         */
+        Object.defineProperty(result, 'length', {
+            get: function () {
+                return iteratorItems.length;
+            }
+        });
+
+        return result;
+    };
+
+    /**
      * Executes JavaScript code globally.
      *
      * @param {String} code The JavaScript code to execute.
@@ -353,17 +1258,27 @@ $MJK_PHP5_BOILERPLATE.funcs = {};
      *
      * @param {function} fn The function to invoke.
      * @param {Array} [args] The arguments for the function.
+     * @param {Object} [opts] Additional options.
      *
      * @return {Object} The result object of the invocation.
      */
-    $MJK_PHP5_BOILERPLATE.funcs.invokeArray = function(fn, args) {
+    $MJK_PHP5_BOILERPLATE.funcs.invokeArray = function(fn, args, opts) {
+        if (fn) {
+            fn = this.asFunc(fn);
+        }
+
         if (!args) {
             args = [];
         }
 
+        opts = jQuery.extend({
+            'state': null
+        }, opts);
+
         var result = {
             'args': args,
-            'hasBeenInvoked': false
+            'hasBeenInvoked': false,
+            'state': opts.state
         };
 
         Object.defineProperty(result, 'duration', {
@@ -497,14 +1412,10 @@ $MJK_PHP5_BOILERPLATE.page = {};
         return this;
     };
 
-    $MJK_PHP5_BOILERPLATE.page.onHandleLoadedErrors = function(errors) {
-        // replace with own code
-    };
-
     /**
      * Process all actions that were added by $MJK_PHP5_BOILERPLATE.page.addOnLoaded() method.
      *
-     * @chainable
+     * @return {Boolean} Loaded actions were processed or not.
      */
     $MJK_PHP5_BOILERPLATE.page.processOnLoadedActions = function() {
         if ($MJK_PHP5_BOILERPLATE.events.pageLoaded) {
@@ -530,16 +1441,41 @@ $MJK_PHP5_BOILERPLATE.page = {};
      *
      * @param {String} name The name of the selector.
      * @param {jQuery} selector The selector.
+     * @param {Object} [opts] Additional options.
      *
      * @chainable
      */
-    $MJK_PHP5_BOILERPLATE.page.addElements = function(name, selector) {
+    $MJK_PHP5_BOILERPLATE.page.addElements = function(name, selector, opts) {
+        opts = jQuery.extend({
+        }, opts);
+
+        var getSelector;
+        if (!$MJK_PHP5_BOILERPLATE.funcs.isJQuery(selector)) {
+            getSelector = function() {
+                return $MJK_PHP5_BOILERPLATE.funcs
+                                            .asJQuery(selector);
+            };
+        }
+        else {
+            getSelector = function() {
+                return selector;
+            };
+        }
+
+        if (opts.onLoaded) {
+            this.addOnLoaded(function() {
+                var ctx = {
+                    'selector': getSelector()
+                };
+
+                opts.onLoaded(ctx);
+            });
+        }
+
         Object.defineProperty(this.elements,
                               jQuery.trim(name),
                               {
-                                  get: function() {
-                                      return $MJK_PHP5_BOILERPLATE.funcs.asJQuery(selector);
-                                  }
+                                  get: getSelector
                               });
 
         return this;
@@ -559,7 +1495,8 @@ $MJK_PHP5_BOILERPLATE.page = {};
                               jQuery.trim(name),
                               {
                                   get: function() {
-                                      return $MJK_PHP5_BOILERPLATE.funcs.asFunc(func);
+                                      return $MJK_PHP5_BOILERPLATE.funcs
+                                                                  .asFunc(func);
                                   }
                               });
 
@@ -579,7 +1516,8 @@ $MJK_PHP5_BOILERPLATE.page = {};
         Object.defineProperty(this.vars,
                               jQuery.trim(name),
                               {
-                                  get: $MJK_PHP5_BOILERPLATE.funcs.asFunc(value)
+                                  get: $MJK_PHP5_BOILERPLATE.funcs
+                                                            .asFunc(value)
                               });
 
         return this;

@@ -128,6 +128,24 @@ interface ContextInterface extends \php5bp\ObjectInterface {
     function setAction($actionName);
 
     /**
+     * Sets the default view.
+     *
+     * @return $this
+     */
+    function setDefaultView();
+
+    /**
+     * Sets up the result for JSON output.
+     *
+     * @param string|bool $viewName The name of the custom view to use.
+     *                              If this value is set to (false), the current view is NOT changed.
+     *                              If this value is set to (true), the default view is set.
+     *
+     * @return $this
+     */
+    function setupForHtml($viewName = false);
+
+    /**
      * Sets up the result for JSON output.
      *
      * @return $this

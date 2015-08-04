@@ -37,10 +37,6 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
      */
     const DEFAULT_VAR_NAME_ACTION = 'action';
     /**
-     * Name of the default view.
-     */
-    const DEFAULT_VIEW = 'main';
-    /**
      * List separator expression.
      */
     const LIST_SEPARATOR = ';';
@@ -97,6 +93,15 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
         return 200;
     }
 
+    /**
+     * Prepares the arguments for an execution method.
+     *
+     * @param ModuleExecutionContext $ctx The underlying execution context.
+     * @param array $args The variable where to write the arguments to
+     */
+    protected function prepareInitialExecutionMethodArgs(ModuleExecutionContext $ctx, array &$args) {
+    }
+
     public final function render() {
         $result = null;
 
@@ -110,6 +115,49 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
             $execCtx           = new \php5bp\Modules\Execution\Context();
             $execCtx->Request  = new \php5bp\Http\Requests\Context();
             $execCtx->Response = new \php5bp\Http\Responses\Context();
+
+            $getVarFromSource = function($sources, $var, $defaultSrc) use ($execCtx) {
+                $defaultSrc = \trim(\strtolower($defaultSrc));
+
+                $result = null;
+
+                foreach ($sources as $src) {
+                    $src = \trim(\strtolower($src));
+                    if ('' == $src) {
+                        $src = $defaultSrc;
+                    }
+
+                    $found = false;
+
+                    switch ($src) {
+                        case 'vars':
+                            $result = $execCtx->getVar($var, $result, $found);
+                            break;
+
+                        case 'request':
+                            $result = $execCtx->request()->request($var, $result, $found);
+                            break;
+
+                        case 'post':
+                            $result = $execCtx->request()->post($var, $result, $found);
+                            break;
+
+                        case 'get':
+                            $result = $execCtx->request()->get($var, $result, $found);
+                            break;
+
+                        default:
+                            //TODO throw exception
+                            break;
+                    }
+
+                    if ($found) {
+                        break;
+                    }
+                }
+
+                return $result;
+            };
 
             if (\array_key_exists('config', $meta)) {
                 $execCtx->Config = $meta['config'];
@@ -171,58 +219,67 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                 $allowedActionVarSources = \explode(static::LIST_SEPARATOR, $allowedActionVarSources);
             }
 
-            $actionName = null;
-            foreach ($allowedActionVarSources as $avs) {
-                $found = false;
+            // action name
+            $actionName = \call_user_func($getVarFromSource,
+                                          $allowedActionVarSources, $actionVar, 'request');
 
-                switch (\trim(\strtolower($avs))) {
-                    case '':
-                    case 'request':
-                        $actionName = $execCtx->request()->request($actionVar, $actionName, $found);
-                        break;
-
-                    case 'post':
-                        $actionName = $execCtx->request()->post($actionVar, $actionName, $found);
-                        break;
-
-                    case 'get':
-                        $actionName = $execCtx->request()->get($actionVar, $actionName, $found);
-                        break;
-
-                    case 'vars':
-                        $actionName = $execCtx->getVar($actionVar, $actionName, $found);
-                        break;
-
-                    default:
-                        //TODO throw exception
-                        break;
-                }
-
-                if ($found) {
-                    break;
-                }
-            }
-
-            $initialView = static::DEFAULT_VIEW;
-
-            if (\array_key_exists('views', $appConf)) {
-                if (\array_key_exists('default', $appConf['views'])) {
-                    $initialView = $appConf['views']['default'];
-                }
-            }
-
-            $execCtx->setView($initialView);
+            // do not change default view
+            $initialView = false;
 
             $execCtx->setAction($actionName);
+            $execCtx->setDefaultView();
             $execCtx->setVar('module', $this);
 
             $wasExecuted = null;
             $exception = null;
 
+            $exceptionHandler = null;
+            $executionMode = null;
+
+            if (\array_key_exists('mode', $meta)) {
+                $executionMode = $meta['mode'];
+            }
+
+            if (\array_key_exists('view', $meta)) {
+                $initialView = $meta['view'];
+            }
+
+            $setupExecutionContext = function(array &$methodArgs = null) use (&$initialView, &$exceptionHandler, $execCtx, &$executionMode, &$methodResult) {
+                switch (\trim(\strtolower($executionMode))) {
+                    case 'json':
+                        $methodResult         = array();
+                        $methodResult['code'] = 0;
+                        $methodResult['msg']  = 'OK';
+
+                        $exceptionHandler = function(\Exception $ex) use (&$methodResult) {
+                            $methodResult = \php5bp::createExceptionResult($ex);
+                        };
+
+                        $methodArgs[] = &$methodResult;
+
+                        $execCtx->setupForJson();
+                        break;
+
+                    case 'html':
+                        $execCtx->setupForHtml();
+                        break;
+                }
+
+                if (false !== $initialView) {
+                    if (true !== $initialView) {
+                        $execCtx->setView($initialView);
+                    }
+                    else {
+                        $execCtx->setDefaultView();
+                    }
+                }
+            };
+
             try {
                 if (false !== $this->beforeExecute($execCtx)) {
                     $wasExecuted = true;
                     $invokeDefault = false;
+                    $methodResult = null;
 
                     $actionName = \trim(\strtolower($execCtx->getAction()));
                     if ('' == $actionName) {
@@ -270,8 +327,19 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                                 $actionMethod = $actionEntry['method'];
                             }
 
+                            // action specific MODE
+                            if (\array_key_exists('mode', $actionEntry)) {
+                                $executionMode = $actionEntry['mode'];
+                            }
+
+                            // action specific VIEW
+                            if (\array_key_exists('view', $actionEntry)) {
+                                $initialView = $actionEntry['view'];
+                            }
+
                             if (!empty($actionMethod)) {
                                 $actionMethodArgs = array($execCtx);
+                                $this->prepareInitialExecutionMethodArgs($execCtx, $actionMethodArgs);
 
                                 $actionArgs = null;
                                 if (\array_key_exists('args', $actionEntry)) {
@@ -301,6 +369,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                                     $actionArgs = array();
                                 }
 
+                                $additionalActionArgs = array();
                                 foreach ($actionArgs as $aa) {
                                     $argName         = null;
                                     $argSources      = null;
@@ -352,38 +421,9 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                                         $argTransformers = array();
                                     }
 
-                                    $argValue = null;
-                                    foreach ($argSources as $as) {
-                                        $foundArgValue = false;
-
-                                        switch (\trim(strtolower($as))) {
-                                            case '':
-                                            case 'vars':
-                                                $argValue = $execCtx->getVar($argName, $argValue, $foundArgValue);
-                                                break;
-
-                                            case 'post':
-                                                $argValue = $execCtx->request()->post($argName, $argValue, $foundArgValue);
-                                                break;
-
-                                            case 'request':
-                                                $argValue = $execCtx->request()->request($argName, $argValue, $foundArgValue);
-                                                break;
-
-                                            case 'get':
-                                                $argValue = $execCtx->request()->get($argName, $argValue, $foundArgValue);
-                                                break;
-
-                                            default:
-                                                //TODO: throw exception
-                                                break;
-                                        }
-
-                                        if ($foundArgValue) {
-                                            // nothing more to do
-                                            break;
-                                        }
-                                    }
+                                    // argument value
+                                    $argValue = \call_user_func($getVarFromSource,
+                                                                $argSources, $argName, 'vars');
 
                                     // transform value
                                     foreach ($argTransformers as $at) {
@@ -391,11 +431,21 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                                                                     $argValue);
                                     }
 
-                                    $actionMethodArgs[] = $argValue;
+                                    $additionalActionArgs[] = $argValue;
                                 }
 
+                                \call_user_func_array($setupExecutionContext,
+                                                      array(&$additionalActionArgs));
+
+                                if (\is_null($additionalActionArgs)) {
+                                    $additionalActionArgs = array();
+                                }
+
+                                // execute
                                 $result = \call_user_func_array(array($this, $actionMethod),
-                                                                $actionMethodArgs);
+                                                                Enumerable::create($actionMethodArgs)
+                                                                          ->concat($additionalActionArgs)
+                                                                          ->toArray());
                             }
                             else {
                                 // use default
@@ -408,7 +458,22 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                     }
 
                     if ($invokeDefault) {
+                        \call_user_func($setupExecutionContext);
+
                         $result = $this->execute($execCtx);
+                    }
+
+                    if (!\is_null($methodResult)) {
+                        // custom result defined
+
+                        if (\is_null($result)) {
+                            // overwrite
+                            $result = $methodResult;
+                        }
+                        else {
+                            // append
+                            $result = $result . $methodResult;
+                        }
                     }
                 }
                 else {
@@ -418,7 +483,13 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
             catch (\Exception $ex) {
                 $exception = $ex;
 
-                throw $ex;
+                if (is_null($exceptionHandler)) {
+                    throw $ex;
+                }
+                else {
+                    \call_user_func($exceptionHandler,
+                                    $ex, $execCtx);
+                }
             }
             finally {
                 $this->afterExecution($execCtx, $wasExecuted, $exception);

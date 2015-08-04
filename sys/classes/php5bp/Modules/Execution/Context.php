@@ -33,6 +33,10 @@ use \System\Linq\Enumerable;
  */
 class Context extends \php5bp\Object implements ContextInterface {
     /**
+     * Name of the default view.
+     */
+    const DEFAULT_VIEW_DEFAULT = 'main';
+    /**
      * Default name of the view that outputs JSON data.
      */
     const DEFAULT_VIEW_JSON = 'json';
@@ -196,8 +200,37 @@ class Context extends \php5bp\Object implements ContextInterface {
         return $this;
     }
 
+    public function setDefaultView() {
+        $viewName = static::DEFAULT_VIEW_DEFAULT;
+
+        $appConf = \php5bp::appConf();
+        if (\array_key_exists('views', $appConf)) {
+            if (\array_key_exists('default', $appConf['views'])) {
+                $viewName = $appConf['views']['default'];
+            }
+        }
+
+        return $this->setView($viewName);
+    }
+
+    public function setupForHtml($viewName = false) {
+        if (false !== $viewName) {
+            if (true !== $viewName) {
+                $this->setView($viewName);
+            }
+            else {
+                $this->setDefaultView();
+            }
+        }
+
+        $this->response()
+             ->setContentType('text/html; charset=' . \php5bp::outputEncoding());
+
+        return $this;
+    }
+
     public function setupForJson() {
-        $viewName = null;
+        $viewName = static::DEFAULT_VIEW_JSON;
 
         $appConf = \php5bp::appConf();
         if (\array_key_exists('views', $appConf)) {
@@ -206,12 +239,8 @@ class Context extends \php5bp\Object implements ContextInterface {
             }
         }
 
-        $viewName = \trim($viewName);
-        if ('' == $viewName) {
-            $viewName = static::DEFAULT_VIEW_JSON;
-        }
-
-        $this->response()->setContentType('application/json; charset=' . \iconv_get_encoding('output_encoding'));
+        $this->response()
+             ->setContentType('application/json; charset=' . \php5bp::outputEncoding());
         $this->setView($viewName);
 
         return $this;
@@ -235,18 +264,13 @@ class Context extends \php5bp\Object implements ContextInterface {
     }
 
     public function suppressOutput() {
-        $viewName = null;
+        $viewName = static::DEFAULT_VIEW_NULL;
 
         $appConf = \php5bp::appConf();
         if (\array_key_exists('views', $appConf)) {
             if (\array_key_exists('null', $appConf['views'])) {
                 $viewName = $appConf['views']['null'];
             }
-        }
-
-        $viewName = \trim($viewName);
-        if ('' == $viewName) {
-            $viewName = static::DEFAULT_VIEW_NULL;
         }
 
         return $this->setView($viewName);

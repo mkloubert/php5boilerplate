@@ -21,6 +21,7 @@
 
 namespace php5bp;
 
+use \php5bp\Modules\Meta\ProviderInterface as ModuleMetaProviderInterface;
 use \System\Linq\Enumerable;
 
 
@@ -31,6 +32,10 @@ use \System\Linq\Enumerable;
  * @author Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
  */
 class Application extends Object {
+    /**
+     * Default class of a meta provider.
+     */
+    const DEFAULT_MODULE_META_PROVIDER = '\php5bp\Modules\Meta\Provider';
     /**
      * The name of the default render method of a module object.
      */
@@ -74,6 +79,34 @@ class Application extends Object {
      */
     public function handleException(\Exception $ex) {
         return false;
+    }
+
+    /**
+     * @return ModuleMetaProviderInterface
+     */
+    protected function getModuleMetaProvider() {
+        $providerClass = null;
+
+        $appConf = \php5bp::appConf();
+
+        // custom provider?
+        if (\array_key_exists('modules', $appConf)) {
+            // $appConf['modules']['meta']
+            if (\array_key_exists('meta', $appConf['modules'])) {
+                // $appConf['modules']['meta']['provider']
+                if (\array_key_exists('provider', $appConf['modules']['meta'])) {
+                    $providerClass = $appConf['modules']['meta']['provider'];
+                }
+            }
+        }
+
+        $providerClass = \trim($providerClass);
+        if ('' == $providerClass) {
+            $providerClass = static::DEFAULT_MODULE_META_PROVIDER;
+        }
+
+        $prc = new \ReflectionClass($providerClass);
+        return $prc->newInstance();
     }
 
     /**
@@ -203,7 +236,8 @@ class Application extends Object {
         if (false !== $modulePath) {
             $moduleScriptPath = \realpath($modulePath . \DIRECTORY_SEPARATOR . static::MODULE_SCRIPT_FILENAME);
             if (false !== $moduleScriptPath) {
-                $moduleMeta = \php5bp::conf('meta', $modulePath);
+                $moduleMeta = $this->getModuleMetaProvider()
+                                   ->getModuleMetaByName($moduleName);
 
                 if (!\is_array($moduleMeta)) {
                     // set default

@@ -6,6 +6,9 @@
         "var": "action"
     },
     "default": "index",
+    "meta": {
+      "provider": "\\php5bp\\Modules\\Meta\\Provider"
+    },
     "methods": {
       "render": "render",
       "updateContext": "updateContext"

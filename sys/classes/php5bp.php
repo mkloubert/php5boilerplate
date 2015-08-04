@@ -53,6 +53,10 @@ final class php5bp {
      * @var DateTime
      */
     private static $_now;
+    /**
+     * @var array
+     */
+    private static $_vars = array();
 
 
     private function __construct() {
@@ -65,12 +69,12 @@ final class php5bp {
      * @return \php5bp\Application The app instance.
      */
     public static function app() {
-        if (is_null(self::$_app)) {
+        if (is_null(static::$_app)) {
             // initialize
-            self::$_app = new \php5bp\Application();
+            static::$_app = new \php5bp\Application();
         }
 
-        return self::$_app;
+        return static::$_app;
     }
 
     /**
@@ -79,7 +83,7 @@ final class php5bp {
      * @return array The configuration or (null) if not found.
      */
     public static function appConf() {
-        return self::conf('app');
+        return static::conf('app');
     }
 
     /**
@@ -95,16 +99,23 @@ final class php5bp {
             return false;
         }
 
-        if (is_null(self::$_cache)) {
-            $cacheConf = self::conf('cache.' . $name);
+        if (is_null(static::$_cache)) {
+            $cacheConf = static::conf('cache.' . $name);
             if (!is_array($cacheConf)) {
                 $cacheConf = array();
             }
 
-            self::$_cache = \Zend\Cache\StorageFactory::factory($cacheConf);
+            static::$_cache = \Zend\Cache\StorageFactory::factory($cacheConf);
         }
 
-        return self::$_cache;
+        return static::$_cache;
+    }
+
+    /**
+     * Removes all variables.
+     */
+    public static function clearVars() {
+        static::$_vars = array();
     }
 
     /**
@@ -141,7 +152,7 @@ final class php5bp {
             // by directory separator
             $filePrefix = $confDir . str_replace('.', DIRECTORY_SEPARATOR, $name) . '.';
 
-            $file = Enumerable::create(self::$_configExtensions)
+            $file = Enumerable::create(static::$_configExtensions)
                               ->select(function($x, $ctx) use ($filePrefix) {
                                            $result        = new stdClass();
                                            $result->class = $x;
@@ -166,6 +177,44 @@ final class php5bp {
     }
 
     /**
+     * Creates an array that stores the data for an exception result.
+     *
+     * @param Exception $ex The occurred exception.
+     *
+     * @return array The data array.
+     */
+    public static function createExceptionData(Exception $ex) {
+        $result        = array();
+        $result['msg'] = $ex->getMessage();
+
+        if (static::isDebug()) {
+            $result['code'] = $ex->getCode();
+
+            $inner = $ex->getPrevious();
+            if ($inner instanceof Exception) {
+                $result['inner'] = static::createExceptionData($inner);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Creates an array with all basic data for an exception result.
+     *
+     * @param Exception $ex The occurred exception.
+     *
+     * @return array The data array.
+     */
+    public static function createExceptionResult(Exception $ex) {
+        return array(
+            'code' => -1,
+            'data' => static::createExceptionData($ex),
+            'msg'  => 'Exception',
+        );
+    }
+
+    /**
      * Returns a new database adapter.
      *
      * @param string $name The name of the configuration storage.
@@ -179,7 +228,7 @@ final class php5bp {
             return false;
         }
 
-        $dbConf = self::conf('db.' . $name);
+        $dbConf = static::conf('db.' . $name);
         if (!is_array($dbConf)) {
             $dbConf = array();
         }
@@ -199,7 +248,7 @@ final class php5bp {
     public static function endsWith($str, $expr, $ignoreCase = false) {
         $func = !$ignoreCase ? 'strpos' : 'stripos';
 
-        return self::isNullOrEmpty($expr) ||
+        return static::isNullOrEmpty($expr) ||
                (($temp = strlen($str) - strlen($expr)) >= 0 &&
                 call_user_func($func,
                                $str, $expr, $temp) !== false);
@@ -214,8 +263,8 @@ final class php5bp {
      * @return string The formatted string.
      */
     public static function format($format) {
-        return self::formatArray($format,
-                                 array_slice(func_get_args(), 1));
+        return static::formatArray($format,
+                                   array_slice(func_get_args(), 1));
     }
 
     /**
@@ -249,13 +298,47 @@ final class php5bp {
                                      }, $format);
     }
 
+
+    /**
+     * Gets the value of a variable.
+     *
+     * @param string $name The name of the variable.
+     * @param mixed $defaultValue The value to return if $name was not found.
+     * @param bool $found The variable where to write if value was found or not.
+     *
+     * @return mixed The value.
+     */
+    public static function getVar($name, $defaultValue = null, &$found = null) {
+        $name = static::normalizeVarName($name);
+
+        $found = false;
+        if (array_key_exists($name, static::$_vars)) {
+            $found = true;
+            return static::$_vars[$name];
+        }
+
+        return $defaultValue;
+    }
+
+    /**
+     * Checks if a variable exists.
+     *
+     * @param string $name The name of the variable.
+     *
+     * @return bool Variable exists or not.
+     */
+    public static function hasVar($name) {
+        static::getVar($name, null, $result);
+        return $result;
+    }
+
     /**
      * Gets if the application runs in debug mode or not.
      *
      * @return bool Runs in debug mode or not.
      */
     public static function isDebug() {
-        $appConf = self::appConf();
+        $appConf = static::appConf();
         if (array_key_exists('debug', $appConf)) {
             return boolval($appConf['debug']);
         }
@@ -281,11 +364,11 @@ final class php5bp {
      * @return \php5bp\Diagnostics\Log\Logger The logger.
      */
     public static function log() {
-        if (is_null(self::$_logger)) {
+        if (is_null(static::$_logger)) {
             $newLogger = new \php5bp\Diagnostics\Log\Logger();
             $newLogger->addWriter(new \Zend\Log\Writer\Noop());
 
-            if (self::isDebug()) {
+            if (static::isDebug()) {
                 if (isset($_SERVER['HTTP_USER_AGENT'])) {
                     if (false !== stripos($_SERVER['HTTP_USER_AGENT'], 'firefox')) {
                         // FirePHP
@@ -299,10 +382,21 @@ final class php5bp {
                 }
             }
 
-            self::$_logger = $newLogger;
+            static::$_logger = $newLogger;
         }
 
-        return self::$_logger;
+        return static::$_logger;
+    }
+
+    /**
+     * Normalizes a variable name.
+     *
+     * @param string $name The input value.
+     *
+     * @return string The output value.
+     */
+    protected function normalizeVarName($name) {
+        return \trim($name);
     }
 
     /**
@@ -311,19 +405,28 @@ final class php5bp {
      * @return DateTime The current time.
      */
     public static function now() {
-        if (is_null(self::$_now)) {
-            self::$_now = new \DateTime();
+        if (is_null(static::$_now)) {
+            static::$_now = new \DateTime();
 
             if (array_key_exists('REQUEST_TIME', $_SERVER)) {
-                self::$_now->setTimestamp($_SERVER['REQUEST_TIME']);
+                static::$_now->setTimestamp($_SERVER['REQUEST_TIME']);
             }
         }
 
         // create copy
         $result = new \DateTime();
-        $result->setTimestamp(self::$_now->getTimestamp());
+        $result->setTimestamp(static::$_now->getTimestamp());
 
         return $result;
+    }
+
+    /**
+     * Gets the name of the output encoding.
+     *
+     * @return string The output encoding.
+     */
+    public static function outputEncoding() {
+        return iconv_get_encoding('output_encoding');
     }
 
     /**
@@ -355,6 +458,18 @@ final class php5bp {
     }
 
     /**
+     * Sets a variable.
+     *
+     * @param string $name The name of the variable.
+     * @param mixed $value The value for the variable.
+     */
+    public static function setVar($name, $value) {
+        $name = static::normalizeVarName($name);
+
+        static::$_vars[$name] = $value;
+    }
+
+    /**
      * Checks if a string starts with a specific expression.
      *
      * @param string $str The string to search in.
@@ -375,5 +490,14 @@ final class php5bp {
      */
     public static function table($table, $adapter = null, $features = null, \Zend\Db\ResultSet\ResultSetInterface $resultSetPrototype = null, \Zend\Db\Sql\Sql $sql = null) {
         return new \php5bp\Db\TableGateway($table, $adapter, $features, $resultSetPrototype, $sql);
+    }
+
+    /**
+     * Returns the list of all vars.
+     *
+     * @return array The list of vars.
+     */
+    public static function vars() {
+        return static::$_vars;
     }
 }

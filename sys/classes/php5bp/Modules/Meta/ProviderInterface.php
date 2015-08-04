@@ -19,5 +19,21 @@
  * License along with this software.                                                                                  *
  **********************************************************************************************************************/
 
+namespace php5bp\Modules\Meta;
 
-echo \json_encode($this->content, \JSON_UNESCAPED_UNICODE);
+/**
+ * Describes an object that provides meta data for a module.
+ *
+ * @package php5bp\Modules\Meta
+ * @author Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
+ */
+interface ProviderInterface {
+    /**
+     * Returns meta data by name.
+     *
+     * @param string $moduleName The name of the module.
+     *
+     * @return array The meta data or (false) if an error occurred.
+     */
+    function getModuleMetaByName($moduleName);
+}

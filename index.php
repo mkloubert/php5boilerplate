@@ -24,9 +24,10 @@ define('PHP5BP_INDEX', true, false);
 
 chdir(__DIR__);
 
-iconv_set_encoding('input_encoding', 'UTF-8');
 iconv_set_encoding('internal_encoding', 'UTF-8');
+iconv_set_encoding('input_encoding', 'UTF-8');
 iconv_set_encoding('output_encoding', 'UTF-8');
+ob_start('ob_iconv_handler');
 
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'bootstrap.php';
 

@@ -19,5 +19,33 @@
  * License along with this software.                                                                                  *
  **********************************************************************************************************************/
 
+namespace php5bp\Modules\Meta;
 
-echo \json_encode($this->content, \JSON_UNESCAPED_UNICODE);
+
+/**
+ * A common meta data provider for a module.
+ *
+ * @package php5bp\Modules\Meta
+ * @author Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
+ */
+class Provider extends \php5bp\Object implements ProviderInterface {
+    /**
+     * The name of a meta file.
+     */
+    const META_NAME = 'meta';
+    /**
+     * Expression for module name separator.
+     */
+    const MODULE_NAME_SEPARATOR = '/';
+
+
+    public function getModuleMetaByName($moduleName) {
+        $modulePath = \realpath(\PHP5BP_DIR_MODULES .
+                                \str_replace(static::MODULE_NAME_SEPARATOR, \DIRECTORY_SEPARATOR, $moduleName));
+        if (false !== $modulePath) {
+            return \php5bp::conf(static::META_NAME, $modulePath);
+        }
+
+        return false;
+    }
+}

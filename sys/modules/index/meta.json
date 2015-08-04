@@ -9,7 +9,6 @@
   "actions": {
     "test": "testAction",
     "test2": {
-      "method": "test2Action",
       "args": [
         "module",
         "a",
@@ -18,7 +17,13 @@
           "source": "get;vars",
           "transformer": ["\\strtolower", "\\ucwords"]
         }
-      ]
+      ],
+      "method": "test2Action",
+      "mode": "json"
+    },
+    "test3": {
+      "method": "test3Action",
+      "mode": "json"
     }
   },
   "methods": {

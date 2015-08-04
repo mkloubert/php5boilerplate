@@ -34,11 +34,10 @@ use \php5bp\Modules\Execution\ContextInterface as ModuleExecutionContext;
  */
 class IndexModule extends ModuleBase {
     protected function execute(ModuleExecutionContext $ctx) {
-        $ctx->setupForJson();
-
         return array(
             'PZ' => '19861222',
             'MK' => \php5bp::format('{0:Y-m-d H:i:s}', \DateTime::createFromFormat('Y-m-d H:i', '1979-09-23 21:50')),
+            'wurst' => "Käse"
         );
     }
 
@@ -48,15 +47,21 @@ class IndexModule extends ModuleBase {
         }
     }
 
-    public function test2Action(ModuleExecutionContext $ctx) {
+    public function test2Action(ModuleExecutionContext $ctx, $module, $a, $b, array &$result) {
         if ($ctx != null) {
 
         }
     }
 
-    public function test3Action(ModuleExecutionContext $ctx) {
+    public function test3Action(ModuleExecutionContext $ctx, array &$result) {
+        $ctx->setupForHtml(true);
+
         if ($ctx != null) {
 
         }
+
+        $result = null;
+
+        echo '<strong>abcdef</strong>';
     }
 }

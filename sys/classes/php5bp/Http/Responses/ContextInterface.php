@@ -44,6 +44,13 @@ interface ContextInterface extends \php5bp\ObjectInterface {
     function getCode();
 
     /**
+     * Gets the MIME type for the output.
+     *
+     * @return string The MIME type or (null) if not defined.
+     */
+    function getContentType();
+
+    /**
      * Returns the value of a HTTP header.
      *
      * @param string $name The name of the header.
@@ -79,6 +86,15 @@ interface ContextInterface extends \php5bp\ObjectInterface {
      * @return $this
      */
     function setCode($code);
+
+    /**
+     * Sets the MIME type of the output.
+     *
+     * @param string $mime The MIME type.
+     *
+     * @return $this
+     */
+    function setContentType($mime);
 
     /**
      * Sets a HTTP header.

@@ -33,6 +33,14 @@ use \System\Linq\Enumerable;
  */
 class Context extends \php5bp\Object implements ContextInterface {
     /**
+     * Default name of the view that outputs JSON data.
+     */
+    const DEFAULT_VIEW_JSON = 'json';
+    /**
+     * Default name of the view that outputs nothing.
+     */
+    const DEFAULT_VIEW_NULL = 'null';
+    /**
      * The name of the variable for storing the action name.
      */
     const VAR_NAME_ACTION = 'action';
@@ -162,6 +170,14 @@ class Context extends \php5bp\Object implements ContextInterface {
         return \trim($name);
     }
 
+    public function notFound() {
+        $this->response()->clearHeaders();
+        $this->response()->setCode(404);
+        $this->suppressOutput();
+
+        return $this;
+    }
+
     public function request() {
         return $this->Request;
     }
@@ -180,6 +196,27 @@ class Context extends \php5bp\Object implements ContextInterface {
         return $this;
     }
 
+    public function setupForJson() {
+        $viewName = null;
+
+        $appConf = \php5bp::appConf();
+        if (\array_key_exists('views', $appConf)) {
+            if (\array_key_exists('json', $appConf['views'])) {
+                $viewName = $appConf['views']['json'];
+            }
+        }
+
+        $viewName = \trim($viewName);
+        if ('' == $viewName) {
+            $viewName = static::DEFAULT_VIEW_JSON;
+        }
+
+        $this->response()->setContentType('application/json; charset=' . \iconv_get_encoding('output_encoding'));
+        $this->setView($viewName);
+
+        return $this;
+    }
+
     public function setVar($name, $value) {
         $name = static::normalizeVarName($name);
 
@@ -195,6 +232,24 @@ class Context extends \php5bp\Object implements ContextInterface {
 
         $this->_view = $viewName;
         return $this;
+    }
+
+    public function suppressOutput() {
+        $viewName = null;
+
+        $appConf = \php5bp::appConf();
+        if (\array_key_exists('views', $appConf)) {
+            if (\array_key_exists('null', $appConf['views'])) {
+                $viewName = $appConf['views']['null'];
+            }
+        }
+
+        $viewName = \trim($viewName);
+        if ('' == $viewName) {
+            $viewName = static::DEFAULT_VIEW_NULL;
+        }
+
+        return $this->setView($viewName);
     }
 
     public function unsetVar($name) {

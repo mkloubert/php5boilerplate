@@ -48,6 +48,7 @@ final class php5bp {
         'yaml'  => '\Zend\Config\Reader\Yaml',
         'properties'  => '\Zend\Config\Reader\JavaProperties',
     );
+    private static $_logger;
     /**
      * @var DateTime
      */
@@ -205,6 +206,50 @@ final class php5bp {
     }
 
     /**
+     * Formats a string.
+     *
+     * @param string $format The format string.
+     * @param mixed ...$arg One or more argument for $format.
+     *
+     * @return string The formatted string.
+     */
+    public static function format($format) {
+        return self::formatArray($format,
+                                 array_slice(func_get_args(), 1));
+    }
+
+    /**
+     * Formats a string.
+     *
+     * @param string $format The format string.
+     * @param \Traversable|array $args The arguments for $format.
+     *
+     * @return string The formatted string.
+     */
+    public static function formatArray($format, $args = null) {
+        if (is_null($args)) {
+            $args = array();
+        }
+
+        if (!is_array($args)) {
+            $args = iterator_to_array($args);
+        }
+
+        return preg_replace_callback('/{(\d+)(\:[^}]*)?}/i',
+                                     function($match) use ($args) {
+                                         $i = intval($match[1]);
+
+                                         $format = null;
+                                         if (array_key_exists(2, $match)) {
+                                             $format = substr($match[2], 1);
+                                         }
+
+                                         return array_key_exists($i, $args) ? strval(php5bp::parseFormatStringValue($format, $args[$i]))
+                                                                            : $match[0];
+                                     }, $format);
+    }
+
+    /**
      * Gets if the application runs in debug mode or not.
      *
      * @return bool Runs in debug mode or not.
@@ -231,6 +276,36 @@ final class php5bp {
     }
 
     /**
+     * Gets the logger.
+     *
+     * @return \php5bp\Diagnostics\Log\Logger The logger.
+     */
+    public static function log() {
+        if (is_null(self::$_logger)) {
+            $newLogger = new \php5bp\Diagnostics\Log\Logger();
+            $newLogger->addWriter(new \Zend\Log\Writer\Noop());
+
+            if (self::isDebug()) {
+                if (isset($_SERVER['HTTP_USER_AGENT'])) {
+                    if (false !== stripos($_SERVER['HTTP_USER_AGENT'], 'firefox')) {
+                        // FirePHP
+                        $newLogger->addWriter(new \Zend\Log\Writer\FirePhp());
+                    }
+
+                    if (false !== stripos($_SERVER['HTTP_USER_AGENT'], 'chrome')) {
+                        // ChromePHP
+                        $newLogger->addWriter(new \Zend\Log\Writer\ChromePhp());
+                    }
+                }
+            }
+
+            self::$_logger = $newLogger;
+        }
+
+        return self::$_logger;
+    }
+
+    /**
      * Gets the current time.
      *
      * @return DateTime The current time.
@@ -249,6 +324,34 @@ final class php5bp {
         $result->setTimestamp(self::$_now->getTimestamp());
 
         return $result;
+    }
+
+    /**
+     * Formats a value for a formatted string.
+     *
+     * @param string $format The format string for $value.
+     * @param mixed $value The value to parse.
+     *
+     * @return mixed The parsed value.
+     */
+    public static function parseFormatStringValue($format, $value) {
+        if (!is_null($format)) {
+            $handled = true;
+
+            if ($value instanceof DateTime) {
+                $value = $value->format($format);
+            }
+            else {
+                $handled = false;
+            }
+
+            if (!$handled) {
+                // default
+                $value = sprintf($format, $value);
+            }
+        }
+
+        return $value;
     }
 
     /**

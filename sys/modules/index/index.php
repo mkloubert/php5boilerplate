@@ -34,40 +34,12 @@ use \php5bp\Modules\Execution\ContextInterface as ModuleExecutionContext;
  */
 class IndexModule extends ModuleBase {
     protected function execute(ModuleExecutionContext $ctx) {
-        ?>
+        $ctx->setupForJson();
 
-        <style type="text/css">
-            .col {
-                min-width: 100px;
-            }
-        </style>
-
-        <div class="row" id="wurst">
-            <div class="col col-1">1</div>
-            <div class="col col-1">2</div>
-            <div class="col col-1">3</div>
-            <div class="col col-1">4</div>
-            <div class="col col-1">5</div>
-            <div class="col col-1">6</div>
-            <div class="col col-1">7</div>
-            <div class="col col-1">8</div>
-            <div class="col col-1">9</div>
-            <div class="col col-1">10</div>
-            <div class="col col-1">11</div>
-            <div class="col col-1">12</div>
-        </div>
-
-        <script type="text/javascript">
-
-            $php5bp.page.addElements('wurstColumns', '#wurst .col');
-
-            $php5bp.page.addOnLoaded(function() {
-                alert('abc def e'.ucwords());
-            });
-
-        </script>
-
-        <?php
+        return array(
+            'PZ' => '19861222',
+            'MK' => \php5bp::format('{0:Y-m-d H:i:s}', \DateTime::createFromFormat('Y-m-d H:i', '1979-09-23 21:50')),
+        );
     }
 
     public function testAction(ModuleExecutionContext $ctx) {

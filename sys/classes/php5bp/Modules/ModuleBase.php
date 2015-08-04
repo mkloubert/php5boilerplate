@@ -279,20 +279,20 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                                         $actionArgs = $actionEntry['args'];
                                     }
                                     else {
-                                        $actionArgs = array();
+                                        $actionArgs = Enumerable::create(\explode(static::LIST_SEPARATOR, $actionEntry['args']))
+                                                                ->select(function ($x) {
+                                                                             $x = \trim($x);
+                                                                             if ('' == $x) {
+                                                                                 return null;
+                                                                             }
 
-                                        Enumerable::create(\explode(static::LIST_SEPARATOR, $actionEntry['args']))
-                                                  ->each(function ($x) use (&$actionArgs) {
-                                                             $x = \trim($x);
-                                                             if ('' == $x) {
-                                                                 return;
-                                                             }
+                                                                             $result         = array();
+                                                                             $result['name'] = $x;
 
-                                                             $newEntry = array();
-                                                             $newEntry['name'] = $x;
-
-                                                             $actionArgs[] = $newEntry;
-                                                         });
+                                                                             return $result;
+                                                                         })
+                                                                ->ofType('array')
+                                                                ->toArray();
                                     }
                                 }
 
@@ -478,6 +478,6 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
     public final function updateContext(ContextInterface $ctx = null) {
         $this->_context = $ctx;
 
-        return $ctx;
+        return $this;
     }
 }

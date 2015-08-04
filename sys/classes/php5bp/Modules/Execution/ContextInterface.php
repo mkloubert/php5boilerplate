@@ -98,6 +98,13 @@ interface ContextInterface extends \php5bp\ObjectInterface {
     function hasVar($name);
 
     /**
+     * Prepares the output for a Document Not Found (404) error.
+     *
+     * @return $this
+     */
+    function notFound();
+
+    /**
      * Gets the HTTP request context.
      *
      * @return \php5bp\Http\Requests\ContextInterface The request context.
@@ -121,6 +128,13 @@ interface ContextInterface extends \php5bp\ObjectInterface {
     function setAction($actionName);
 
     /**
+     * Sets up the result for JSON output.
+     *
+     * @return $this
+     */
+    function setupForJson();
+
+    /**
      * Sets the value for a variable.
      *
      * @param string $name The name of the variable.
@@ -138,6 +152,13 @@ interface ContextInterface extends \php5bp\ObjectInterface {
      * @return $this.
      */
     function setView($viewName);
+
+    /**
+     * Suppresses output.
+     *
+     * @return $this
+     */
+    function suppressOutput();
 
     /**
      * Removes a variable.

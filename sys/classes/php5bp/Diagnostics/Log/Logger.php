@@ -19,41 +19,57 @@
  * License along with this software.                                                                                  *
  **********************************************************************************************************************/
 
-
-define('PHP5BP_INDEX', true, false);
-
-chdir(__DIR__);
-
-iconv_set_encoding('input_encoding', 'UTF-8');
-iconv_set_encoding('internal_encoding', 'UTF-8');
-iconv_set_encoding('output_encoding', 'UTF-8');
-
-require_once __DIR__ . DIRECTORY_SEPARATOR . 'bootstrap.php';
+namespace php5bp\Diagnostics\Log;
 
 
-// run application
-$app = php5bp::app();
-try {
-    try {
-        $app->initialize();
+/**
+ * Extension of \Zend\Log\Logger class.
+ *
+ * @package php5bp\Diagnostics\Log
+ * @author Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
+ */
+class Logger extends \Zend\Log\Logger {
+    /**
+     * Add a filter specific to all writers.
+     *
+     * @param  int|string|\Zend\Log\Filter\FilterInterface $filter
+     * @param  array|null $options
+     *
+     * @return $this
+     *
+     * @throws \Zend\Log\Exception\InvalidArgumentException
+     */
+    public function addFilter($filter, array $options = null) {
+        foreach ($this->writers->toArray() as $writer) {
+            $writer->addFilter($filter, $options);
+        }
+
+        return $this;
     }
-    catch (\Exception $ex) {
-        throw new \php5bp\Application\NotInitializedException($app, $ex);
-    }
 
-    $app->run();
-}
-catch (\Exception $ex) {
-    if (!$app->handleException($ex)) {
-        // not handled => rethrow
-        throw $ex;
-    }
-}
-finally {
-    $app->dispose();
+    public function log($priority, $message, $extra = array()) {
+        $timestamp = new \DateTime();
 
-    if ($app->processShutdown()) {
-        // shutdown process
-        require_once __DIR__ . DIRECTORY_SEPARATOR . 'shutdown.php';
+        if ($this->writers->count() === 0) {
+            throw new \Zend\Log\Exception\RuntimeException('No log writer specified');
+        }
+
+        $event = array(
+            'timestamp'    => $timestamp,
+            'priority'     => (int) $priority,
+            'priorityName' => $this->priorities[$priority],
+            'message'      => $message,
+            'extra'        => $extra,
+        );
+
+        foreach ($this->processors->toArray() as $processor) {
+            $event = $processor->process($event);
+        }
+
+        foreach ($this->writers->toArray() as $writer) {
+            $writer->write($event);
+        }
+
+        return $this;
     }
 }

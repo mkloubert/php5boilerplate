@@ -19,41 +19,34 @@
  * License along with this software.                                                                                  *
  **********************************************************************************************************************/
 
+namespace php5bp\Db;
 
-define('PHP5BP_INDEX', true, false);
+use \Zend\Db\Adapter\Adapter as ZendDbAdapter;
+use \Zend\Db\RowGateway\Exception\InvalidArgumentException as ZendInvalidArgumentException;
+use \Zend\Db\Sql\Sql as ZendSql;
+use \Zend\Db\Sql\TableIdentifier as ZendSqlTableIdentifier;
 
-chdir(__DIR__);
+/**
+ * Extension of \Zend\Db\RowGateway\RowGateway class.
+ *
+ * @package php5bp\Db
+ * @author Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
+ */
+class RowGateway extends \Zend\Db\RowGateway\RowGateway {
+    /**
+     * Initializes a new instance of that class.
+     *
+     * @param string $primaryKeyColumn
+     * @param string|ZendSqlTableIdentifier $table
+     * @param ZendDbAdapter|ZendSql $adapterOrSql
+     *
+     * @throws ZendInvalidArgumentException
+     */
+    public function __construct($primaryKeyColumn, $table, $adapterOrSql = null) {
+        if (\is_null($adapterOrSql)) {
+            $adapterOrSql = \php5bp::db();
+        }
 
-iconv_set_encoding('input_encoding', 'UTF-8');
-iconv_set_encoding('internal_encoding', 'UTF-8');
-iconv_set_encoding('output_encoding', 'UTF-8');
-
-require_once __DIR__ . DIRECTORY_SEPARATOR . 'bootstrap.php';
-
-
-// run application
-$app = php5bp::app();
-try {
-    try {
-        $app->initialize();
-    }
-    catch (\Exception $ex) {
-        throw new \php5bp\Application\NotInitializedException($app, $ex);
-    }
-
-    $app->run();
-}
-catch (\Exception $ex) {
-    if (!$app->handleException($ex)) {
-        // not handled => rethrow
-        throw $ex;
-    }
-}
-finally {
-    $app->dispose();
-
-    if ($app->processShutdown()) {
-        // shutdown process
-        require_once __DIR__ . DIRECTORY_SEPARATOR . 'shutdown.php';
+        parent::__construct($primaryKeyColumn, $table, $adapterOrSql);
     }
 }

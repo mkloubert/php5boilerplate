@@ -23,8 +23,8 @@ if ('undefined' === typeof Array.prototype.isEmpty) {
      * Checks if that array is empty or not.
      *
      * @property isEmpty
-     *
-     * @return {Boolean} Is empty or not.
+     * @type Boolean
+     * @readOnly
      */
     Object.defineProperty(Array.prototype, 'isEmpty', {
        get: function() {
@@ -38,8 +38,8 @@ if ('undefined' === typeof Array.prototype.isNotEmpty) {
      * Checks if that array is NOT empty.
      *
      * @property isNotEmpty
-     *
-     * @return {Boolean} Is empty (false) or not (true).
+     * @type Boolean
+     * @readOnly
      */
     Object.defineProperty(Array.prototype, 'isNotEmpty', {
         get: function() {
@@ -110,8 +110,8 @@ if ('undefined' === typeof String.prototype.isEmpty) {
      * Checks if that string is empty or not.
      *
      * @property isEmpty
-     *
-     * @return {Boolean} Is empty or not.
+     * @type Boolean
+     * @readOnly
      */
     Object.defineProperty(String.prototype, 'isEmpty', {
         get: function() {
@@ -125,14 +125,27 @@ if ('undefined' === typeof String.prototype.isNotEmpty) {
      * Checks if that string is NOT empty.
      *
      * @property isNotEmpty
-     *
-     * @return {Boolean} Is empty (false) or not (true).
+     * @type Boolean
+     * @readOnly
      */
     Object.defineProperty(String.prototype, 'isNotEmpty', {
         get: function() {
             return this.length > 0;
         }
     });
+}
+
+if ('undefined' === typeof String.isNullOrEmpty) {
+    /**
+     * Check if a string is (null) or empty.
+     *
+     * @param {String} s The string to check.
+     *
+     * @return {Boolean} Is (null) or empty.
+     */
+    String.isNullOrEmpty = function(s) {
+        return (null == s) || ('' == s);
+    };
 }
 
 if ('undefined' === typeof String.isNullOrWhitespace) {
@@ -203,6 +216,75 @@ if ('undefined' === typeof String.prototype.trimRight) {
 
 var $MJK_PHP5_BOILERPLATE = {};
 
+$MJK_PHP5_BOILERPLATE.events = {};
+{
+    // DON'T CHANGE!
+    // THIS IS FOR INTERNAL USE ONLY!
+    $MJK_PHP5_BOILERPLATE.events.__defaultPageLoaded = function(e) {
+        if (!$MJK_PHP5_BOILERPLATE.page.__onLoadedActions) {
+            return this;
+        }
+
+        var errors = [];
+        var lastError = null;
+        var prevError = null;
+        var prevValue = null;
+        var value = null;
+        for (var i = 0; i < $MJK_PHP5_BOILERPLATE.page.__onLoadedActions.length; i++) {
+            var entry = $MJK_PHP5_BOILERPLATE.page.__onLoadedActions[i];
+            if (!entry.action) {
+                continue;
+            }
+
+            var ctx = {
+                'errors': errors,
+                'index': i,
+                'lastError': lastError,
+                'nextValue': null,
+                'page': $MJK_PHP5_BOILERPLATE.page,
+                'prevError': prevError,
+                'prevValue' : prevValue,
+                'state': entry.options.state,
+                'time': e.time,
+                'value': value
+            };
+
+            try {
+                entry.action(ctx);
+
+                prevError = null;
+            }
+            catch (err) {
+                var errCtx = {
+                    'error': err,
+                    'index': i
+                };
+
+                lastError = errCtx;
+                prevError = errCtx;
+
+                errors.push(errCtx);
+
+                if (!entry.options.continueOnError) {
+                    throw err;
+                }
+            }
+            finally {
+                prevValue = ctx.nextValue;
+                value = ctx.value;
+            }
+        }
+
+        if (errors.length > 0) {
+            if ($MJK_PHP5_BOILERPLATE.page.onHandleLoadedErrors) {
+                $MJK_PHP5_BOILERPLATE.page.onHandleLoadedErrors(errors);
+            }
+        }
+    };
+
+    $MJK_PHP5_BOILERPLATE.events.pageLoaded = $MJK_PHP5_BOILERPLATE.events.__defaultPageLoaded;
+}
+
 $MJK_PHP5_BOILERPLATE.funcs = {};
 {
     /**
@@ -239,6 +321,92 @@ $MJK_PHP5_BOILERPLATE.funcs = {};
     };
 
     /**
+     * Executes JavaScript code globally.
+     *
+     * @param {String} code The JavaScript code to execute.
+     *
+     * @return {mixed} The result of the execution.
+     */
+    $MJK_PHP5_BOILERPLATE.funcs.eval = function(code) {
+        return jQuery.globalEval(code);
+    };
+
+    /**
+     * Invokes a function inside a try-catch block and returns the result as object.
+     *
+     * @param {function} fn The function to invoke.
+     * @param {mixed} [...args] The arguments for the function.
+     *
+     * @return {Object} The result object of the invocation.
+     */
+    $MJK_PHP5_BOILERPLATE.funcs.invoke = function(fn) {
+        var args = [];
+        for (var i = 1; i < arguments.length; i++) {
+            args.push(arguments[i]);
+        }
+
+        return this.invokeArray(fn, args);
+    };
+
+    /**
+     * Invokes a function inside a try-catch block and returns the result as object.
+     *
+     * @param {function} fn The function to invoke.
+     * @param {Array} [args] The arguments for the function.
+     *
+     * @return {Object} The result object of the invocation.
+     */
+    $MJK_PHP5_BOILERPLATE.funcs.invokeArray = function(fn, args) {
+        if (!args) {
+            args = [];
+        }
+
+        var result = {
+            'args': args,
+            'hasBeenInvoked': false
+        };
+
+        Object.defineProperty(result, 'duration', {
+            get: function() {
+                return this.endTime - this.startTime;
+            }
+        });
+
+        Object.defineProperty(result, 'hasFailed', {
+            get: function() {
+                return this.error ? true : false;
+            }
+        });
+
+        try {
+            if (fn) {
+                result.hasBeenInvoked = true;
+
+                var code = 'fn(';
+                for (var i = 0; i < result.args.length; i++) {
+                    if (i > 0) {
+                        code += ',';
+                    }
+
+                    code += 'result.args[' + i + ']';
+                }
+                code += ');';
+
+                result.startTime = $MJK_PHP5_BOILERPLATE.now;
+                result.result = eval(code);
+                result.endTime = $MJK_PHP5_BOILERPLATE.now;
+            }
+        }
+        catch (e) {
+            result.endTime = $MJK_PHP5_BOILERPLATE.now;
+
+            result.error = e;
+        }
+
+        return result;
+    };
+
+    /**
      * Checks if an object is a function or not.
      *
      * @param {Object} obj The object to check.
@@ -261,6 +429,39 @@ $MJK_PHP5_BOILERPLATE.funcs = {};
     };
 }
 
+/**
+ * Gets the current time.
+ *
+ * @property now
+ * @type Date
+ * @readOnly
+ */
+Object.defineProperty($MJK_PHP5_BOILERPLATE,
+                      'now',
+                      {
+                          get: function() {
+                              return new Date();
+                          }
+                      });
+
+/**
+ * Gets the current UTC time.
+ *
+ * @property nowUTC
+ * @type Date
+ * @readOnly
+ */
+Object.defineProperty($MJK_PHP5_BOILERPLATE,
+                      'nowUTC',
+                      {
+                          get: function() {
+                              var n = this.now;
+
+                              return new Date(n.getUTCFullYear(), n.getUTCMonth(), n.getUTCDate(),
+                                              n.getUTCHours(), n.getUTCMinutes(), n.getUTCSeconds(), n.getUTCMilliseconds());
+                          }
+                      });
+
 $MJK_PHP5_BOILERPLATE.page = {};
 {
     // this is for internal use only!
@@ -280,7 +481,7 @@ $MJK_PHP5_BOILERPLATE.page = {};
      */
     $MJK_PHP5_BOILERPLATE.page.addOnLoaded = function(action, opts) {
         opts = jQuery.extend({
-            'continueOnError': true,
+            'continueOnError': false,
             'state': null
         }, opts);
 
@@ -306,66 +507,21 @@ $MJK_PHP5_BOILERPLATE.page = {};
      * @chainable
      */
     $MJK_PHP5_BOILERPLATE.page.processOnLoadedActions = function() {
-        if (!$MJK_PHP5_BOILERPLATE.page.__onLoadedActions) {
-            return this;
-        }
-
-        var errors = [];
-        var lastError = null;
-        var prevError = null;
-        var prevValue = null;
-        var value = null;
-        for (var i = 0; i < this.__onLoadedActions.length; i++) {
-            var entry = this.__onLoadedActions[i];
-            if (!entry.action) {
-                continue;
-            }
-
-            var ctx = {
-                'errors': errors,
-                'index': i,
-                'lastError': lastError,
-                'nextValue': null,
-                'page': $MJK_PHP5_BOILERPLATE.page,
-                'prevError': prevError,
-                'prevValue' : prevValue,
-                'state': entry.options.state,
-                'value': value
+        if ($MJK_PHP5_BOILERPLATE.events.pageLoaded) {
+            var e = {
+                'time': $MJK_PHP5_BOILERPLATE.now
             };
 
-            try {
-                entry.action(ctx);
+            e.invokeDefault = function() {
+                $MJK_PHP5_BOILERPLATE.events.__defaultPageLoaded(e);
+            };
 
-                prevError = null;
-            }
-            catch (err) {
-                var errCtx = {
-                    'error': err,
-                    'index': i
-                };
+            $MJK_PHP5_BOILERPLATE.events.pageLoaded(e);
 
-                lastError = errCtx;
-                prevError = errCtx;
-
-                errors.push(errCtx);
-
-                if (!entry.options.continueOnError) {
-                    throw err;
-                }
-            }
-            finally {
-                prevValue = ctx.nextValue;
-                value = ctx.value;
-            }
+            return true;
         }
 
-        if (errors.length > 0) {
-            if ($MJK_PHP5_BOILERPLATE.page.onHandleLoadedErrors) {
-                $MJK_PHP5_BOILERPLATE.page.onHandleLoadedErrors(errors);
-            }
-        }
-
-        return this;
+        return false;
     };
 
     /**
@@ -430,17 +586,7 @@ $MJK_PHP5_BOILERPLATE.page = {};
     };
 }
 
-// aliases
-{
-    if ('undefined' === typeof $php5boilerplate) {
-        $php5boilerplate = $MJK_PHP5_BOILERPLATE;
-    }
-
-    if ('undefined' === typeof $php5BP) {
-        $php5BP = $MJK_PHP5_BOILERPLATE;
-    }
-
-    if ('undefined' === typeof $php5bp) {
-        $php5bp = $MJK_PHP5_BOILERPLATE;
-    }
+// alias
+if ('undefined' === typeof $php5bp) {
+    $php5bp = $MJK_PHP5_BOILERPLATE;
 }

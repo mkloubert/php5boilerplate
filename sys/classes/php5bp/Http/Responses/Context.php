@@ -30,6 +30,12 @@ namespace php5bp\Http\Responses;
  */
 class Context extends \php5bp\Object implements ContextInterface {
     /**
+     * The name of the header for the MIME type of the output.
+     */
+    const HEADER_CONTENT_TYPE = 'Content-type';
+
+
+    /**
      * @var int
      */
     protected $_code;
@@ -53,6 +59,10 @@ class Context extends \php5bp\Object implements ContextInterface {
 
     public function getCode() {
         return $this->_code;
+    }
+
+    public function getContentType() {
+        return $this->getHeader(static::HEADER_CONTENT_TYPE);
     }
 
     public function getHeader($name, $defaultValue = null, &$found = null) {
@@ -91,6 +101,18 @@ class Context extends \php5bp\Object implements ContextInterface {
         $code = \trim($code);
 
         $this->_code = \is_numeric($code) ? \intval($code) : null;
+        return $this;
+    }
+
+    public function setContentType($mime) {
+        $mime = \trim(\strtolower($mime));
+        if ('' != $mime) {
+            $this->setHeader(static::HEADER_CONTENT_TYPE, $mime);
+        }
+        else {
+            $this->unsetHeader(static::HEADER_CONTENT_TYPE);
+        }
+
         return $this;
     }
 

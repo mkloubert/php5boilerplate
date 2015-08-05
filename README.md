@@ -95,7 +95,7 @@ Edit the **meta.json** file and define the action(s) there:
 
 The **key** of each entry **defines the name of the action**, the **value the name of the method** inside the module class. 
 
-These methods are invoked inseatd of the `execute()` method.
+These methods are invoked instead of the `execute()` method.
 
 Each method HAS TO BE public and non-static.
 

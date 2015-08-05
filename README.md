@@ -19,7 +19,7 @@ PHP 5 based and modular framework for starting websites from scratch.
 
 ### Global application settings
 
-Create or edit the file **app.json** in the folder **sys/conf**.
+Create or edit the file **app.json** in the **sys/conf** folder.
 
 ```json
 {

@@ -62,6 +62,9 @@ use \php5bp\Modules\Execution\ContextInterface as ModuleExecutionContext;
 
 class MyModule extends ModuleBase {
     protected function execute(ModuleExecutionContext $ctx) {
+        ?>
+            <h1>Hello, World!</h1>
+        <?php
     }
 }
 ```

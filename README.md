@@ -45,7 +45,7 @@ and should only be changed if you want to use another name. The **default value*
 
 If you want to see more **debug information** (via [FirePHP](https://github.com/firephp/firephp-core) or [ChromePHP](https://github.com/ccampbell/chromephp) e.g.) you have to **set the debug flag** to **(true)**.
 
-### Create module
+### Create a module
 
 Create a directory inside the **sys/modules** folder.
 
@@ -76,6 +76,83 @@ Add a **meta.json** file inside your module's folder and **define the full class
 ```json
 {
   "class": "\\MyPage\\Modules\\MyModule"
+}
+```
+
+#### Define an action for a module
+
+Edit the **meta.json** file and define the action(s) there:
+
+```json
+{
+  "class": "\\MyPage\\Modules\\MyModule",
+  "actions": {
+     "myFormAction": "processForm",
+     "myJsonAction": "processJson"
+  }
+}
+```
+
+The **key** of each entry **defines the name of the action**, the **value the name of the method** inside the module class. 
+
+These methods are invoked inseatd of the `execute()` method.
+
+Each method HAS TO BE public and non-static.
+
+```php
+namespace MyPage\Modules;
+
+use \php5bp\Modules\ModuleBase;
+use \php5bp\Modules\Execution\ContextInterface as ModuleExecutionContext;
+
+
+class MyModule extends ModuleBase {
+    protected function execute(ModuleExecutionContext $ctx) {
+        ?>
+            <!-- call 'myFormAction' action -->
+            <form action="/mymodule" method="POST">
+                <input type="hidden" name="action" value="myFormAction">
+                
+                <input type="submit">
+            </form>
+            
+            <input type="button" onclick="callJsonAction()">
+            
+            <script type="text/javascript">
+            
+                function callJsonAction() {
+                    $.ajax({
+                        'url': '/mymodule',
+                        'type': 'POST',
+                        'data': {
+                            'action': 'myJsonAction'
+                        },
+                        
+                        'success': function(data) {
+                            // process result of 'myJsonAction'
+                        }
+                    });
+                }
+            
+            </script>
+        <?php
+    }
+    
+    // myFormAction
+    public function processForm(ModuleExecutionContext $ctx) {
+        // process the form of 'execute' method
+    }
+    
+    // myJsonAction
+    public function processJson(ModuleExecutionContext $ctx) {
+        $ctx->setupForJson();
+        
+        $jsonResult = array();
+        
+        // do something that returns JSON conform data
+        
+        return $jsonResult;
+    }
 }
 ```
 

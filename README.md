@@ -71,7 +71,7 @@ class MyModule extends ModuleBase {
 
 The system needs to know what class should be used for a module instance.
 
-Add a **meta.json** file inside your module's folder and define the full class name:
+Add a **meta.json** file inside your module's folder and **define the full class name**:
 
 ```json
 {

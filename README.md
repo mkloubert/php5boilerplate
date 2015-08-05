@@ -122,3 +122,90 @@ The content you output or return in your modules will be stored in the `$this->c
 
 You do not need to use the JavaScript libraries and the CSS styles from the example. You can completely start with your own stuff.
 
+### Database connections
+
+Create or edit the file **main.json** in the **sys/conf/db** folder.
+
+This is an example for a MySQL database connection:
+
+```json
+{
+  "driver": "Pdo",
+  "dsn": "mysql:dbname=myDatabase;host=localhost",
+  "username": "dbUser",
+  "password": "dbPassword"
+}
+```
+
+Now you can use it by calling the `\php5bp::db()` method:
+
+```php
+$db = \php5bp::db();
+
+$sql = "SELECT * FROM users;";
+
+$dbResult = $db->query($sql);
+               ->execute();
+               
+foreach ($dbResult as $row) {
+    // do things with the current row
+}
+```
+
+Have a look at [Zend Framework documentation page](http://framework.zend.com/manual/current/en/modules/zend.db.adapter.html) to get more information about adapters and their configurations and how to use them.
+
+### Caching
+
+By default the system is configured to use the application's memory. The problem is that all cached data will be lost when the script execution has finished.
+
+Create or edit the file **main.json** in the **sys/conf/cache** folder.
+
+This is an example for a [memcached](https://en.wikipedia.org/wiki/Memcached) server:
+
+```json
+{
+  "adapter": {
+    "name": "memcached",
+    "options": {
+      "ttl": 7200,
+      "namespace": "php5boilerplate",
+      "servers": [
+        ["127.0.0.1", 11211]
+      ],
+      "liboptions": {
+        "COMPRESSION": true,
+        "binary_protocol": true,
+        "no_block": true
+      }
+    }
+  },
+  "plugins": {
+    "exception_handler": {
+      "throw_exceptions": false
+    }
+  }
+}
+```
+
+The following code shows the basic usage of a cache storage by calling `\php5bp::cache()` method:
+
+```php
+$cache = \php5bp::cache();
+
+$pz = $cache->getItem('PZ', $hasPZ);
+
+if (!$hasPZ) {
+    // keep sure to have an item
+    $cache->setItem('PZ', '19861222');
+}
+
+// get current value
+$pz = $cache->getItem('PZ');
+
+if ($cache->hasItem('PZ')) {
+    // remove existing item
+    $cache->removeItem('PZ');
+}
+```
+
+Have a look at [Zend Framework documentation page](http://framework.zend.com/manual/current/en/modules/zend.cache.storage.adapter.html) to get more information about storage adapters and their configurations and how to use them.

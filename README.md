@@ -168,7 +168,7 @@ This is an example for a [memcached](https://en.wikipedia.org/wiki/Memcached) se
     "name": "memcached",
     "options": {
       "ttl": 7200,
-      "namespace": "php5boilerplate",
+      "namespace": "myPage",
       "servers": [
         ["127.0.0.1", 11211]
       ],

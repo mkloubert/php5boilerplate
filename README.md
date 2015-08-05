@@ -227,3 +227,53 @@ Use `\php5bp::log()` method to access the global logger:
 ```
 
 Have a look at [Zend Framework documentation page](http://framework.zend.com/manual/current/en/modules/zend.log.overview.html) to get more information about logging.
+
+### Bootstrapping
+
+In the **sys/bootstrap** folder you can define own scripts for initializing your application environment. All files are included in alphabetic order (case-insensitive).
+
+One suggestion is to choose a filename that has a format like `{script_nr_with_leading_zeros}_{script_name}.php`.
+
+For example you can create a file called `0001_logger.php` to add additional log writers:
+
+```php
+<?php
+
+defined('PHP5BP_BOOTSTRAP') or die();
+
+use \php5bp\Diagnostics\Log\Logger;
+use \php5bp\Diagnostics\Log\Writers\CallableLogWriter;
+use \Zend\Log\Filter\Priority as ZendLogFilterPriority;
+
+// write to database
+\php5bp::log()
+       ->addWriter(new CallableLogWriter(
+                       function($event) {
+                           // get table gateway for a table called 'logs'
+                           $table = \php5bp::table('logs');
+                           
+                           // define the columns (left) with their values (right)
+                           $newEntry = array(
+                               'extra'    => json_encode($event['extra']),
+                               'message'  => (string)$event['message'],
+                               'priority' => $event['priority'],
+                               'time'     => $event['timestamp']->format('Y-m-d H:i:s'),
+                           );
+
+                           // insert data
+                           $table->insert($newEntry);
+                       }));
+                       
+if (!php5bp::isDebug()) {
+    // write debug messages in debug mode only
+
+    \php5bp::log()
+           ->addFilter(new ZendLogFilterPriority(Logger::DEBUG, "<"));
+}
+```
+
+### Shutdown
+
+In the **sys/shutdown** folder you can define own scripts for disposing the application environment.
+
+It works the same way like bootstrapping.

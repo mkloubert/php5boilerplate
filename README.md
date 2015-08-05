@@ -235,7 +235,7 @@ foreach ($dbResult as $row) {
 
 Have a look at [Zend Framework documentation page](http://framework.zend.com/manual/current/en/modules/zend.db.adapter.html) to get more information about adapters and their configurations and how to use them.
 
-#### Created classes for cached rows
+#### Create classes for cached rows
 
 The frameworks provides the base class **\php5bp\Db\CachableRowBase** which manages the data of a table's row by storing it in a/the cache.
 

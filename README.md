@@ -209,3 +209,21 @@ if ($cache->hasItem('PZ')) {
 ```
 
 Have a look at [Zend Framework documentation page](http://framework.zend.com/manual/current/en/modules/zend.cache.storage.adapter.html) to get more information about storage adapters and their configurations and how to use them.
+
+### Logging
+
+Use `\php5bp::log()` method to access the global logger.
+
+```php
+\php5bp::log()
+       ->debug('Something for the developer or tester')
+       ->info('An info')
+       ->notice('That is something you should know')
+       ->warn("That's a warning")
+       ->err('Something went wrong!')
+       ->crit('This becomes critical!')
+       ->alert('ALERT!!!')
+       ->emerg('WORST CASE!');
+```
+
+Have a look at [Zend Framework documentation page](http://framework.zend.com/manual/current/en/modules/zend.log.overview.html) to get more information about logging.

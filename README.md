@@ -358,3 +358,22 @@ if (!php5bp::isDebug()) {
 In the **sys/shutdown** folder you can define own scripts for disposing the application environment.
 
 It works the same way like bootstrapping.
+
+### Classes
+
+Classes are stored inside the **sys/classes** folder structure.
+
+If you want to create the class
+
+```php
+<?php
+
+// folder 'sys/classes/MyPage/MyNamespace1/MyNamespace2'
+namespace MyPage\MyNamespace1\MyNamespace2;
+
+// file 'MyClass.php'
+class MyClass {
+}
+```
+
+for example, you have to store the code into the **sys/classes/MyPage/MyNamespace1/MyNamespace2/MyClass.php** file.

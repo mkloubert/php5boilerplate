@@ -235,6 +235,47 @@ foreach ($dbResult as $row) {
 
 Have a look at [Zend Framework documentation page](http://framework.zend.com/manual/current/en/modules/zend.db.adapter.html) to get more information about adapters and their configurations and how to use them.
 
+#### Created classes for cached rows
+
+The frameworks provides the base class **\php5bp\Db\CachableRowBase** which manages the data of a table's row by storing it in a/the cache.
+
+This is a small example for a row of a table called `users`:
+
+```php
+<?php
+
+namespace MyPage\Db\Entities;
+
+class UserRow extends \php5bp\Db\CachableRowBase {
+    protected $_id;
+    
+    public function __construct($id) {
+        $this->_id = $id;
+        
+        parent::__construct();
+    }
+
+    // list of columns that represent
+    // the primary key of the rows
+    public static function idColumns() {
+        return array('id');
+    }
+    
+    // the list of values that represent
+    // the primary key value
+    protected abstract function ids() {
+        return array($this->_id);
+    }
+    
+    // the name of the table
+    public static function tableName() {
+        return 'users';
+    }
+}
+```
+
+That class contains methods like `clearCache()`, `deleteRow()`, `registerDeletedEvent()` or `updateColumn()` which gives you control over the underlying data.
+
 ### Caching
 
 By default the system is configured to use the application's memory. The problem is that all cached data will be lost when the script execution has finished.

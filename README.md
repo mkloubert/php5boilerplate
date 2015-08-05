@@ -212,7 +212,7 @@ Have a look at [Zend Framework documentation page](http://framework.zend.com/man
 
 ### Logging
 
-Use `\php5bp::log()` method to access the global logger.
+Use `\php5bp::log()` method to access the global logger:
 
 ```php
 \php5bp::log()

@@ -117,5 +117,5 @@ Here is an example:
 
 The content you output or return in your modules will be stored in the `$this->content` variable.
 
-You do not need to use the JavaScript libraries and the CSS styles from the example. You can completely starts with your own stuff.
+You do not need to use the JavaScript libraries and the CSS styles from the example. You can completely start with your own stuff.
 

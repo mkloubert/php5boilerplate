@@ -33,7 +33,7 @@ Create or edit the file **app.json** in the **sys/conf** folder.
 }
 ```
 
-**modules.var stores** the HTTP variable for the **action name**. This is handled by the **.htaccess** file
+**modules.var** stores the HTTP variable for the **action name**. This is handled by the **.htaccess** file
 
 ```apache
 RewriteRule ^(.*)$ index.php?CE4EBCB3=$1 [QSA,L]

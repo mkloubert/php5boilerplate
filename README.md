@@ -79,6 +79,8 @@ Add a **meta.json** file inside your module's folder and **define the full class
 }
 ```
 
+Now you only need to open the URL `/mymodule` to invoke the module.
+
 #### Define an action for a module
 
 Edit the **meta.json** file and define the action(s) there:

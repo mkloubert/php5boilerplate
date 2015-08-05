@@ -160,7 +160,7 @@ By default the system is configured to use the application's memory. The problem
 
 Create or edit the file **main.json** in the **sys/conf/cache** folder.
 
-This is an example for a [memcached](https://en.wikipedia.org/wiki/Memcached) server:
+This is an example for a [memcached](http://php.net/manual/en/book.memcached.php) server:
 
 ```json
 {

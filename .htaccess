@@ -1,5 +1,3 @@
-SetEnv PLANEL_APPLICATION_ENV "development"
-
 # remove headers
 Header unset X-Powered-By
 

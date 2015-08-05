@@ -34,13 +34,23 @@ use \php5bp\Modules\Execution\ContextInterface as ModuleExecutionContext;
  */
 class IndexModule extends ModuleBase {
     protected function execute(ModuleExecutionContext $ctx) {
+        \php5bp::log()
+               ->debug('Something for the developer or tester')
+               ->info('An info')
+               ->notice('That is something you should know')
+               ->warn("That's a warning")
+               ->err('Something went wrong!')
+               ->crit('This becomes critical!')
+               ->alert('ALERT!!!')
+               ->emerg('WORST CASE!');
+
         $ctx->setupForHtml()
             ->setDefaultView();
 
         ?>
             <script type="text/javascript">
 
-                $php5bp.page.addOnLoaded(function() {
+                $php5bp.addOnLoaded(function() {
                     var b = $php5bp.createBatch({
                         'initialResult': 1
                     });
@@ -51,20 +61,27 @@ class IndexModule extends ModuleBase {
 
                     b.add(function() {
                         i *= 100;
-                        alert('a');
+                        // alert('a');
                     });
 
                     b.add(function() {
                         i -= 13;
-                        alert('b');
+                        // alert('b');
                     });
 
                     // b.run();
                     while(b.invokeNext()) {
-                        alert(b.isLast);
+                        // alert(b.isLast);
                     }
 
+                    $php5bp.addVar('wurst', function() {
+                        return new Date();
+                    });
+
+                    alert($php5bp.vars.wurst);
                     alert(i);
+                    alert(b.hasNext);
+                    alert($php5bp.vars.wurst);
                 });
 
             </script>

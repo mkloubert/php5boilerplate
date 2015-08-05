@@ -347,7 +347,7 @@ $MJK_PHP5_BOILERPLATE.events = {};
     // DON'T CHANGE!
     // THIS IS FOR INTERNAL USE ONLY!
     $MJK_PHP5_BOILERPLATE.events.__defaultPageLoaded = function(e) {
-        if (!$MJK_PHP5_BOILERPLATE.page.__onLoadedActions) {
+        if (!$MJK_PHP5_BOILERPLATE.__onLoadedActions) {
             return this;
         }
 
@@ -356,8 +356,8 @@ $MJK_PHP5_BOILERPLATE.events = {};
         var prevError = null;
         var prevValue = null;
         var value = null;
-        for (var i = 0; i < $MJK_PHP5_BOILERPLATE.page.__onLoadedActions.length; i++) {
-            var entry = $MJK_PHP5_BOILERPLATE.page.__onLoadedActions[i];
+        for (var i = 0; i < $MJK_PHP5_BOILERPLATE.__onLoadedActions.length; i++) {
+            var entry = $MJK_PHP5_BOILERPLATE.__onLoadedActions[i];
             if (!entry.action) {
                 continue;
             }
@@ -367,7 +367,6 @@ $MJK_PHP5_BOILERPLATE.events = {};
                 'index': i,
                 'lastError': lastError,
                 'nextValue': null,
-                'page': $MJK_PHP5_BOILERPLATE.page,
                 'prevError': prevError,
                 'prevValue' : prevValue,
                 'state': entry.options.state,
@@ -1386,14 +1385,14 @@ Object.defineProperty($MJK_PHP5_BOILERPLATE,
                           }
                       });
 
-$MJK_PHP5_BOILERPLATE.page = {};
+// vars, elements and functions
 {
     // this is for internal use only!
-    $MJK_PHP5_BOILERPLATE.page.__onLoadedActions = [];
+    $MJK_PHP5_BOILERPLATE.__onLoadedActions = [];
 
-    $MJK_PHP5_BOILERPLATE.page.elements = {};  // elements and selectors
-    $MJK_PHP5_BOILERPLATE.page.funcs = {};  // functions
-    $MJK_PHP5_BOILERPLATE.page.vars = {};  // variables / values
+    $MJK_PHP5_BOILERPLATE.elements = {};  // elements and selectors
+    $MJK_PHP5_BOILERPLATE.funcs = {};  // functions
+    $MJK_PHP5_BOILERPLATE.vars = {};  // variables / values
 
     /**
      * Adds a function that is called when the page has been loaded.
@@ -1403,7 +1402,7 @@ $MJK_PHP5_BOILERPLATE.page = {};
      *
      * @chainable
      */
-    $MJK_PHP5_BOILERPLATE.page.addOnLoaded = function(action, opts) {
+    $MJK_PHP5_BOILERPLATE.addOnLoaded = function(action, opts) {
         opts = jQuery.extend({
             'continueOnError': false,
             'state': null
@@ -1422,11 +1421,11 @@ $MJK_PHP5_BOILERPLATE.page = {};
     };
 
     /**
-     * Process all actions that were added by $MJK_PHP5_BOILERPLATE.page.addOnLoaded() method.
+     * Process all actions that were added by $MJK_PHP5_BOILERPLATE.addOnLoaded() method.
      *
      * @return {Boolean} Loaded actions were processed or not.
      */
-    $MJK_PHP5_BOILERPLATE.page.processOnLoadedActions = function() {
+    $MJK_PHP5_BOILERPLATE.processOnLoadedActions = function() {
         if ($MJK_PHP5_BOILERPLATE.events.pageLoaded) {
             var e = {
                 'time': $MJK_PHP5_BOILERPLATE.now
@@ -1446,7 +1445,7 @@ $MJK_PHP5_BOILERPLATE.page = {};
 
     /**
      * Adds an (element) selector.
-     * The selectors can be accessed by using $MJK_PHP5_BOILERPLATE.page.elements property.
+     * The selectors can be accessed by using $MJK_PHP5_BOILERPLATE.elements property.
      *
      * @param {String} name The name of the selector.
      * @param {jQuery} selector The selector.
@@ -1454,7 +1453,7 @@ $MJK_PHP5_BOILERPLATE.page = {};
      *
      * @chainable
      */
-    $MJK_PHP5_BOILERPLATE.page.addElements = function(name, selector, opts) {
+    $MJK_PHP5_BOILERPLATE.addElements = function(name, selector, opts) {
         opts = jQuery.extend({
         }, opts);
 
@@ -1491,14 +1490,14 @@ $MJK_PHP5_BOILERPLATE.page = {};
 
     /**
      * Adds a function.
-     * The functions can be accessed by using $MJK_PHP5_BOILERPLATE.page.funcs property.
+     * The functions can be accessed by using $MJK_PHP5_BOILERPLATE.funcs property.
      *
      * @param {String} name The name of the function.
      * @param {function} func The function.
      *
      * @chainable
      */
-    $MJK_PHP5_BOILERPLATE.page.addFunction = function(name, func) {
+    $MJK_PHP5_BOILERPLATE.addFunction = function(name, func) {
         Object.defineProperty(this.funcs,
                               jQuery.trim(name),
                               {
@@ -1512,14 +1511,14 @@ $MJK_PHP5_BOILERPLATE.page = {};
 
     /**
      * Adds a variable.
-     * The variables can be accessed by using $MJK_PHP5_BOILERPLATE.page.vars property.
+     * The variables can be accessed by using $MJK_PHP5_BOILERPLATE.vars property.
      *
      * @param {String} name The name of the function.
      * @param {mixed} value The value or the function that provides it.
      *
      * @chainable
      */
-    $MJK_PHP5_BOILERPLATE.page.addVar = function(name, value) {
+    $MJK_PHP5_BOILERPLATE.addVar = function(name, value) {
         Object.defineProperty(this.vars,
                               jQuery.trim(name),
                               {

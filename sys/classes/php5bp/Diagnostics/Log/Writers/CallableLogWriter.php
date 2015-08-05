@@ -19,49 +19,37 @@
  * License along with this software.                                                                                  *
  **********************************************************************************************************************/
 
-?>
-<!DOCTYPE HTML>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+namespace php5bp\Diagnostics\Log\Writers;
 
-        <title><?= \htmlentities((!$this->debug ? '' : '[DEBUG] ') . $this->title) ?></title>
 
-        <link rel="stylesheet" href="css/normalize-3.0.3.css">
-<?php if (!$this->debug): ?>
-        <link rel="stylesheet" href="css/php5bp.min.css">
-<?php else: ?>
-        <link rel="stylesheet" href="css/php5bp.css">
-<?php endif; ?>
+/**
+ * A log writer that uses a callable.
+ *
+ * @package php5bp\Diagnostics\Log\Writers
+ * @author Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
+ */
+class CallableLogWriter extends \Zend\Log\Writer\AbstractWriter {
+    /**
+     * @var callable
+     */
+    protected $_action;
 
-<?php if (!$this->debug): ?>
-        <script type="text/javascript" src="js/jquery.min.js"></script>
-<?php else: ?>
-        <script type="text/javascript" src="js/jquery-2.1.4.js"></script>
-<?php endif; ?>
-<?php if (!$this->debug): ?>
-        <script type="text/javascript" src="js/angular.min.js"></script>
-<?php else: ?>
-        <script type="text/javascript" src="js/angular-1.4.3.js"></script>
-<?php endif; ?>
 
-        <!-- this should be included as last script -->
-<?php if (!$this->debug): ?>
-        <script type="text/javascript" src="js/php5bp.min.js"></script>
-<?php else: ?>
-        <script type="text/javascript" src="js/php5bp.js"></script>
-<?php endif; ?>
-    </head>
+    /**
+     * Initializes a new instance of that class.
+     *
+     * @param callable $action The action to invoke.
+     * @param array|\Traversable $options The options for the logger.
+     */
+    public function __construct(callable $action, $options = null) {
+        parent::__construct($options);
 
-    <body>
-        <?= $this->content ?>
+        $this->_action = $action;
+    }
 
-        <!-- this should be executed as last script -->
-        <script type="text/javascript">
-            jQuery(function() {
-                $php5bp.processOnLoadedActions();
-            });
-        </script>
-    </body>
-</html>
+
+    protected function doWrite(array $event) {
+        \call_user_func($this->_action,
+                        $event);
+    }
+}

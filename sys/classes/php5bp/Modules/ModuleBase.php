@@ -527,6 +527,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                 $view->__set('debug'   , \php5bp::isDebug());
                 $view->__set('request' , $execCtx->request());
                 $view->__set('response', $execCtx->response());
+                $view->__set('title'   , $execCtx->getTitle());
 
                 // overwrite/fill with values from execution content
                 foreach ($execCtx->vars() as $vn => $vv) {

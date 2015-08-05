@@ -59,6 +59,10 @@ class Context extends \php5bp\Object implements ContextInterface {
      */
     protected $_action;
     /**
+     * @var string
+     */
+    protected $_title;
+    /**
      * @var array
      */
     protected $_vars;
@@ -125,6 +129,10 @@ class Context extends \php5bp\Object implements ContextInterface {
         }
 
         return $defaultValue;
+    }
+
+    public function getTitle() {
+        return $this->_title;
     }
 
     public function getVar($name, $defaultValue = null, &$found = null) {
@@ -211,6 +219,16 @@ class Context extends \php5bp\Object implements ContextInterface {
         }
 
         return $this->setView($viewName);
+    }
+
+    public function setTitle($title) {
+        $title = \trim($title);
+        if ('' == $title) {
+            $title = null;
+        }
+
+        $this->_title = $title;
+        return $this;
     }
 
     public function setupForHtml($viewName = false) {

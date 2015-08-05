@@ -333,6 +333,35 @@ final class php5bp {
     }
 
     /**
+     * Creates and opens a new temp file and invokes a function for it.
+     * The temp file will be deleted after $func has been invoked.
+     *
+     * @param callable $func The function to invoke.
+     * @param string $prefix The prefix to use.
+     * @param bool &$success The variable where to write down if file could be created/opened or not.
+     *
+     * @return mixed The result of $func.
+     */
+    public static function invokeForTempFile(callable $func, $prefix = '', &$success = null) {
+        $res = static::openTempFile($prefix, $tempFile);
+
+        $success = false;
+        if (is_resource($res)) {
+            try {
+                $success = true;
+
+                return call_user_func($func,
+                                      $res, $tempFile);
+            }
+            finally {
+                if (fclose($res)) {
+                    unlink($tempFile);
+                }
+            }
+        }
+    }
+
+    /**
      * Gets if the application runs in debug mode or not.
      *
      * @return bool Runs in debug mode or not.
@@ -421,6 +450,24 @@ final class php5bp {
     }
 
     /**
+     * Creates and opens a new temp file.
+     *
+     * @param string $prefix The prefix to use.
+     * @param string &$tempFile The variable where to write the path of the new temp file.
+     *                          Is (false) on error.
+     *
+     * @return resource The resource of the temp file or (false) if an error occurred.
+     */
+    public static function openTempFile($prefix = '', &$tempFile = null) {
+        $tempFile = static::tempFile($prefix);
+        if (false === $tempFile) {
+            return false;
+        }
+
+        return fopen($tempFile, 'a+');
+    }
+
+    /**
      * Gets the name of the output encoding.
      *
      * @return string The output encoding.
@@ -490,6 +537,55 @@ final class php5bp {
      */
     public static function table($table, $adapter = null, $features = null, \Zend\Db\ResultSet\ResultSetInterface $resultSetPrototype = null, \Zend\Db\Sql\Sql $sql = null) {
         return new \php5bp\Db\TableGateway($table, $adapter, $features, $resultSetPrototype, $sql);
+    }
+
+    /**
+     * Gets the full path of the directory for the temporary files.
+     *
+     * @return string The path or (false) on error.
+     */
+    public static function tempDir() {
+        $result = null;
+
+        $appConf = static::appConf();
+
+        // custom directory?
+        if (array_key_exists('dirs', $appConf)) {
+            // $appConf['dirs']['temp']
+            if (array_key_exists('temp', $appConf['dirs'])) {
+                $result = $appConf['dirs']['temp'];
+            }
+        }
+
+        $result = trim($result);
+        if ('' == $result) {
+            $result = sys_get_temp_dir();
+        }
+        else {
+            $result = realpath($result);
+        }
+
+        if (false !== $result) {
+            $result .= DIRECTORY_SEPARATOR;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Creates a new temp file.
+     *
+     * @param string $prefix The prefix to use.
+     *
+     * @return string The full path of the file or (false) on error.
+     */
+    public static function tempFile($prefix = '') {
+        $tempDir = static::tempDir();
+        if (false === $tempDir) {
+            return false;
+        }
+
+        return tempnam($tempDir, trim($prefix));
     }
 
     /**

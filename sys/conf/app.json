@@ -1,5 +1,8 @@
 {
   "debug": true,
+  "dirs": {
+    "temp": "./sys/tmp"
+  },
   "modules": {
     "actions": {
         "source": ["post", "request", "get"],

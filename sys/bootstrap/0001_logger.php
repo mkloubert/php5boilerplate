@@ -19,49 +19,13 @@
  * License along with this software.                                                                                  *
  **********************************************************************************************************************/
 
-?>
-<!DOCTYPE HTML>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+defined('PHP5BP_BOOTSTRAP') or die();
 
-        <title><?= \htmlentities((!$this->debug ? '' : '[DEBUG] ') . $this->title) ?></title>
 
-        <link rel="stylesheet" href="css/normalize-3.0.3.css">
-<?php if (!$this->debug): ?>
-        <link rel="stylesheet" href="css/php5bp.min.css">
-<?php else: ?>
-        <link rel="stylesheet" href="css/php5bp.css">
-<?php endif; ?>
+if (!php5bp::isDebug()) {
+    // write debug messages in debug mode only
 
-<?php if (!$this->debug): ?>
-        <script type="text/javascript" src="js/jquery.min.js"></script>
-<?php else: ?>
-        <script type="text/javascript" src="js/jquery-2.1.4.js"></script>
-<?php endif; ?>
-<?php if (!$this->debug): ?>
-        <script type="text/javascript" src="js/angular.min.js"></script>
-<?php else: ?>
-        <script type="text/javascript" src="js/angular-1.4.3.js"></script>
-<?php endif; ?>
-
-        <!-- this should be included as last script -->
-<?php if (!$this->debug): ?>
-        <script type="text/javascript" src="js/php5bp.min.js"></script>
-<?php else: ?>
-        <script type="text/javascript" src="js/php5bp.js"></script>
-<?php endif; ?>
-    </head>
-
-    <body>
-        <?= $this->content ?>
-
-        <!-- this should be executed as last script -->
-        <script type="text/javascript">
-            jQuery(function() {
-                $php5bp.processOnLoadedActions();
-            });
-        </script>
-    </body>
-</html>
+    \php5bp::log()
+           ->addFilter(new \Zend\Log\Filter\Priority(\php5bp\Diagnostics\Log\Logger::DEBUG,
+                                                     '<'));
+}

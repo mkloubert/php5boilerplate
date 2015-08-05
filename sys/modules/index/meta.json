@@ -1,33 +1,3 @@
 {
-  "class": "\\php5bp\\Modules\\Impl\\IndexModule",
-  "module": {
-    "actions":{
-      "source": ["post", "get", "request"],
-      "var": "action2"
-    }
-  },
-  "actions": {
-    "test": "testAction",
-    "test2": {
-      "args": [
-        "module",
-        "a",
-        {
-          "name": "b",
-          "source": "get;vars",
-          "transformer": ["\\strtolower", "\\ucwords"]
-        }
-      ],
-      "method": "test2Action",
-      "mode": "json"
-    },
-    "test3": {
-      "method": "test3Action",
-      "mode": "json"
-    }
-  },
-  "methods": {
-    "render": "render",
-    "updateContext": "updateContext"
-  }
+  "class": "\\php5bp\\Modules\\Impl\\IndexModule"
 }

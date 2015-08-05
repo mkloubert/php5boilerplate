@@ -62,6 +62,13 @@ interface ContextInterface extends \php5bp\ObjectInterface {
     function getConfig($name, $defaultValue = null, &$found = null);
 
     /**
+     * Gets the title for the page.
+     *
+     * @return string The title.
+     */
+    function getTitle();
+
+    /**
      * Gets the value of a variable.
      *
      * @param string $name The name of the variable.
@@ -133,6 +140,15 @@ interface ContextInterface extends \php5bp\ObjectInterface {
      * @return $this
      */
     function setDefaultView();
+
+    /**
+     * Sets the title for the page.
+     *
+     * @param string $title The new value.
+     *
+     * @return $this
+     */
+    function setTitle($title);
 
     /**
      * Sets up the result for JSON output.

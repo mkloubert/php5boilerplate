@@ -19,55 +19,66 @@
  * License along with this software.                                                                                  *
  **********************************************************************************************************************/
 
-namespace php5bp\Http\Requests;
-
-use \System\Collections\IEnumerable;
+namespace php5bp\IO\Files;
 
 
 /**
- * Describes a HTTP request context.
+ * A basic local file.
  *
- * @package php5bp\Http\Requests
+ * @package php5bp\IO\Files
  * @author Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
  */
-interface ContextInterface extends \php5bp\ObjectInterface {
+abstract class LocalFileBase extends FileBase {
     /**
-     * Returns the list of uploaded files.
-     *
-     * @return IEnumerable The list of \php5bp\IO\Files\UploadedFileInterface instances.
+     * @var string
      */
-    function files();
+    protected $_path;
+
 
     /**
-     * Returns a GET/query variable.
+     * Initializes a new instance of that class.
      *
-     * @param string $name The name of the variable.
-     * @param mixed $defaultValue The default value if $name was not found.
-     * @param bool &$found The variable where to write if $name was found or not.
-     *
-     * @return mixed The value.
+     * @param string $path The path to the local file.
      */
-    function get($name, $defaultValue = null, &$found = null);
+    public function __construct($path) {
+        $this->_path = $path;
+    }
 
-    /**
-     * Returns a POST variable.
-     *
-     * @param string $name The name of the variable.
-     * @param mixed $defaultValue The default value if $name was not found.
-     * @param bool &$found The variable where to write if $name was found or not.
-     *
-     * @return mixed The value.
-     */
-    function post($name, $defaultValue = null, &$found = null);
 
-    /**
-     * Returns a POST or GET/query variable.
-     *
-     * @param string $name The name of the variable.
-     * @param mixed $defaultValue The default value if $name was not found.
-     * @param bool &$found The variable where to write if $name was found or not.
-     *
-     * @return mixed The value.
-     */
-    function request($name, $defaultValue = null, &$found = null);
+    public function content() {
+        return file_get_contents($this->path());
+    }
+
+    public function extension() {
+        return \pathinfo($this->name(), \PATHINFO_EXTENSION);
+    }
+
+    public function mime() {
+        $fi = \finfo_open(FILEINFO_MIME_TYPE);
+            $result = \trim(\strtolower(\finfo_file($fi, $this->path())));
+        \finfo_close($fi);
+
+        return '' != $result ? $result : static::MIME_TYPE_DEFAULT;
+    }
+
+    protected function moveToInner($dest) {
+        if (@\rename($this->_path, $dest)) {
+            $this->_path = \realpath($dest);
+            return true;
+        }
+
+        return false;
+    }
+
+    public function name() {
+        return \basename($this->path());
+    }
+
+    public function path() {
+        return \realpath($this->_path);
+    }
+
+    public function size() {
+        return \filesize($this->path());
+    }
 }

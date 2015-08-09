@@ -21,6 +21,8 @@
 
 namespace php5bp\Http\Requests;
 
+use \php5bp\IO\Files\UploadedFile;
+
 
 /**
  * A HTTP request context.
@@ -29,6 +31,10 @@ namespace php5bp\Http\Requests;
  * @author Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
  */
 class Context extends \php5bp\Object implements ContextInterface {
+    public function files() {
+        return UploadedFile::create();
+    }
+
     /**
      * Returns a GET/query variable.
      *

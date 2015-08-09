@@ -19,55 +19,109 @@
  * License along with this software.                                                                                  *
  **********************************************************************************************************************/
 
-namespace php5bp\Http\Requests;
+namespace php5bp\IO\Files;
 
 use \System\Collections\IEnumerable;
+use \System\Linq\Enumerable;
 
 
 /**
- * Describes a HTTP request context.
+ * An uploaded file.
  *
- * @package php5bp\Http\Requests
+ * @package php5bp\IO\Files
  * @author Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
  */
-interface ContextInterface extends \php5bp\ObjectInterface {
+class UploadedFile extends LocalFileBase implements UploadedFileInterface {
     /**
-     * Returns the list of uploaded files.
-     *
-     * @return IEnumerable The list of \php5bp\IO\Files\UploadedFileInterface instances.
+     * @var string
      */
-    function files();
+    protected $_fileEntry;
+    /**
+     * @var string
+     */
+    protected $_field;
+
 
     /**
-     * Returns a GET/query variable.
+     * Creates a new instance of that class.
      *
-     * @param string $name The name of the variable.
-     * @param mixed $defaultValue The default value if $name was not found.
-     * @param bool &$found The variable where to write if $name was found or not.
-     *
-     * @return mixed The value.
+     * @param string $fieldName The name of the underlying HTML form field.
+     * @param array $fileEntry The file entry.
      */
-    function get($name, $defaultValue = null, &$found = null);
+    public function __construct($fieldName, array $fileEntry) {
+        $this->_field     = $fieldName;
+        $this->_fileEntry = $fileEntry;
+
+        $path = null;
+        if (\array_key_exists('tmp_name', $this->_fileEntry)) {
+            $path = $this->_fileEntry['tmp_name'];
+        }
+
+        parent::__construct($path);
+    }
+
 
     /**
-     * Returns a POST variable.
+     * Creates a list of instances from $_FILES super global.
      *
-     * @param string $name The name of the variable.
-     * @param mixed $defaultValue The default value if $name was not found.
-     * @param bool &$found The variable where to write if $name was found or not.
-     *
-     * @return mixed The value.
+     * @return IEnumerable The created instances.
      */
-    function post($name, $defaultValue = null, &$found = null);
+    public static function create() {
+        return Enumerable::create(static::createInner())
+                         ->toArray(function($key, UploadedFile $x) {
+                                       return $x->field();
+                                   });
+    }
 
     /**
-     * Returns a POST or GET/query variable.
-     *
-     * @param string $name The name of the variable.
-     * @param mixed $defaultValue The default value if $name was not found.
-     * @param bool &$found The variable where to write if $name was found or not.
-     *
-     * @return mixed The value.
+     * @see UploadedFile::create()
      */
-    function request($name, $defaultValue = null, &$found = null);
+    protected static function createInner() {
+        foreach ($_FILES as $fieldName => $fileEntry) {
+            yield new static($fieldName, $fileEntry);
+        }
+    }
+
+    public function field() {
+        return $this->_field;
+    }
+
+    public function mime() {
+        $result = '';
+
+        if (\array_key_exists('type', $this->_fileEntry)) {
+            $result = \trim(\strtolower($this->_fileEntry['type']));
+        }
+
+        if ('' == $result) {
+            $result = static::MIME_TYPE_DEFAULT;
+        }
+
+        return $result;
+    }
+
+    protected function moveToInner($dest) {
+        if (@\move_uploaded_file($this->_path, $dest)) {
+            $this->_path = \realpath($dest);
+            return true;
+        }
+
+        return false;
+    }
+
+    public function name() {
+        if (\array_key_exists('name', $this->_fileEntry)) {
+            return $this->_fileEntry['name'];
+        }
+
+        return null;
+    }
+
+    public function size() {
+        if (\array_key_exists('size', $this->_fileEntry)) {
+            return $this->_fileEntry['size'];
+        }
+
+        return null;
+    }
 }

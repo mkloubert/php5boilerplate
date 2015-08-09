@@ -19,55 +19,20 @@
  * License along with this software.                                                                                  *
  **********************************************************************************************************************/
 
-namespace php5bp\Http\Requests;
-
-use \System\Collections\IEnumerable;
+namespace php5bp\IO\Files;
 
 
 /**
- * Describes a HTTP request context.
+ * Describes an uploaded file.
  *
- * @package php5bp\Http\Requests
+ * @package php5bp\IO\Files
  * @author Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
  */
-interface ContextInterface extends \php5bp\ObjectInterface {
+interface UploadedFileInterface extends FileInterface {
     /**
-     * Returns the list of uploaded files.
+     * Gets the name of the underlying HTML form field.
      *
-     * @return IEnumerable The list of \php5bp\IO\Files\UploadedFileInterface instances.
+     * @return string The field name.
      */
-    function files();
-
-    /**
-     * Returns a GET/query variable.
-     *
-     * @param string $name The name of the variable.
-     * @param mixed $defaultValue The default value if $name was not found.
-     * @param bool &$found The variable where to write if $name was found or not.
-     *
-     * @return mixed The value.
-     */
-    function get($name, $defaultValue = null, &$found = null);
-
-    /**
-     * Returns a POST variable.
-     *
-     * @param string $name The name of the variable.
-     * @param mixed $defaultValue The default value if $name was not found.
-     * @param bool &$found The variable where to write if $name was found or not.
-     *
-     * @return mixed The value.
-     */
-    function post($name, $defaultValue = null, &$found = null);
-
-    /**
-     * Returns a POST or GET/query variable.
-     *
-     * @param string $name The name of the variable.
-     * @param mixed $defaultValue The default value if $name was not found.
-     * @param bool &$found The variable where to write if $name was found or not.
-     *
-     * @return mixed The value.
-     */
-    function request($name, $defaultValue = null, &$found = null);
+    function field();
 }

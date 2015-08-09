@@ -19,55 +19,74 @@
  * License along with this software.                                                                                  *
  **********************************************************************************************************************/
 
-namespace php5bp\Http\Requests;
-
-use \System\Collections\IEnumerable;
+namespace php5bp\IO\Files;
 
 
 /**
- * Describes a HTTP request context.
+ * Describes a file.
  *
- * @package php5bp\Http\Requests
+ * @package php5bp\IO\Files
  * @author Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
  */
-interface ContextInterface extends \php5bp\ObjectInterface {
+interface FileInterface extends \php5bp\ObjectInterface {
     /**
-     * Returns the list of uploaded files.
+     * Gets the content of the uploaded file.
      *
-     * @return IEnumerable The list of \php5bp\IO\Files\UploadedFileInterface instances.
+     * @return string The content of the file or (false) if content could not be loaded.
      */
-    function files();
+    function content();
 
     /**
-     * Returns a GET/query variable.
+     * Gets the current extension of the file.
      *
-     * @param string $name The name of the variable.
-     * @param mixed $defaultValue The default value if $name was not found.
-     * @param bool &$found The variable where to write if $name was found or not.
-     *
-     * @return mixed The value.
+     * @return string The current extension.
      */
-    function get($name, $defaultValue = null, &$found = null);
+    function extension();
 
     /**
-     * Returns a POST variable.
+     * Gets the MIME type.
      *
-     * @param string $name The name of the variable.
-     * @param mixed $defaultValue The default value if $name was not found.
-     * @param bool &$found The variable where to write if $name was found or not.
-     *
-     * @return mixed The value.
+     * @return string The MIME type.
      */
-    function post($name, $defaultValue = null, &$found = null);
+    function mime();
 
     /**
-     * Returns a POST or GET/query variable.
+     * Moves that file to a specific (local) folder.
      *
-     * @param string $name The name of the variable.
-     * @param mixed $defaultValue The default value if $name was not found.
-     * @param bool &$found The variable where to write if $name was found or not.
+     * @param string $folder The path of the folder.
+     * @param string $name The custom name WITHOUT the extension.
+     * @param string $extension The custom extension to use.
      *
-     * @return mixed The value.
+     * @return string The full (new) path or (false) if an error occured.
      */
-    function request($name, $defaultValue = null, &$found = null);
+    function moveTo($folder, $name = null, $extension = null);
+
+    /**
+     * Gets the name of the file.
+     *
+     * @return string The name of the file.
+     */
+    function name();
+
+    /**
+     * Gets the full path of that file.
+     *
+     * @return string The path.
+     */
+    function path();
+
+    /**
+     * Gets the size in bytes.
+     *
+     * @return int The size in bytes or (null) if size is not available.
+     *             (false) indicates that an error occurred.
+     */
+    function size();
+
+    /**
+     * Gets the suggested file extension based on the MIME type.
+     *
+     * @return string The suggested file extension.
+     */
+    function suggestedExtension();
 }

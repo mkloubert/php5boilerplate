@@ -32,6 +32,21 @@ use \System\Linq\Enumerable;
  * @author Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
  */
 class Context extends \php5bp\Object implements ContextInterface {
+    /**
+     * Checks the user agent header field for a specific expression.
+     *
+     * @param string $expr The expression.
+     *
+     * @return bool Expression was found or not.
+     */
+    protected static function checkAgentFor($expr) {
+        if (\array_key_exists('HTTP_USER_AGENT', $_SERVER)) {
+            return false !== \stripos($_SERVER['HTTP_USER_AGENT'], $expr);
+        }
+
+        return false;
+    }
+
     public function cookie($name, $defaultValue = null, &$found = null) {
         return static::getArrayValue($_COOKIE, $name, $defaultValue, $found);
     }
@@ -93,19 +108,20 @@ class Context extends \php5bp\Object implements ContextInterface {
     }
 
     public function isChrome() {
-        if (\array_key_exists('HTTP_USER_AGENT', $_SERVER)) {
-            return false !== \stripos($_SERVER['HTTP_USER_AGENT'], 'chrome');
-        }
+        return static::checkAgentFor('chrome');
+    }
 
-        return false;
+    public function isEdge() {
+        return static::checkAgentFor('edge');
     }
 
     public function isFacebook() {
-        if (\array_key_exists('HTTP_USER_AGENT', $_SERVER)) {
-            return false !== \stripos($_SERVER['HTTP_USER_AGENT'], 'facebookexternalhit');
-        }
+        return static::checkAgentFor('facebookexternalhit');
+    }
 
-        return false;
+    public function isFirefox() {
+        return static::checkAgentFor('firefox') ||
+               static::checkAgentFor('gecko');
     }
 
     public function isMobile() {
@@ -116,6 +132,10 @@ class Context extends \php5bp\Object implements ContextInterface {
         }
 
         return false;
+    }
+
+    public function isSafari() {
+        return static::checkAgentFor('safari');
     }
 
     public function isSearchEngine() {
@@ -132,19 +152,11 @@ class Context extends \php5bp\Object implements ContextInterface {
     }
 
     public function isTrident() {
-        if (\array_key_exists('HTTP_USER_AGENT', $_SERVER)) {
-            return false !== \stripos($_SERVER['HTTP_USER_AGENT'], 'trident');
-        }
-
-        return false;
+        return static::checkAgentFor('trident');
     }
 
     public function isTwitter() {
-        if (\array_key_exists('HTTP_USER_AGENT', $_SERVER)) {
-            return false !== \stripos($_SERVER['HTTP_USER_AGENT'], 'twitterbot');
-        }
-
-        return false;
+        return static::checkAgentFor('twitterbot');
     }
 
     public function post($name, $defaultValue = null, &$found = null) {

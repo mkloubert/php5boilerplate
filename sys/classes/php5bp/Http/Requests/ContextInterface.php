@@ -87,6 +87,13 @@ interface ContextInterface extends \php5bp\ObjectInterface {
     function isChrome();
 
     /**
+     * Checks if the requesting client is Microsoft Edge compatible or not.
+     *
+     * @return bool Is Edge or not.
+     */
+    function isEdge();
+
+    /**
      * Checks if the requesting client is a Facebook crawler or not.
      *
      * @return bool Is a Facebook crawler or not.
@@ -94,11 +101,25 @@ interface ContextInterface extends \php5bp\ObjectInterface {
     function isFacebook();
 
     /**
+     * Checks if the requesting client is Firefox compatible or not.
+     *
+     * @return bool Is Firefox or not.
+     */
+    function isFirefox();
+
+    /**
      * Checks if the requesting client is a mobile device or not.
      *
      * @return bool Is mobile device or not.
      */
     function isMobile();
+
+    /**
+     * Checks if the requesting client is Apple Safari compatible or not.
+     *
+     * @return bool Is Safari or not.
+     */
+    function isSafari();
 
     /**
      * Checks if the requesting client is a search engine bot/crawler or not.

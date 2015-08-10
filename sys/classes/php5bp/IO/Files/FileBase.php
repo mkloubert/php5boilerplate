@@ -21,6 +21,8 @@
 
 namespace php5bp\IO\Files;
 
+use \System\Linq\Enumerable;
+
 
 /**
  * A basic file.
@@ -96,30 +98,39 @@ abstract class FileBase extends \php5bp\Object implements FileInterface {
     public abstract function size();
 
     public function suggestedExtension() {
-        switch ($this->mime()) {
-            case 'application/json':
-                return 'json';
+        $result = null;
 
-            case 'application/pdf':
-                return 'pdf';
+        $files = \php5bp::conf('known.files');
+        if (\is_array($files)) {
+            if (\array_key_exists('mime', $files)) {
+                $mime = \trim(\strtolower($this->mime()));
 
-            case 'image/gif':
-                return 'gif';
+                // find extension by MIME type
+                $result = Enumerable::create($files['mime'])
+                                    ->where(function($x, $ctx) use ($mime) {
+                                                return \trim(\strtolower($ctx->key)) == $mime;
+                                            })
+                                    ->selectMany(function($extensions) {
+                                                     if ($extensions instanceof \Traversable) {
+                                                         $extensions = \iterator_to_array($extensions);
+                                                     }
 
-            case 'image/jpeg':
-            case 'image/jpg':
-                return 'jpg';
+                                                     if (!\is_array($extensions)) {
+                                                         // keep sure to have an array
+                                                         $extensions = array($extensions);
+                                                     }
 
-            case 'image/png':
-                return 'png';
-
-            case 'text/plain':
-                return 'txt';
-
-            case 'text/xml':
-                return 'xml';
+                                                     return $extensions;
+                                                 })
+                                    ->firstOrDefault();
+            }
         }
 
-        return $this->extension();
+        if (\is_null($result)) {
+            // use "real" file extension
+            $result = $this->extension();
+        }
+
+        return $result;
     }
 }

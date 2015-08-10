@@ -183,9 +183,24 @@ class Context extends \php5bp\Object implements ContextInterface {
     }
 
     public function notFound() {
-        $this->response()->clearHeaders();
-        $this->response()->setCode(404);
         $this->suppressOutput();
+        $this->response()->clearHeaders();
+
+        $this->response()->setCode(404);
+
+        return $this;
+    }
+
+    public function noView() {
+        return $this->setView(null);
+    }
+
+    public function redirectTo($url) {
+        $this->suppressOutput();
+        $this->response()->clearHeaders();
+
+        $this->response()->setCode(307)
+                         ->setHeader('Location', \trim($url));
 
         return $this;
     }
@@ -196,6 +211,25 @@ class Context extends \php5bp\Object implements ContextInterface {
 
     public function response() {
         return $this->Response;
+    }
+
+    public function sendAsDownload($filename, $mime = null) {
+        $filename = \trim($filename);
+        if ('' != $filename) {
+            $mime = \trim($mime);
+            if ('' == $mime) {
+                $mime = \php5bp::getMimeByFilename($filename);
+            }
+
+            $this->noView();
+
+            $this->response()->setContentType($mime)
+                             ->setHeader('Content-Disposition',
+                                         \php5bp::format('attachment; filename="{0}"',
+                                                         $filename));
+        }
+
+        return $this;
     }
 
     public function setAction($actionName) {
@@ -259,6 +293,7 @@ class Context extends \php5bp\Object implements ContextInterface {
 
         $this->response()
              ->setContentType('application/json; charset=' . \php5bp::outputEncoding());
+
         $this->setView($viewName);
 
         return $this;

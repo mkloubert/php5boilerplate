@@ -36,6 +36,7 @@ final class php5bp {
      * @var \Zend\Cache\Storage\StorageInterface
      */
     private static $_cache;
+    private static $_configCache = array();
     /**
      * @var array
      */
@@ -128,7 +129,7 @@ final class php5bp {
      * @return array The loaded data or (null) if config storage does not exist.
      *               (false) indicates that $name is invalid.
      *
-     * @throws \Exception Error while loading.
+     * @throws Exception Error while loading.
      */
     public static function conf($name, $confDir = null) {
         $name = trim($name);
@@ -136,7 +137,7 @@ final class php5bp {
             return false;
         }
 
-        $confDir = \trim($confDir);
+        $confDir = trim($confDir);
         if ('' == $confDir) {
             $confDir = PHP5BP_DIR_CONFIG;
         }
@@ -165,10 +166,14 @@ final class php5bp {
                                                 }, false);
 
             if (false !== $file) {
-                $cls = new \ReflectionClass($file->class);
+                if (!array_key_exists($file->path, static::$_configCache)) {
+                    $cls = new ReflectionClass($file->class);
 
-                $reader = $cls->newInstance();
-                return $reader->fromFile($file->path);
+                    $reader = $cls->newInstance();
+                    static::$_configCache[$file->path] = $reader->fromFile($file->path);
+                }
+
+                return static::$_configCache[$file->path];
             }
         }
 
@@ -271,7 +276,7 @@ final class php5bp {
      * Formats a string.
      *
      * @param string $format The format string.
-     * @param \Traversable|array $args The arguments for $format.
+     * @param Traversable|array $args The arguments for $format.
      *
      * @return string The formatted string.
      */
@@ -298,6 +303,75 @@ final class php5bp {
                                      }, $format);
     }
 
+    /**
+     * Returns a MIME type by filename.
+     * The list of supported MIME types is handled in the known.files config storage.
+     *
+     * @param string $filename The filename.
+     *
+     * @return string The MIME type or (false) if $filename is invalid.
+     */
+    public static function getMimeByFilename($filename) {
+        $filename = trim(strtolower($filename));
+        if ('' == $filename) {
+            return false;
+        }
+
+        $result = null;
+
+        $lastDot = strrpos($filename, '.');
+        if (false !== $lastDot) {
+            $ext = trim(substr($filename, $lastDot + 1));
+
+            $files = static::conf('known.files');
+            if (is_array($files)) {
+                if (array_key_exists('mime', $files)) {
+                    // find MIME by extension
+                    $result = Enumerable::create($files['mime'])
+                                        ->select(function($extensions, $ctx) {
+                                                     $result             = new stdClass();
+                                                     $result->extensions = $extensions;
+                                                     $result->mime       = trim(strtolower($ctx->key));
+
+                                                     if ($result->extensions instanceof Traversable) {
+                                                         $result->extensions = iterator_to_array($result->extensions);
+                                                     }
+
+                                                     if (!is_array($result->extensions)) {
+                                                         // keep sure to have an array
+                                                         $result->extensions = array($result->extensions);
+                                                     }
+
+                                                     // normalize list
+                                                     $result->extensions = Enumerable::create($result->extensions)
+                                                                                     ->select(function($x) {
+                                                                                                  return trim(strtolower($x));
+                                                                                              })
+                                                                                     ->where(function($x) {
+                                                                                                 return '' != $x;
+                                                                                             })
+                                                                                     ->toArray();
+
+                                                     return $result;
+                                                 })
+                                        ->where(function($x) use ($ext) {
+                                                    return in_array($ext, $x->extensions);
+                                                })
+                                        ->select(function($x) {
+                                                     return $x->mime;
+                                                 })
+                                        ->firstOrDefault();
+                }
+            }
+        }
+
+        if (is_null($result)) {
+            // use default
+            $result = 'application/octet-stream';
+        }
+
+        return trim(strtolower($result));
+    }
 
     /**
      * Gets the value of a variable.
@@ -425,7 +499,7 @@ final class php5bp {
      * @return string The output value.
      */
     protected function normalizeVarName($name) {
-        return \trim($name);
+        return trim($name);
     }
 
     /**
@@ -435,7 +509,7 @@ final class php5bp {
      */
     public static function now() {
         if (is_null(static::$_now)) {
-            static::$_now = new \DateTime();
+            static::$_now = new DateTime();
 
             if (array_key_exists('REQUEST_TIME', $_SERVER)) {
                 static::$_now->setTimestamp($_SERVER['REQUEST_TIME']);
@@ -443,7 +517,7 @@ final class php5bp {
         }
 
         // create copy
-        $result = new \DateTime();
+        $result = new DateTime();
         $result->setTimestamp(static::$_now->getTimestamp());
 
         return $result;

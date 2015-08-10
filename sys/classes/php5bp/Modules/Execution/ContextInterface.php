@@ -112,6 +112,22 @@ interface ContextInterface extends \php5bp\ObjectInterface {
     function notFound();
 
     /**
+     * Sets up the response for direct output (no view is used).
+     *
+     * @return $this
+     */
+    function noView();
+
+    /**
+     * Redirects to a new URL.
+     *
+     * @param string $url The new URL.
+     *
+     * @return $this
+     */
+    function redirectTo($url);
+
+    /**
      * Gets the HTTP request context.
      *
      * @return \php5bp\Http\Requests\ContextInterface The request context.
@@ -124,6 +140,16 @@ interface ContextInterface extends \php5bp\ObjectInterface {
      * @return \php5bp\Http\Responses\ContextInterface The request context.
      */
     function response();
+
+    /**
+     * Sends the result as download.
+     *
+     * @param string $filename The output filename.
+     * @param string $mime The custom MIME type.
+     *
+     * @return $this
+     */
+    function sendAsDownload($filename, $mime = null);
 
     /**
      * Sets the name of the action to invoke.

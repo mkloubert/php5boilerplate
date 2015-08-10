@@ -32,6 +32,25 @@ use \System\Collections\IEnumerable;
  */
 interface ContextInterface extends \php5bp\ObjectInterface {
     /**
+     * Returns a cookie value.
+     *
+     * @param string $name The name of the value.
+     * @param mixed $defaultValue The default value if $name was not found.
+     * @param bool &$found The variable where to write if $name was found or not.
+     *
+     * @return mixed The value.
+     */
+    function cookie($name, $defaultValue = null, &$found = null);
+
+    /**
+     * Gets if the client has send DNT header or not.
+     *
+     * @return bool Client send 1 (true) or 0 (false).
+     *              Otherwise (null) is returned.
+     */
+    function doNotTrack();
+
+    /**
      * Returns the list of uploaded files.
      *
      * @return IEnumerable The list of \php5bp\IO\Files\UploadedFileInterface instances.
@@ -48,6 +67,59 @@ interface ContextInterface extends \php5bp\ObjectInterface {
      * @return mixed The value.
      */
     function get($name, $defaultValue = null, &$found = null);
+
+    /**
+     * Returns a HTTP request header value.
+     *
+     * @param string $name The name of the header value.
+     * @param mixed $defaultValue The default value if $name was not found.
+     * @param bool &$found The variable where to write if $name was found or not.
+     *
+     * @return mixed The value.
+     */
+    function header($name, $defaultValue = null, &$found = null);
+
+    /**
+     * Checks if the requesting client is Chrome compatible or not.
+     *
+     * @return bool Is Chrome or not.
+     */
+    function isChrome();
+
+    /**
+     * Checks if the requesting client is a Facebook crawler or not.
+     *
+     * @return bool Is a Facebook crawler or not.
+     */
+    function isFacebook();
+
+    /**
+     * Checks if the requesting client is a mobile device or not.
+     *
+     * @return bool Is mobile device or not.
+     */
+    function isMobile();
+
+    /**
+     * Checks if the requesting client is a search engine bot/crawler or not.
+     *
+     * @return bool Is search engine or not.
+     */
+    function isSearchEngine();
+
+    /**
+     * Checks if the requesting client is Trident compatible (Internet Explorer) or not.
+     *
+     * @return bool Is Trident or not.
+     */
+    function isTrident();
+
+    /**
+     * Checks if the requesting client is a Twitter crawler or not.
+     *
+     * @return bool Is a Twitter crawler or not.
+     */
+    function isTwitter();
 
     /**
      * Returns a POST variable.

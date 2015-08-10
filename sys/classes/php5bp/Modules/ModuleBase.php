@@ -337,7 +337,8 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                                 $initialView = $actionEntry['view'];
                             }
 
-                            if (!empty($actionMethod)) {
+                            $actionMethod = \trim($actionMethod);
+                            if ('' != $actionMethod) {
                                 $actionMethodArgs = array($execCtx);
                                 $this->prepareInitialExecutionMethodArgs($execCtx, $actionMethodArgs);
 
@@ -483,7 +484,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
             catch (\Exception $ex) {
                 $exception = $ex;
 
-                if (is_null($exceptionHandler)) {
+                if (\is_null($exceptionHandler)) {
                     throw $ex;
                 }
                 else {
@@ -529,7 +530,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                 $view->__set('response', $execCtx->response());
                 $view->__set('title'   , $execCtx->getTitle());
 
-                // overwrite/fill with values from execution content
+                // overwrite/fill with values from execution context
                 foreach ($execCtx->vars() as $vn => $vv) {
                     $view->__set($vn, $vv);
                 }

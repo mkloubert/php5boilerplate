@@ -29,7 +29,7 @@ use \php5bp\Modules\Execution\ContextInterface as ModuleExecutionContext;
 /**
  * A sample module.
  *
- * @package php5bp\Modules\Impl\Samples\SampleModule
+ * @package php5bp\Modules\Impl\Samples
  * @author Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
  */
 class SampleModule extends ModuleBase {

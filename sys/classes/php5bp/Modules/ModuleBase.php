@@ -21,6 +21,7 @@
 
 namespace php5bp\Modules;
 
+use \php5bp\IO\Files\UploadedFileInterface;
 use \php5bp\Modules\Execution\ContextInterface as ModuleExecutionContext;
 use \System\Linq\Enumerable;
 
@@ -144,6 +145,13 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
 
                         case 'get':
                             $result = $execCtx->request()->get($var, $result, $found);
+                            break;
+
+                        case 'files':
+                            $result = $execCtx->request()->file($var);
+                            if ($result instanceof UploadedFileInterface) {
+                                $found = true;
+                            }
                             break;
 
                         default:

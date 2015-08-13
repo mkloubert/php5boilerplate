@@ -21,6 +21,7 @@
 
 namespace php5bp\Http\Requests;
 
+use \php5bp\IO\Files\UploadedFileInterface;
 use \System\Collections\IEnumerable;
 
 
@@ -51,11 +52,13 @@ interface ContextInterface extends \php5bp\ObjectInterface {
     function doNotTrack();
 
     /**
-     * Returns the list of uploaded files.
+     * Returns an uploaded file.
      *
-     * @return IEnumerable The list of \php5bp\IO\Files\UploadedFileInterface instances.
+     * @param string $name The (field) name of the file.
+     *
+     * @return UploadedFileInterface The file or (null) if not found.
      */
-    function files();
+    function file($name);
 
     /**
      * Returns a GET/query variable.
@@ -163,4 +166,11 @@ interface ContextInterface extends \php5bp\ObjectInterface {
      * @return mixed The value.
      */
     function request($name, $defaultValue = null, &$found = null);
+
+    /**
+     * Returns the list of uploaded files.
+     *
+     * @return IEnumerable The list of UploadedFileInterface instances.
+     */
+    function uploadedFiles();
 }

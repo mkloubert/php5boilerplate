@@ -22,6 +22,7 @@
 namespace php5bp\Http\Requests;
 
 use \php5bp\IO\Files\UploadedFile;
+use \php5bp\IO\Files\UploadedFileInterface;
 use \System\Linq\Enumerable;
 
 
@@ -64,8 +65,13 @@ class Context extends \php5bp\Object implements ContextInterface {
         return null;
     }
 
-    public function files() {
-        return UploadedFile::create();
+    public function file($name) {
+        $name = \trim(\strtolower($name));
+
+        return $this->uploadedFiles()
+                    ->lastOrDefault(function(UploadedFileInterface $x) use ($name) {
+                                        return \trim(\strtolower($x->field())) == $name;
+                                    });
     }
 
     public function get($name, $defaultValue = null, &$found = null) {
@@ -165,5 +171,9 @@ class Context extends \php5bp\Object implements ContextInterface {
 
     public function request($name, $defaultValue = null, &$found = null) {
         return static::getArrayValue($_REQUEST, $name, $defaultValue, $found);
+    }
+
+    public function uploadedFiles() {
+        return UploadedFile::create();
     }
 }

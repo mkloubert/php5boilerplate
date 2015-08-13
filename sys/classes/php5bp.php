@@ -559,7 +559,7 @@ final class php5bp {
      * @return mixed The parsed value.
      */
     public static function parseFormatStringValue($format, $value) {
-        if (!is_null($format)) {
+        if (!static::isNullOrEmpty($format)) {
             $handled = true;
 
             if ($value instanceof DateTime) {

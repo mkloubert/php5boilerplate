@@ -147,6 +147,10 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                             $result = $execCtx->request()->get($var, $result, $found);
                             break;
 
+                        case 'cookies':
+                            $result = $execCtx->request()->cookie($var, $result, $found);
+                            break;
+
                         case 'files':
                             $result = $execCtx->request()->file($var);
                             if ($result instanceof UploadedFileInterface) {

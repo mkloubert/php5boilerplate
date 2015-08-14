@@ -10,4 +10,10 @@ class TestModule extends ModuleBase {
     protected function execute(ModuleExecutionContext $ctx) {
         echo "test";
     }
+
+    public function test2Action(ModuleExecutionContext $ctx, array $args, array &$result) {
+        $result['code'] = 666;
+
+        echo "test";
+    }
 }

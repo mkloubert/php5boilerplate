@@ -158,6 +158,10 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                             }
                             break;
 
+                        case 'headers':
+                            $result = $execCtx->request()->header($var, $result, $found);
+                            break;
+
                         default:
                             //TODO throw exception
                             break;
@@ -247,6 +251,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
 
             $exceptionHandler = null;
             $executionMode = null;
+            $packAdditionalActionArgs = false;
 
             if (\array_key_exists('mode', $meta)) {
                 $executionMode = $meta['mode'];
@@ -342,6 +347,11 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                             // action specific MODE
                             if (\array_key_exists('mode', $actionEntry)) {
                                 $executionMode = $actionEntry['mode'];
+                            }
+
+                            // pack args
+                            if (\array_key_exists('packArgs', $actionEntry)) {
+                                $packAdditionalActionArgs = $actionEntry['packArgs'];
                             }
 
                             // action specific VIEW
@@ -447,18 +457,23 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                                     $additionalActionArgs[] = $argValue;
                                 }
 
-                                \call_user_func_array($setupExecutionContext,
-                                                      array(&$additionalActionArgs));
+                                if ($packAdditionalActionArgs) {
+                                    $additionalActionArgs = array($additionalActionArgs);
+                                }
 
-                                if (\is_null($additionalActionArgs)) {
-                                    $additionalActionArgs = array();
+                                $actionMethodArgs = \array_merge($actionMethodArgs,
+                                                                 $additionalActionArgs);
+
+                                \call_user_func_array($setupExecutionContext,
+                                                      array(&$actionMethodArgs));
+
+                                if (\is_null($actionMethodArgs)) {
+                                    $actionMethodArgs = array();
                                 }
 
                                 // execute
                                 $result = \call_user_func_array(array($this, $actionMethod),
-                                                                Enumerable::create($actionMethodArgs)
-                                                                          ->concat($additionalActionArgs)
-                                                                          ->toArray());
+                                                                $actionMethodArgs);
                             }
                             else {
                                 // use default

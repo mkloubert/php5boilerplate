@@ -19,7 +19,8 @@
         }
       ],
       "method": "test2Action",
-      "mode": "json"
+      "mode": "json",
+      "packArgs": true
     },
     "test3": {
       "method": "test3Action",

@@ -72,6 +72,60 @@ interface ContextInterface extends \php5bp\ObjectInterface {
     function get($name, $defaultValue = null, &$found = null);
 
     /**
+     * Checks if a cookie is defined or not.
+     *
+     * @param string $name The name of the cookie.
+     *
+     * @return bool Cookie was found or not.
+     */
+    function hasCookie($name);
+
+    /**
+     * Checks if a file is defined or not.
+     *
+     * @param string $name The (field) name of the file.
+     *
+     * @return bool File was found or not.
+     */
+    function hasFile($name);
+
+    /**
+     * Checks if a GET variable is defined or not.
+     *
+     * @param string $name The name of the variable.
+     *
+     * @return bool Variable was found or not.
+     */
+    function hasGet($name);
+
+    /**
+     * Checks if a request header is defined or not.
+     *
+     * @param string $name The name of the header.
+     *
+     * @return bool Header was found or not.
+     */
+    function hasHeader($name);
+
+    /**
+     * Checks if a POST variable is defined or not.
+     *
+     * @param string $name The name of the variable.
+     *
+     * @return bool Variable was found or not.
+     */
+    function hasPost($name);
+
+    /**
+     * Checks if a REQUEST variable is defined or not.
+     *
+     * @param string $name The name of the variable.
+     *
+     * @return bool Variable was found or not.
+     */
+    function hasRequest($name);
+
+    /**
      * Returns a HTTP request header value.
      *
      * @param string $name The name of the header value.

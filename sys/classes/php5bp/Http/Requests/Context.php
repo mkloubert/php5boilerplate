@@ -106,6 +106,35 @@ class Context extends \php5bp\Object implements ContextInterface {
         return $result;
     }
 
+    public function hasCookie($name) {
+        $this->cookie($name, null, $result);
+        return $result;
+    }
+
+    public function hasFile($name) {
+        return $this->file($name) instanceof UploadedFileInterface;
+    }
+
+    public function hasGet($name) {
+        $this->get($name, null, $result);
+        return $result;
+    }
+
+    public function hasHeader($name) {
+        $this->header($name, null, $result);
+        return $result;
+    }
+
+    public function hasPost($name) {
+        $this->post($name, null, $result);
+        return $result;
+    }
+
+    public function hasRequest($name) {
+        $this->request($name, null, $result);
+        return $result;
+    }
+
     public function header($name, $defaultValue = null, &$found = null) {
         $headers = \getallheaders();
 

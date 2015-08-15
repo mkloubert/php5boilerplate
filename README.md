@@ -16,6 +16,7 @@ The documentation can be found at the [wiki](https://github.com/mkloubert/php5bo
 * [phpLINQ](https://github.com/mkloubert/phpLINQ/)
 * [Slim](http://www.slimframework.com/)
 * [Zend Framework](http://framework.zend.com/)
+* [Zend PDF](https://github.com/zendframework/ZendPdf)
 
 ## Getting started
 

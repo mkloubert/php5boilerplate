@@ -65,6 +65,10 @@ class Context extends \php5bp\Object implements ContextInterface {
         return null;
     }
 
+    public function env($name, $defaultValue = null, &$found = null) {
+        return static::getArrayValue($_ENV, $name, $defaultValue, $found);
+    }
+
     public function file($name) {
         $name = \trim(\strtolower($name));
 
@@ -200,6 +204,14 @@ class Context extends \php5bp\Object implements ContextInterface {
 
     public function request($name, $defaultValue = null, &$found = null) {
         return static::getArrayValue($_REQUEST, $name, $defaultValue, $found);
+    }
+
+    public function server($name, $defaultValue = null, &$found = null) {
+        return static::getArrayValue($_SERVER, $name, $defaultValue, $found);
+    }
+
+    public function session($name, $defaultValue = null, &$found = null) {
+        return static::getArrayValue($_SESSION, $name, $defaultValue, $found);
     }
 
     public function uploadedFiles() {

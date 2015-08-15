@@ -147,10 +147,6 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                             $result = $execCtx->request()->get($var, $result, $found);
                             break;
 
-                        case 'cookies':
-                            $result = $execCtx->request()->cookie($var, $result, $found);
-                            break;
-
                         case 'files':
                             $result = $execCtx->request()->file($var);
                             if ($result instanceof UploadedFileInterface) {
@@ -158,8 +154,24 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                             }
                             break;
 
+                        case 'session':
+                            $result = $execCtx->request()->session($var, $result, $found);
+                            break;
+
+                        case 'cookies':
+                            $result = $execCtx->request()->cookie($var, $result, $found);
+                            break;
+
                         case 'headers':
                             $result = $execCtx->request()->header($var, $result, $found);
+                            break;
+
+                        case 'environment':
+                            $result = $execCtx->request()->env($var, $result, $found);
+                            break;
+
+                        case 'server':
+                            $result = $execCtx->request()->server($var, $result, $found);
                             break;
 
                         default:

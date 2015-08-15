@@ -52,6 +52,17 @@ interface ContextInterface extends \php5bp\ObjectInterface {
     function doNotTrack();
 
     /**
+     * Returns an environment variable.
+     *
+     * @param string $name The name of the variable.
+     * @param mixed $defaultValue The default value if $name was not found.
+     * @param bool &$found The variable where to write if $name was found or not.
+     *
+     * @return mixed The value.
+     */
+    function env($name, $defaultValue = null, &$found = null);
+
+    /**
      * Returns an uploaded file.
      *
      * @param string $name The (field) name of the file.
@@ -220,6 +231,28 @@ interface ContextInterface extends \php5bp\ObjectInterface {
      * @return mixed The value.
      */
     function request($name, $defaultValue = null, &$found = null);
+
+    /**
+     * Returns a server variable.
+     *
+     * @param string $name The name of the variable.
+     * @param mixed $defaultValue The default value if $name was not found.
+     * @param bool &$found The variable where to write if $name was found or not.
+     *
+     * @return mixed The value.
+     */
+    function server($name, $defaultValue = null, &$found = null);
+
+    /**
+     * Returns a session variable.
+     *
+     * @param string $name The name of the variable.
+     * @param mixed $defaultValue The default value if $name was not found.
+     * @param bool &$found The variable where to write if $name was found or not.
+     *
+     * @return mixed The value.
+     */
+    function session($name, $defaultValue = null, &$found = null);
 
     /**
      * Returns the list of uploaded files.

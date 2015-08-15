@@ -172,12 +172,16 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                             $result = $execCtx->request()->header($var, $result, $found);
                             break;
 
-                        case 'environment':
-                            $result = $execCtx->request()->env($var, $result, $found);
+                        case 'globals':
+                            $result = \php5bp::getVar($var, $result, $found);
                             break;
 
                         case 'server':
                             $result = $execCtx->request()->server($var, $result, $found);
+                            break;
+
+                        case 'environment':
+                            $result = $execCtx->request()->env($var, $result, $found);
                             break;
 
                         default:

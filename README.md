@@ -19,6 +19,8 @@ The documentation can be found at the [wiki](https://github.com/mkloubert/php5bo
 
 ## Getting started
 
+If you want to do a quick setup, have a look at the [Quick Start Guide](https://github.com/mkloubert/php5boilerplate/wiki/quick-start-guide) of the wiki.
+
 ### Global application settings
 
 Create or edit the file **app.json** in the **sys/conf** folder.

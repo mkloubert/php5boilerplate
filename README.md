@@ -1,6 +1,6 @@
 # php5boilerplate
 
-PHP 5 based and modular framework for starting websites from scratch.
+PHP 5 based and modular framework for starting websites or Web-APIs from scratch.
 
 The documentation can be found at the [wiki](https://github.com/mkloubert/php5boilerplate/wiki).
 

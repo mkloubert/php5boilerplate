@@ -37,12 +37,24 @@ abstract class FileBase extends \php5bp\Object implements FileInterface {
     const MIME_TYPE_DEFAULT = "application/octet-stream";
 
 
+    /**
+     * {@inheritDoc}
+     */
     public abstract function content();
 
+    /**
+     * {@inheritDoc}
+     */
     public abstract function extension();
 
+    /**
+     * {@inheritDoc}
+     */
     public abstract function mime();
 
+    /**
+     * {@inheritDoc}
+     */
     public final function moveTo($folder, $name = null, $extension = null) {
         if (!$this->prepareForMoveTo($folder, $name, $extension)) {
             // invalid input
@@ -61,8 +73,14 @@ abstract class FileBase extends \php5bp\Object implements FileInterface {
      */
     protected abstract function moveToInner($dest);
 
+    /**
+     * {@inheritDoc}
+     */
     public abstract function name();
 
+    /**
+     * {@inheritDoc}
+     */
     public abstract function path();
 
     /**
@@ -95,8 +113,14 @@ abstract class FileBase extends \php5bp\Object implements FileInterface {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public abstract function size();
 
+    /**
+     * {@inheritDoc}
+     */
     public function suggestedExtension() {
         $result = null;
 

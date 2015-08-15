@@ -70,6 +70,9 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
     protected function beforeExecute(ModuleExecutionContext $ctx) {
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public final function context() {
         return $this->_context;
     }
@@ -103,6 +106,9 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
     protected function prepareInitialExecutionMethodArgs(ModuleExecutionContext $ctx, array &$args) {
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public final function render() {
         $result = null;
 
@@ -587,6 +593,9 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public final function updateContext(ContextInterface $ctx = null) {
         $this->_context = $ctx;
 

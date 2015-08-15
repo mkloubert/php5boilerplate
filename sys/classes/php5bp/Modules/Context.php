@@ -47,18 +47,30 @@ class Context extends \php5bp\Object implements ContextInterface {
     public $Name;
 
 
+    /**
+     * {@inheritDoc}
+     */
     public function dir() {
         return $this->Dir;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function meta() {
         return $this->Meta;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function module() {
         return $this->Module;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function name() {
         return $this->Name;
     }

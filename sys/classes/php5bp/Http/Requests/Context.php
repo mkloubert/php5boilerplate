@@ -48,10 +48,16 @@ class Context extends \php5bp\Object implements ContextInterface {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function cookie($name, $defaultValue = null, &$found = null) {
         return static::getArrayValue($_COOKIE, $name, $defaultValue, $found);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function doNotTrack() {
         switch (\trim($this->header('DNT'))) {
             case '1':
@@ -65,10 +71,16 @@ class Context extends \php5bp\Object implements ContextInterface {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function env($name, $defaultValue = null, &$found = null) {
         return static::getArrayValue($_ENV, $name, $defaultValue, $found);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function file($name) {
         $name = \trim(\strtolower($name));
 
@@ -78,6 +90,9 @@ class Context extends \php5bp\Object implements ContextInterface {
                                     });
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function get($name, $defaultValue = null, &$found = null) {
         return static::getArrayValue($_GET, $name, $defaultValue, $found);
     }
@@ -110,35 +125,56 @@ class Context extends \php5bp\Object implements ContextInterface {
         return $result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function hasCookie($name) {
         $this->cookie($name, null, $result);
         return $result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function hasFile($name) {
         return $this->file($name) instanceof UploadedFileInterface;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function hasGet($name) {
         $this->get($name, null, $result);
         return $result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function hasHeader($name) {
         $this->header($name, null, $result);
         return $result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function hasPost($name) {
         $this->post($name, null, $result);
         return $result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function hasRequest($name) {
         $this->request($name, null, $result);
         return $result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function header($name, $defaultValue = null, &$found = null) {
         $headers = \getallheaders();
 
@@ -146,23 +182,38 @@ class Context extends \php5bp\Object implements ContextInterface {
                                      $name, $defaultValue, $found);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function isChrome() {
         return static::checkAgentFor('chrome');
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function isEdge() {
         return static::checkAgentFor('edge');
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function isFacebook() {
         return static::checkAgentFor('facebookexternalhit');
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function isFirefox() {
         return static::checkAgentFor('firefox') ||
                static::checkAgentFor('gecko');
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function isMobile() {
         if (\array_key_exists('HTTP_USER_AGENT', $_SERVER)) {
             // based on: http://detectmobilebrowsers.com/
@@ -173,10 +224,16 @@ class Context extends \php5bp\Object implements ContextInterface {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function isSafari() {
         return static::checkAgentFor('safari');
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function isSearchEngine() {
         if (\array_key_exists('HTTP_USER_AGENT', $_SERVER)) {
             $userAgent = $_SERVER['HTTP_USER_AGENT'];
@@ -190,30 +247,51 @@ class Context extends \php5bp\Object implements ContextInterface {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function isTrident() {
         return static::checkAgentFor('trident');
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function isTwitter() {
         return static::checkAgentFor('twitterbot');
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function post($name, $defaultValue = null, &$found = null) {
         return static::getArrayValue($_POST, $name, $defaultValue, $found);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function request($name, $defaultValue = null, &$found = null) {
         return static::getArrayValue($_REQUEST, $name, $defaultValue, $found);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function server($name, $defaultValue = null, &$found = null) {
         return static::getArrayValue($_SERVER, $name, $defaultValue, $found);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function session($name, $defaultValue = null, &$found = null) {
         return static::getArrayValue($_SESSION, $name, $defaultValue, $found);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function uploadedFiles() {
         return UploadedFile::create();
     }

@@ -53,18 +53,30 @@ class Context extends \php5bp\Object implements ContextInterface {
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
     public function clearHeaders() {
         $this->_headers = array();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getCode() {
         return $this->_code;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getContentType() {
         return $this->getHeader(static::HEADER_CONTENT_TYPE);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getHeader($name, $defaultValue = null, &$found = null) {
         $name = static::normalizeHeaderName($name);
 
@@ -77,11 +89,17 @@ class Context extends \php5bp\Object implements ContextInterface {
         return $defaultValue;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function hasHeader($name) {
         $this->getHeader($name, null, $result);
         return $result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function headers() {
         return $this->_headers;
     }
@@ -97,6 +115,9 @@ class Context extends \php5bp\Object implements ContextInterface {
         return \ucwords(\trim($name));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function setCode($code) {
         $code = \trim($code);
 
@@ -104,6 +125,9 @@ class Context extends \php5bp\Object implements ContextInterface {
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function setContentType($mime) {
         $mime = \trim(\strtolower($mime));
         if ('' != $mime) {
@@ -116,6 +140,9 @@ class Context extends \php5bp\Object implements ContextInterface {
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function setHeader($name, $value) {
         $name = static::normalizeHeaderName($name);
         if ('' == $name) {
@@ -126,6 +153,9 @@ class Context extends \php5bp\Object implements ContextInterface {
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function unsetHeader($name) {
         $name = static::normalizeHeaderName($name);
         unset($this->_headers[$name]);

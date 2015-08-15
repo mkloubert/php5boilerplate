@@ -48,6 +48,9 @@ class CallableLogWriter extends \Zend\Log\Writer\AbstractWriter {
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
     protected function doWrite(array $event) {
         \call_user_func($this->_action,
                         $event);

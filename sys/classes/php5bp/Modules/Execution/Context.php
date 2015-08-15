@@ -96,20 +96,32 @@ class Context extends \php5bp\Object implements ContextInterface {
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
     public function clearVars() {
         $this->_vars = array();
 
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function config() {
         return $this->Config;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getAction() {
         return $this->_action;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getConfig($name, $defaultValue = null, &$found = null) {
         $name = static::normalizeConfigName($name);
 
@@ -131,10 +143,16 @@ class Context extends \php5bp\Object implements ContextInterface {
         return $defaultValue;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getTitle() {
         return $this->_title;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getVar($name, $defaultValue = null, &$found = null) {
         $name = static::normalizeVarName($name);
 
@@ -146,15 +164,24 @@ class Context extends \php5bp\Object implements ContextInterface {
         return $defaultValue;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getView() {
         return $this->_view;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function hasConfig($name) {
         $this->getConfig($name, null, $result);
         return $result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function hasVar($name) {
         $this->getVar($name, null, $result);
         return $result;
@@ -182,6 +209,9 @@ class Context extends \php5bp\Object implements ContextInterface {
         return \trim($name);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function notFound() {
         $this->suppressOutput();
         $this->response()->clearHeaders();
@@ -191,10 +221,16 @@ class Context extends \php5bp\Object implements ContextInterface {
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function noView() {
         return $this->setView(null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function redirectTo($url) {
         $this->suppressOutput();
         $this->response()->clearHeaders();
@@ -205,14 +241,23 @@ class Context extends \php5bp\Object implements ContextInterface {
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function request() {
         return $this->Request;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function response() {
         return $this->Response;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function sendAsDownload($filename, $mime = null) {
         $filename = \trim($filename);
         if ('' != $filename) {
@@ -232,6 +277,9 @@ class Context extends \php5bp\Object implements ContextInterface {
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function setAction($actionName) {
         $actionName = \trim($actionName);
         if ('' == $actionName) {
@@ -242,6 +290,9 @@ class Context extends \php5bp\Object implements ContextInterface {
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function setDefaultView() {
         $viewName = static::DEFAULT_VIEW_DEFAULT;
 
@@ -255,6 +306,9 @@ class Context extends \php5bp\Object implements ContextInterface {
         return $this->setView($viewName);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function setTitle($title) {
         $title = \trim($title);
         if ('' == $title) {
@@ -265,6 +319,9 @@ class Context extends \php5bp\Object implements ContextInterface {
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function setupForHtml($viewName = false) {
         if (false !== $viewName) {
             if (true !== $viewName) {
@@ -281,6 +338,9 @@ class Context extends \php5bp\Object implements ContextInterface {
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function setupForJson() {
         $viewName = static::DEFAULT_VIEW_JSON;
 
@@ -299,6 +359,9 @@ class Context extends \php5bp\Object implements ContextInterface {
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function setVar($name, $value) {
         $name = static::normalizeVarName($name);
 
@@ -306,6 +369,9 @@ class Context extends \php5bp\Object implements ContextInterface {
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function setView($viewName) {
         $viewName = \trim($viewName);
         if ('' == $viewName) {
@@ -316,6 +382,9 @@ class Context extends \php5bp\Object implements ContextInterface {
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function suppressOutput() {
         $viewName = static::DEFAULT_VIEW_NULL;
 
@@ -329,6 +398,9 @@ class Context extends \php5bp\Object implements ContextInterface {
         return $this->setView($viewName);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function unsetVar($name) {
         $name = static::normalizeVarName($name);
 
@@ -336,6 +408,9 @@ class Context extends \php5bp\Object implements ContextInterface {
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function vars() {
         return $this->_vars;
     }

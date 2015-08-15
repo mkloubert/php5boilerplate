@@ -45,22 +45,30 @@ abstract class LocalFileBase extends FileBase {
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
     public function content() {
-        return file_get_contents($this->path());
+        return \file_get_contents($this->path());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function extension() {
         return \pathinfo($this->name(), \PATHINFO_EXTENSION);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function mime() {
-        $fi = \finfo_open(FILEINFO_MIME_TYPE);
-            $result = \trim(\strtolower(\finfo_file($fi, $this->path())));
-        \finfo_close($fi);
-
-        return '' != $result ? $result : static::MIME_TYPE_DEFAULT;
+        return \php5bp::getMimeByFilename($this->name());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected function moveToInner($dest) {
         if (@\rename($this->_path, $dest)) {
             $this->_path = \realpath($dest);
@@ -70,14 +78,23 @@ abstract class LocalFileBase extends FileBase {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function name() {
         return \basename($this->path());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function path() {
         return \realpath($this->_path);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function size() {
         return \filesize($this->path());
     }

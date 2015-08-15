@@ -47,6 +47,9 @@ class Logger extends \Zend\Log\Logger {
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function log($priority, $message, $extra = array()) {
         $timestamp = new \DateTime();
 

@@ -29,10 +29,16 @@ namespace php5bp\Config\Reader;
  * @author Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
  */
 class PhpArray implements \Zend\Config\Reader\ReaderInterface {
+    /**
+     * {@inheritDoc}
+     */
     public function fromFile($filename) {
         return require $filename;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function fromString($string) {
         return eval("return {$string};");
     }

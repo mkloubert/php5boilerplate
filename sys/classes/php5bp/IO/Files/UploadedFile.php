@@ -82,10 +82,16 @@ class UploadedFile extends LocalFileBase implements UploadedFileInterface {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function field() {
         return $this->_field;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function mime() {
         $result = '';
 
@@ -100,6 +106,9 @@ class UploadedFile extends LocalFileBase implements UploadedFileInterface {
         return $result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected function moveToInner($dest) {
         if (@\move_uploaded_file($this->_path, $dest)) {
             $this->_path = \realpath($dest);
@@ -109,6 +118,9 @@ class UploadedFile extends LocalFileBase implements UploadedFileInterface {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function name() {
         if (\array_key_exists('name', $this->_fileEntry)) {
             return $this->_fileEntry['name'];
@@ -117,6 +129,9 @@ class UploadedFile extends LocalFileBase implements UploadedFileInterface {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function size() {
         if (\array_key_exists('size', $this->_fileEntry)) {
             return $this->_fileEntry['size'];

@@ -39,6 +39,9 @@ class Provider extends \php5bp\Object implements ProviderInterface {
     const MODULE_NAME_SEPARATOR = '/';
 
 
+    /**
+     * {@inheritDoc}
+     */
     public function getModuleMetaByName($moduleName) {
         $modulePath = \realpath(\PHP5BP_DIR_MODULES .
                                 \str_replace(static::MODULE_NAME_SEPARATOR, \DIRECTORY_SEPARATOR, $moduleName));

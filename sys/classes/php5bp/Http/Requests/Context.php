@@ -136,6 +136,14 @@ class Context extends \php5bp\Object implements ContextInterface {
     /**
      * {@inheritDoc}
      */
+    public function hasEnv($name) {
+        $this->env($name, null, $result);
+        return $result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function hasFile($name) {
         return $this->file($name) instanceof UploadedFileInterface;
     }
@@ -169,6 +177,22 @@ class Context extends \php5bp\Object implements ContextInterface {
      */
     public function hasRequest($name) {
         $this->request($name, null, $result);
+        return $result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function hasServer($name) {
+        $this->server($name, null, $result);
+        return $result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function hasSession($name) {
+        $this->session($name, null, $result);
         return $result;
     }
 

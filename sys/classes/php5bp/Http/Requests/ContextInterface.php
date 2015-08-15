@@ -92,6 +92,15 @@ interface ContextInterface extends \php5bp\ObjectInterface {
     function hasCookie($name);
 
     /**
+     * Checks if an environment value is defined or not.
+     *
+     * @param string $name The name of the cookie.
+     *
+     * @return bool Value was found or not.
+     */
+    function hasEnv($name);
+
+    /**
      * Checks if a file is defined or not.
      *
      * @param string $name The (field) name of the file.
@@ -135,6 +144,23 @@ interface ContextInterface extends \php5bp\ObjectInterface {
      * @return bool Variable was found or not.
      */
     function hasRequest($name);
+    /**
+     * Checks if a server variable is defined or not.
+     *
+     * @param string $name The name of the cookie.
+     *
+     * @return bool Variable was found or not.
+     */
+    function hasServer($name);
+
+    /**
+     * Checks if a session variable is defined or not.
+     *
+     * @param string $name The name of the cookie.
+     *
+     * @return bool Variable was found or not.
+     */
+    function hasSession($name);
 
     /**
      * Returns a HTTP request header value.

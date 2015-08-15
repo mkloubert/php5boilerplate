@@ -2,6 +2,8 @@
 
 PHP 5 based and modular framework for starting websites from scratch.
 
+The documentation can be found at the [wiki](https://github.com/mkloubert/php5boilerplate/wiki).
+
 ## Requirements
 
 * PHP 5.5+

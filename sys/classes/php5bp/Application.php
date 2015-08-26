@@ -82,7 +82,9 @@ class Application extends Object {
     }
 
     /**
-     * @return ModuleMetaProviderInterface
+     * Returns the meta data provider for modules.
+     *
+     * @return ModuleMetaProviderInterface The provider.
      */
     protected function getModuleMetaProvider() {
         $providerClass = null;

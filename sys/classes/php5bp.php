@@ -166,14 +166,16 @@ final class php5bp {
                                                 }, false);
 
             if (false !== $file) {
-                if (!array_key_exists($file->path, static::$_configCache)) {
+                $cacheKey = $file->path;
+
+                if (!array_key_exists($cacheKey, static::$_configCache)) {
                     $cls = new ReflectionClass($file->class);
 
                     $reader = $cls->newInstance();
-                    static::$_configCache[$file->path] = $reader->fromFile($file->path);
+                    static::$_configCache[$cacheKey] = $reader->fromFile($file->path);
                 }
 
-                return static::$_configCache[$file->path];
+                return static::$_configCache[$cacheKey];
             }
         }
 

@@ -13,6 +13,7 @@ The documentation can be found at the [wiki](https://github.com/mkloubert/php5bo
 * [AngularJS](https://angularjs.org/)
 * [jQuery](https://jquery.com/)
 * [normalize.css](https://github.com/necolas/normalize.css/)
+* [phpDeeBuk](https://github.com/mkloubert/phpDeeBuk/)
 * [phpLINQ](https://github.com/mkloubert/phpLINQ/)
 * [Slim](http://www.slimframework.com/)
 * [Zend Framework](http://framework.zend.com/)

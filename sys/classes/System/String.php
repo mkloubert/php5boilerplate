@@ -30,7 +30,7 @@ use \System\Linq\Enumerable;
  * @package System
  * @author Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
  */
-class String extends \System\ObjectWrapper implements \Countable, \Serializable, \IteratorAggregate {
+class String extends \System\ObjectWrapper implements \Countable, IComparable, \IteratorAggregate, \Serializable {
     /**
      * Initializes a new instance of that class.
      *
@@ -48,16 +48,120 @@ class String extends \System\ObjectWrapper implements \Countable, \Serializable,
      * @return string The formatted string.
      */
     public function __invoke() {
-        return static::formatArray($this->toString(),
+        return static::formatArray($this->getWrappedValue(),
                                    \func_get_args());
     }
 
+
+    /**
+     * Returns a value as a String object.
+     *
+     * @param mixed $val The value to convert/case.
+     * @param bool $nullAsEmpty If (true) an empty string will be returned instead of a (null) reference.
+     *
+     * @return static
+     */
+    public static function asString($val, $nullAsEmpty = true) {
+        if (null === $val) {
+            if ($nullAsEmpty) {
+                $val = '';
+            }
+        }
+
+        if (null === $val) {
+            return $val;
+        }
+
+        if ($val instanceof static) {
+            return $val;
+        }
+
+        return new static($val);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function compareTo($other) {
+        return \strcmp($this, $other);
+    }
+
+    /**
+     * Checks if that string contains an expression.
+     *
+     * @param string $expr The expression to search for.
+     * @param bool $ignoreCase Ignore case or not.
+     *
+     * @return bool String contains expression or not.
+     */
+    public function contains($expr, $ignoreCase = false) {
+        return false !== $this->invokeFindStringFunc($expr, $ignoreCase);
+    }
+
+    /**
+     * Creates a string that is stored in a specific encoding (s. \iconv()).
+     *
+     * @param mixed $str The string to convert.
+     * @param string $srcEnc The source encoding. If not defined the input encoding is used.
+     * @param string $targetEnc The target encoding. If not defined the internal encoding is used.
+     *
+     * @return static
+     */
+    public static function convertFrom($str, $srcEnc = null, $targetEnc = null) {
+        if (static::isNullOrWhitespace($srcEnc)) {
+            $srcEnc = \iconv_get_encoding('input_encoding');
+        }
+
+        if (static::isNullOrWhitespace($targetEnc)) {
+            $targetEnc = \iconv_get_encoding('internal_encoding');
+        }
+
+        return static::asString(\iconv($srcEnc, $targetEnc,
+                                       static::valueToString($str)));
+    }
+
+    /**
+     * Converts a string to a new encoding (s. \iconv()).
+     *
+     * @param string $targetEnc The target encoding. If not defined the output encoding is used.
+     * @param string $srcEnc The source encoding. If not defined the internal encoding is used.
+     *
+     * @return static
+     */
+    public function convertTo($targetEnc = null, $srcEnc = null) {
+        if (static::isNullOrWhitespace($targetEnc)) {
+            $targetEnc = \iconv_get_encoding('output_encoding');
+        }
+
+        if (static::isNullOrWhitespace($srcEnc)) {
+            $srcEnc = \iconv_get_encoding('internal_encoding');
+        }
+
+        return static::asString(\iconv($srcEnc, $targetEnc,
+                                       $this->getWrappedValue()));
+    }
 
     /**
      * {@inheritDoc}
      */
     public function count() {
         return \strlen($this->getWrappedValue());
+    }
+
+    /**
+     * Checks if that strings ends with a specific expression.
+     *
+     * @param string $expr The expression to check.
+     * @param bool $ignoreCase Ignore case or not.
+     *
+     * @return bool Ends with expression or not.
+     */
+    public function endsWith($expr, $ignoreCase = false) {
+        $expr = static::valueToString($expr);
+
+        return ('' === $expr) ||
+               (($temp = $this->length() - \strlen($expr)) >= 0 &&
+                false !== $this->invokeFindStringFunc($expr, $ignoreCase, $temp));
     }
 
     /**
@@ -118,6 +222,24 @@ class String extends \System\ObjectWrapper implements \Countable, \Serializable,
     }
 
     /**
+     * Invokes the function for finding a string.
+     *
+     * @param string &$expr The expression to search for.
+     * @param bool $ignoreCase Ignore case or not.
+     * @param int $offset The offset.
+     *
+     * @return mixed The result of the invocation.
+     */
+    protected function invokeFindStringFunc(&$expr = null, $ignoreCase = false, $offset = 0) {
+        $expr = static::valueToString($expr);
+        $str = $this->getWrappedValue();
+        $func = !$ignoreCase ? 'strpos' : 'stripos';
+
+        return \call_user_func($func,
+                               $str, $expr, $offset);
+    }
+
+    /**
      * Checks if a string is (null) or empty.
      *
      * @param string $str The string to check.
@@ -148,6 +270,15 @@ class String extends \System\ObjectWrapper implements \Countable, \Serializable,
         }
 
         return '' === \call_user_func_array("\\trim", $args);
+    }
+
+    /**
+     * Gets the length of the string.
+     *
+     * @return int The length of that string.
+     */
+    public function length() {
+        return $this->count();
     }
 
     /**
@@ -184,6 +315,96 @@ class String extends \System\ObjectWrapper implements \Countable, \Serializable,
      */
     public function serialize() {
         return $this->toString();
+    }
+
+    /**
+     * Checks if that strings starts with a specific expression.
+     *
+     * @param string $expr The expression to check.
+     * @param bool $ignoreCase Ignore case or not.
+     *
+     * @return bool Starts with expression or not.
+     */
+    public function startsWith($expr, $ignoreCase = false) {
+        return 0 === $this->invokeFindStringFunc($expr, $ignoreCase);
+    }
+
+    /**
+     * Converts that string to an array of its chars.
+     *
+     * @return array The string as char array.
+     */
+    public function toCharArray() {
+        return $this->getIterator()
+                    ->toArray();
+    }
+
+    /**
+     * Converts that string to lower chars.
+     *
+     * @return static
+     */
+    public function toLower() {
+        return new static(\strtolower($this->getWrappedValue()));
+    }
+
+    /**
+     * Converts that string to upper chars.
+     *
+     * @return static
+     */
+    public function toUpper() {
+        return new static(\strtoupper($this->getWrappedValue()));
+    }
+
+    /**
+     * Trims that string at the beginning and the end.
+     *
+     * @param string $charlist The list of chars that represents whitespaces.
+     *
+     * @return static
+     */
+    public function trim($charlist = null) {
+        return $this->trimMe("\\trim", $charlist);
+    }
+
+    /**
+     * Trims that string at the end.
+     *
+     * @param string $charlist The list of chars that represents whitespaces.
+     *
+     * @return static
+     */
+    public function trimEnd($charlist = null) {
+        return $this->trimMe("\\rtrim", $charlist);
+    }
+
+    /**
+     * Trims that string.
+     *
+     * @param callable $func The function to use.
+     * @param string $charlist The list of chars that represents whitespaces.
+     *
+     * @return static
+     */
+    protected function trimMe($func, $charlist) {
+        $args = array(static::valueToString($this->getWrappedValue()));
+        if (!\is_null($charlist)) {
+            $args[] = static::valueToString($charlist);
+        }
+
+        return new static(\call_user_func_array($func, $args));
+    }
+
+    /**
+     * Trims that string at the beginning.
+     *
+     * @param string $charlist The list of chars that represents whitespaces.
+     *
+     * @return static
+     */
+    public function trimStart($charlist = null) {
+        return $this->trimMe("\\ltrim", $charlist);
     }
 
     /**

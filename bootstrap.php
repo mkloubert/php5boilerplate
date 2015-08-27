@@ -53,10 +53,10 @@ spl_autoload_register(function($clsName) {
                                            str_replace('\\', DIRECTORY_SEPARATOR, $clsName) .
                                            '.php');
 
-                            if (false !== $file) {
-                                require_once $file;
-                            }
-                        });
+                          if (false !== $file) {
+                              require_once $file;
+                          }
+                      });
 
 // bootstrap files
 $bootstrapFiles = Enumerable::scanDir(PHP5BP_DIR_BOOTSTRAP);

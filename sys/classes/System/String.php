@@ -30,7 +30,13 @@ use \System\Linq\Enumerable;
  * @package System
  * @author Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
  */
-class String extends \System\ObjectWrapper implements \Countable, IComparable, \IteratorAggregate, \Serializable {
+class String extends \System\ObjectWrapper implements \ArrayAccess,\Countable, IComparable, \IteratorAggregate, \Serializable {
+    /**
+     * Value for an index that tells that a string was not found.
+     */
+    const NOT_FOUND_INDEX = -1;
+
+
     /**
      * Initializes a new instance of that class.
      *
@@ -56,7 +62,7 @@ class String extends \System\ObjectWrapper implements \Countable, IComparable, \
     /**
      * Returns a value as a String object.
      *
-     * @param mixed $val The value to convert/case.
+     * @param mixed $val The value to convert/cast.
      * @param bool $nullAsEmpty If (true) an empty string will be returned instead of a (null) reference.
      *
      * @return static
@@ -69,7 +75,7 @@ class String extends \System\ObjectWrapper implements \Countable, IComparable, \
         }
 
         if (null === $val) {
-            return $val;
+            return null;
         }
 
         if ($val instanceof static) {
@@ -116,8 +122,8 @@ class String extends \System\ObjectWrapper implements \Countable, IComparable, \
             $targetEnc = \iconv_get_encoding('internal_encoding');
         }
 
-        return static::asString(\iconv($srcEnc, $targetEnc,
-                                       static::valueToString($str)));
+        return new static(\iconv($srcEnc, $targetEnc,
+                                 static::valueToString($str)));
     }
 
     /**
@@ -137,8 +143,8 @@ class String extends \System\ObjectWrapper implements \Countable, IComparable, \
             $srcEnc = \iconv_get_encoding('internal_encoding');
         }
 
-        return static::asString(\iconv($srcEnc, $targetEnc,
-                                       $this->getWrappedValue()));
+        return new static(\iconv($srcEnc, $targetEnc,
+                                 $this->getWrappedValue()));
     }
 
     /**
@@ -168,6 +174,10 @@ class String extends \System\ObjectWrapper implements \Countable, IComparable, \
      * {@inheritDoc}
      */
     public function equals($other) {
+        if (\is_scalar($other)) {
+            return $this->getWrappedValue() === static::valueToString($other);
+        }
+
         if ($other instanceof \System\ObjectWrapper) {
             return $this->getWrappedValue() === $other->getWrappedValue();
         }
@@ -197,8 +207,10 @@ class String extends \System\ObjectWrapper implements \Countable, IComparable, \
      * @return string The formatted string.
      */
     public static function formatArray($format, $args) {
-        $args = Enumerable::create($args)
-                          ->toArray();
+        if (!\is_array($args)) {
+            $args = Enumerable::create($args)
+                              ->toArray();
+        }
 
         return \preg_replace_callback('/{(\d+)(\:[^}]*)?}/i',
                                       function($match) use ($args) {
@@ -222,6 +234,49 @@ class String extends \System\ObjectWrapper implements \Countable, IComparable, \
     }
 
     /**
+     * Finds the first occurrence of a string expression.
+     *
+     * @param string $expr The string to search for.
+     * @param bool $ignoreCase Ignore case or not.
+     * @param int $offset The offset.
+     *
+     * @return int The zero based index or -1 if not found.
+     */
+    public function indexOf($expr, $ignoreCase = false, $offset = 0) {
+        $result = $this->invokeFindStringFunc($expr, $ignoreCase, $offset);
+
+        return false !== $result ? $result
+                                 : static::NOT_FOUND_INDEX;
+    }
+
+    /**
+     * Finds the first occurrence of a char list.
+     *
+     * @param $chars The list of chars.
+     * @param bool $ignoreCase Ignore case or not.
+     * @param int $offset The offset.
+     *
+     * @return int The zero based index or -1 if not found.
+     */
+    public function indexOfAny($chars, $ignoreCase = false, $offset = 0) {
+        $chars = static::valueToString($chars);
+        $charCount = \strlen($chars);
+
+        $result = static::NOT_FOUND_INDEX;
+
+        for ($i = 0; $i < $charCount; $i++) {
+            $result = $this->indexOf($chars[$i], $ignoreCase, $offset);
+
+            if (static::NOT_FOUND_INDEX != $result) {
+                // found
+                break;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Invokes the function for finding a string.
      *
      * @param string &$expr The expression to search for.
@@ -237,6 +292,24 @@ class String extends \System\ObjectWrapper implements \Countable, IComparable, \
 
         return \call_user_func($func,
                                $str, $expr, $offset);
+    }
+
+    /**
+     * Gets if the string is empty or not.
+     *
+     * @return bool Is empty or not.
+     */
+    public function isEmpty() {
+        return $this->length() < 1;
+    }
+
+    /**
+     * Gets if the string is NOT empty.
+     *
+     * @return bool Is empty (false) or not (true).
+     */
+    public function isNotEmpty() {
+        return !$this->isEmpty();
     }
 
     /**
@@ -273,12 +346,59 @@ class String extends \System\ObjectWrapper implements \Countable, IComparable, \
     }
 
     /**
+     * Checks if a value is a string or a String object.
+     *
+     * @param mixed $val The value to check.
+     *
+     * @return bool Is string or not.
+     */
+    public static function isString($val) {
+        return \is_string($val) ||
+               ($val instanceof String);
+    }
+
+    /**
      * Gets the length of the string.
      *
      * @return int The length of that string.
      */
     public function length() {
         return $this->count();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function offsetExists($index) {
+        return ($index >= 0) &&
+               ($index < $this->length());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function offsetGet($index) {
+        $this->throwIfIndexOutOfRange($index);
+
+        return $this->_wrappedValue[$index];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function offsetSet($index, $value) {
+        $this->throwIfIndexOutOfRange($index);
+
+        $this->_wrappedValue[$index] = $value;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function offsetUnset($index) {
+        $this->throwIfIndexOutOfRange($index);
+
+        $this->_wrappedValue[$index] = "\\0";
     }
 
     /**
@@ -291,20 +411,17 @@ class String extends \System\ObjectWrapper implements \Countable, IComparable, \
      */
     public static function parseFormatStringValue($format, $value) {
         if (null !== $format) {
-            $handled = true;
             $format = static::valueToString($format);
 
-            if ($value instanceof \DateTime) {
-                $value = $value->format($format);
+            if ($value instanceof \DateTimeInterface) {
+                return $value->format($format);
             }
-            else {
-                $handled = false;
+            else if ($value instanceof \DateInterval) {
+                return $value->format($format);
             }
 
-            if (!$handled) {
-                // default
-                $value = \sprintf($format, $value);
-            }
+            // default
+            return \sprintf($format, $value);
         }
 
         return $value;
@@ -327,6 +444,19 @@ class String extends \System\ObjectWrapper implements \Countable, IComparable, \
      */
     public function startsWith($expr, $ignoreCase = false) {
         return 0 === $this->invokeFindStringFunc($expr, $ignoreCase);
+    }
+
+    /**
+     * Throws an exception if an index value is out of range.
+     *
+     * @param int $index The value to check.
+     *
+     * @throws ArgumentOutOfRangeException
+     */
+    protected function throwIfIndexOutOfRange($index) {
+        if (($index < 0) || ($index >= $this->length())) {
+            throw new ArgumentOutOfRangeException('index');
+        }
     }
 
     /**

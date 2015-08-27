@@ -262,47 +262,19 @@ final class php5bp {
     }
 
     /**
-     * Formats a string.
-     *
-     * @param string $format The format string.
-     * @param mixed ...$arg One or more argument for $format.
-     *
-     * @return string The formatted string.
+     * @see \System\String::format()
      */
     public static function format($format) {
-        return static::formatArray($format,
-                                   array_slice(func_get_args(), 1));
+        return call_user_func_array(array("\\System\\String", "format"),
+                                    func_get_args());
     }
 
     /**
-     * Formats a string.
-     *
-     * @param string $format The format string.
-     * @param Traversable|array $args The arguments for $format.
-     *
-     * @return string The formatted string.
+     * @see \System\String::formatArray()
      */
-    public static function formatArray($format, $args = null) {
-        if (is_null($args)) {
-            $args = array();
-        }
-
-        if (!is_array($args)) {
-            $args = iterator_to_array($args);
-        }
-
-        return preg_replace_callback('/{(\d+)(\:[^}]*)?}/i',
-                                     function($match) use ($args) {
-                                         $i = intval($match[1]);
-
-                                         $format = null;
-                                         if (array_key_exists(2, $match)) {
-                                             $format = substr($match[2], 1);
-                                         }
-
-                                         return array_key_exists($i, $args) ? strval(php5bp::parseFormatStringValue($format, $args[$i]))
-                                                                            : $match[0];
-                                     }, $format);
+    public static function formatArray($format, $args) {
+        return call_user_func_array(array("\\System\\String", "formatArray"),
+                                    func_get_args());
     }
 
     /**

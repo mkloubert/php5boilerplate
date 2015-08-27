@@ -19,6 +19,7 @@
  * License along with this software.                                                                                  *
  **********************************************************************************************************************/
 
+use \System\String as ClrString;
 use \System\Linq\Enumerable;
 
 
@@ -262,18 +263,18 @@ final class php5bp {
     }
 
     /**
-     * @see \System\String::format()
+     * @see ClrString::format()
      */
     public static function format($format) {
-        return call_user_func_array(array("\\System\\String", "format"),
+        return call_user_func_array(array(ClrString::class, "format"),
                                     func_get_args());
     }
 
     /**
-     * @see \System\String::formatArray()
+     * @see ClrString::formatArray()
      */
     public static function formatArray($format, $args) {
-        return call_user_func_array(array("\\System\\String", "formatArray"),
+        return call_user_func_array(array(ClrString::class, "formatArray"),
                                     func_get_args());
     }
 

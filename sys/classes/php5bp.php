@@ -30,13 +30,22 @@ use \System\Linq\Enumerable;
  */
 final class php5bp {
     /**
-     * @var \php5bp\Application
+     * Default name of the application class.
+     */
+    const DEFAULT_APPLICATION_CLASS = '\php5bp\Application';
+
+
+    /**
+     * @var \php5bp\ApplicationInterface
      */
     private static $_app;
     /**
-     * @var \Zend\Cache\Storage\StorageInterface
+     * @var array
      */
-    private static $_cache;
+    private static $_cache = array();
+    /**
+     * @var array
+     */
     private static $_configCache = array();
     /**
      * @var array
@@ -68,12 +77,26 @@ final class php5bp {
     /**
      * Gets the singleton app instance.
      *
-     * @return \php5bp\Application The app instance.
+     * @return \php5bp\ApplicationInterface The app instance.
      */
     public static function app() {
-        if (is_null(static::$_app)) {
-            // initialize
-            static::$_app = new \php5bp\Application();
+        if (null === static::$_app) {
+            $className = '';
+
+            $appConf = static::appConf();
+            if (array_key_exists('class', $appConf)) {
+                $className = $appConf['class'];
+            }
+
+            $className = trim($className);
+            if ('' == $className) {
+                // use default class
+                $className = static::DEFAULT_APPLICATION_CLASS;
+            }
+
+            // create instance
+            $rc = new ReflectionClass($className);
+            static::$_app = $rc->newInstance();
         }
 
         return static::$_app;
@@ -101,16 +124,16 @@ final class php5bp {
             return false;
         }
 
-        if (is_null(static::$_cache)) {
+        if (array_key_exists($name, static::$_cache)) {
             $cacheConf = static::conf('cache.' . $name);
             if (!is_array($cacheConf)) {
                 $cacheConf = array();
             }
 
-            static::$_cache = \Zend\Cache\StorageFactory::factory($cacheConf);
+            static::$_cache[$name] = \Zend\Cache\StorageFactory::factory($cacheConf);
         }
 
-        return static::$_cache;
+        return static::$_cache[$name];
     }
 
     /**
@@ -273,9 +296,8 @@ final class php5bp {
     /**
      * @see ClrString::formatArray()
      */
-    public static function formatArray($format, $args) {
-        return call_user_func_array(array(ClrString::class, "formatArray"),
-                                    func_get_args());
+    public static function formatArray($format, $args = null) {
+        return ClrString::formatArray($format, $args);
     }
 
     /**
@@ -340,7 +362,7 @@ final class php5bp {
             }
         }
 
-        if (is_null($result)) {
+        if (null === $result) {
             // use default
             $result = 'application/octet-stream';
         }
@@ -432,8 +454,7 @@ final class php5bp {
      * @return bool Is (null) or empty; otherwise (false).
      */
     public static function isNullOrEmpty($str) {
-        return is_null($str) ||
-               ('' == strval($str));
+        return ClrString::isNullOrEmpty($str);
     }
 
     /**
@@ -442,7 +463,7 @@ final class php5bp {
      * @return \php5bp\Diagnostics\Log\Logger The logger.
      */
     public static function log() {
-        if (is_null(static::$_logger)) {
+        if (null === static::$_logger) {
             $newLogger = new \php5bp\Diagnostics\Log\Logger();
             $newLogger->addWriter(new \Zend\Log\Writer\Noop());
 
@@ -483,7 +504,7 @@ final class php5bp {
      * @return DateTime The current time.
      */
     public static function now() {
-        if (is_null(static::$_now)) {
+        if (null === static::$_now) {
             static::$_now = new DateTime();
 
             if (array_key_exists('REQUEST_TIME', $_SERVER)) {
@@ -523,34 +544,6 @@ final class php5bp {
      */
     public static function outputEncoding() {
         return iconv_get_encoding('output_encoding');
-    }
-
-    /**
-     * Formats a value for a formatted string.
-     *
-     * @param string $format The format string for $value.
-     * @param mixed $value The value to parse.
-     *
-     * @return mixed The parsed value.
-     */
-    public static function parseFormatStringValue($format, $value) {
-        if (!static::isNullOrEmpty($format)) {
-            $handled = true;
-
-            if ($value instanceof DateTime) {
-                $value = $value->format($format);
-            }
-            else {
-                $handled = false;
-            }
-
-            if (!$handled) {
-                // default
-                $value = sprintf($format, $value);
-            }
-        }
-
-        return $value;
     }
 
     /**

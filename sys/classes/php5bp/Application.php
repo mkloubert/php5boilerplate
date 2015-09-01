@@ -31,7 +31,7 @@ use \System\Linq\Enumerable;
  * @package php5bp
  * @author Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
  */
-class Application extends Object {
+class Application extends Object implements ApplicationInterface {
     /**
      * Default class of a meta provider.
      */
@@ -65,17 +65,13 @@ class Application extends Object {
 
 
     /**
-     * Disposes the application and all its resources.
+     * {@inheritDoc}
      */
     public function dispose() {
     }
 
     /**
-     * Handles an exception.
-     *
-     * @param \Exception $ex The exception to handle.
-     *
-     * @return bool Was handled or not.
+     * {@inheritDoc}
      */
     public function handleException(\Exception $ex) {
         return false;
@@ -112,9 +108,7 @@ class Application extends Object {
     }
 
     /**
-     * Initializes the application.
-     *
-     * @throws \Exception Initialization failed.
+     * {@inheritDoc}
      */
     public function initialize() {
     }
@@ -168,9 +162,7 @@ class Application extends Object {
     }
 
     /**
-     * Gets or sets if shutdown should be processed or not.
-     *
-     * @return bool Process shutdown or not.
+     * {@inheritDoc}
      */
     public function processShutdown() {
         if (\func_num_args() > 0) {
@@ -181,11 +173,7 @@ class Application extends Object {
     }
 
     /**
-     * Runs the application.
-     *
-     * @return bool Operation was successful or not.
-     *
-     * @throws \Exception An error occurred.
+     * {@inheritDoc}
      */
     public function run() {
         $appConf = \php5bp::appConf();

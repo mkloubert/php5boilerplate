@@ -1,4 +1,5 @@
 {
+  "class": "\\php5bp\\Application",
   "debug": true,
   "dirs": {
     "temp": "./sys/tmp"

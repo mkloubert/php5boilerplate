@@ -908,16 +908,22 @@ abstract class EnumerableBase extends \System\Object implements IEnumerable {
         $type = \trim($type);
 
         return $this->where(function($x) use ($type) {
-                                if (empty($type)) {
-                                    return \is_null($x);
+                                if ('' === $type) {
+                                    return null === $x;
                                 }
 
                                 if (\is_object($x)) {
-                                    if (\class_exists($type)) {
+                                    if (\interface_exists($type) || \class_exists($type)) {
                                         $reflect = new \ReflectionClass($type);
 
                                         return $reflect->isInstance($x);
                                     }
+
+                                    return 'object' === $type;
+                                }
+
+                                if ('scalar' === $type) {
+                                    return \is_scalar($x);
                                 }
 
                                 return \gettype($x) == $type;

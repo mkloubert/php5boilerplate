@@ -22,6 +22,7 @@
 namespace php5bp;
 
 use \php5bp\Modules\Meta\ProviderInterface as ModuleMetaProviderInterface;
+use \php5bp\Modules\Scripts\ProviderInterface as ModuleScriptProviderInterface;
 use \System\Linq\Enumerable;
 
 
@@ -52,10 +53,6 @@ class Application extends Object implements ApplicationInterface {
      * Expression for module name separator.
      */
     const MODULE_NAME_SEPARATOR = '/';
-    /**
-     * The name of a module script file.
-     */
-    const MODULE_SCRIPT_FILENAME = 'index.php';
 
 
     /**
@@ -105,6 +102,31 @@ class Application extends Object implements ApplicationInterface {
 
         $prc = new \ReflectionClass($providerClass);
         return $prc->newInstance();
+    }
+
+    /**
+     * Returns the entry script for a module.
+     *
+     * @param array $meta The meta data of the module.
+     *
+     * @return ModuleScriptProviderInterface The script provider.
+     */
+    protected function getModuleScriptProvider(array $meta) {
+        $providerClass = null;
+
+        if (\array_key_exists('module', $meta)) {
+            if (\array_key_exists('scriptProvider', $meta['module'])) {
+                $providerClass = $meta['module']['scriptProvider'];
+            }
+        }
+
+        $providerClass = \trim($providerClass);
+        if ('' == $providerClass) {
+            $providerClass = \php5bp\Modules\Scripts\Provider::class;
+        }
+
+        $pc = new \ReflectionClass($providerClass);
+        return $pc->newInstance();
     }
 
     /**
@@ -224,16 +246,23 @@ class Application extends Object implements ApplicationInterface {
         $modulePath = \realpath(\PHP5BP_DIR_MODULES .
                                 \str_replace(static::MODULE_NAME_SEPARATOR, \DIRECTORY_SEPARATOR, $moduleName));
         if (false !== $modulePath) {
-            $moduleScriptPath = \realpath($modulePath . \DIRECTORY_SEPARATOR . static::MODULE_SCRIPT_FILENAME);
+            $moduleMeta = $this->getModuleMetaProvider()
+                               ->getModuleMetaByName($moduleName);
+
+            if (!\is_array($moduleMeta)) {
+                // set default
+                $moduleMeta = array();
+            }
+
+            $moduleCtx         = new \php5bp\Modules\Context();
+            $moduleCtx->Dir    = $modulePath;
+            $moduleCtx->Meta   = $moduleMeta;
+            $moduleCtx->Name   = $moduleName;
+
+            $moduleScriptPath = \realpath($modulePath . \DIRECTORY_SEPARATOR .
+                                          $this->getModuleScriptProvider($moduleMeta)
+                                               ->getScriptName($moduleCtx));
             if (false !== $moduleScriptPath) {
-                $moduleMeta = $this->getModuleMetaProvider()
-                                   ->getModuleMetaByName($moduleName);
-
-                if (!\is_array($moduleMeta)) {
-                    // set default
-                    $moduleMeta = array();
-                }
-
                 // module class defined?
                 $moduleClass = null;
                 if (\array_key_exists('class', $moduleMeta)) {
@@ -248,15 +277,10 @@ class Application extends Object implements ApplicationInterface {
 
                 if ('' != $moduleClass) {
                     if (\class_exists($moduleClass)) {
-                        $mc = new \ReflectionClass($moduleClass);
+                        $mrc = new \ReflectionClass($moduleClass);
+                        $module = $mrc->newInstanceArgs($moduleConstructorArgs);
 
-                        $module = $mc->newInstanceArgs($moduleConstructorArgs);
-
-                        $moduleCtx         = new \php5bp\Modules\Context();
-                        $moduleCtx->Dir    = $modulePath;
-                        $moduleCtx->Meta   = $moduleMeta;
                         $moduleCtx->Module = $module;
-                        $moduleCtx->Name   = $moduleName;
 
                         $renderMethod = '';
                         $updateContextMethod = '';

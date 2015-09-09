@@ -4,7 +4,8 @@
     "actions":{
       "source": ["post", "get", "request"],
       "var": "action2"
-    }
+    },
+    "scriptProvider": "\\php5bp\\Modules\\Scripts\\Provider"
   },
   "actions": {
     "test": "testAction",

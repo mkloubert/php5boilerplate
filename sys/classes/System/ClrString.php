@@ -30,7 +30,7 @@ use \System\Linq\Enumerable;
  * @package System
  * @author Marcel Joachim Kloubert <marcel.kloubert@gmx.net>
  */
-class String extends \System\ObjectWrapper implements \ArrayAccess, \Countable, IComparable, \IteratorAggregate, \Serializable {
+class ClrString extends \System\ObjectWrapper implements \ArrayAccess, \Countable, IComparable, \IteratorAggregate, \Serializable {
     /**
      * Value for an index that tells that a string was not found.
      */
@@ -241,7 +241,7 @@ class String extends \System\ObjectWrapper implements \ArrayAccess, \Countable, 
                                               $format = \substr($match[2], 1);
                                           }
 
-                                          return \array_key_exists($i, $args) ? String::parseFormatStringValue($format, $args[$i])
+                                          return \array_key_exists($i, $args) ? ClrString::parseFormatStringValue($format, $args[$i])
                                                                               : $match[0];
                                       }, $format);
     }
@@ -427,7 +427,7 @@ class String extends \System\ObjectWrapper implements \ArrayAccess, \Countable, 
         }
 
         $args = array(static::valueToString($str));
-        if (!\is_null($charlist)) {
+        if (null !== $charlist) {
             $args[] = static::valueToString($charlist);
         }
 
@@ -443,7 +443,7 @@ class String extends \System\ObjectWrapper implements \ArrayAccess, \Countable, 
      */
     public static function isString($val) {
         return \is_string($val) ||
-               ($val instanceof String);
+               ($val instanceof ClrString);
     }
 
     /**
@@ -490,14 +490,14 @@ class String extends \System\ObjectWrapper implements \ArrayAccess, \Countable, 
                                      if (!$ctx->isFirst) {
                                          // append separator
 
-                                         $result .= String::valueToString(\call_user_func($separatorProvider,
-                                                                                          $x, $ctx));
+                                         $result .= ClrString::valueToString(\call_user_func($separatorProvider,
+                                                                                             $x, $ctx));
                                      }
                                      else {
                                          $result = '';
                                      }
 
-                                     return $result . String::valueToString($x);
+                                     return $result . ClrString::valueToString($x);
                                  }, $defValue);
     }
 
@@ -772,7 +772,7 @@ class String extends \System\ObjectWrapper implements \ArrayAccess, \Countable, 
      */
     protected function trimMe($func, $charlist) {
         $args = array();
-        if (!\is_null($charlist)) {
+        if (null !== $charlist) {
             $args[] = static::valueToString($charlist);
         }
 

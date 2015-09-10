@@ -21,10 +21,9 @@
 
 namespace System\Collections;
 
-
+use \System\ClrString;
 use \System\IComparable;
 use \System\IObject;
-use \System\String as ClrString;
 use \System\Linq\Grouping;
 use \System\Linq\IGrouping;
 use \System\Linq\Lookup;
@@ -140,7 +139,7 @@ abstract class EnumerableBase extends \System\Object implements IEnumerable {
      * @return \Iterator|null $obj as iterator or (null) if $obj is also (null).
      */
     public static function asIterator($obj, $emptyIfNull = false) {
-        while (!\is_null($obj)) {
+        while (null !== $obj) {
             if ($obj instanceof \IteratorAggregate) {
                 $obj = $obj->getIterator();
                 continue;
@@ -149,7 +148,7 @@ abstract class EnumerableBase extends \System\Object implements IEnumerable {
             break;
         }
 
-        if (\is_null($obj)) {
+        if (null === $obj) {
             if (!$emptyIfNull) {
                 return null;
             }
@@ -443,7 +442,7 @@ abstract class EnumerableBase extends \System\Object implements IEnumerable {
      * @see EnumerableBase::except()
      */
     protected function exceptInner($second, $equalityComparer = null) {
-        if (\is_null($second)) {
+        if (null === $second) {
             $second = array();
         }
 
@@ -636,7 +635,7 @@ abstract class EnumerableBase extends \System\Object implements IEnumerable {
                 }
             }
 
-            if (\is_null($grp)) {
+            if (null === $grp) {
                 $grp         = new \stdClass();
                 $grp->key    = $key;
                 $grp->values = array();
@@ -733,7 +732,7 @@ abstract class EnumerableBase extends \System\Object implements IEnumerable {
      * @see EnumerableBase::intersect()
      */
     protected function intersectInner($second, $equalityComparer) {
-        if (\is_null($second)) {
+        if (null === $second) {
             $second = array();
         }
 
@@ -1026,13 +1025,13 @@ abstract class EnumerableBase extends \System\Object implements IEnumerable {
      * {@inheritDoc}
      */
     public function randomize($seeder = null, $randProvider = null) {
-        if (\is_null($randProvider)) {
+        if (null === $randProvider) {
             $randProvider = function () {
                 return \mt_rand();
             };
         }
 
-        if (!\is_null($seeder)) {
+        if (null !== $seeder) {
             \call_user_func($seeder);
         }
 
@@ -1114,7 +1113,7 @@ abstract class EnumerableBase extends \System\Object implements IEnumerable {
             $iterator = static::asIterator(\call_user_func($selector,
                                                            $ctx->value, $ctx));
 
-            if (\is_null($iterator)) {
+            if (null === $iterator) {
                 continue;
             }
 
@@ -1298,7 +1297,7 @@ abstract class EnumerableBase extends \System\Object implements IEnumerable {
      * {@inheritDoc}
      */
     public function toArray($keySelector = null) {
-        if (\is_null($keySelector)) {
+        if (null === $keySelector) {
             $keySelector = function() {
                 return null;
             };
@@ -1313,7 +1312,7 @@ abstract class EnumerableBase extends \System\Object implements IEnumerable {
             $key = \call_user_func($keySelector,
                                    $ctx->key, $ctx->value, $ctx);
 
-            if (\is_null($key)) {
+            if (null === $key) {
                 // autokey
                 $result[] = $ctx->value;
             }
@@ -1329,7 +1328,7 @@ abstract class EnumerableBase extends \System\Object implements IEnumerable {
      * {@inheritDoc}
      */
     public function toDictionary($keySelector = null, $keyEqualityComparer = null) {
-        if (\is_null($keySelector)) {
+        if (null === $keySelector) {
             $keySelector = function($key) {
                 return $key;
             };
@@ -1354,7 +1353,7 @@ abstract class EnumerableBase extends \System\Object implements IEnumerable {
      */
     public function toJson($keySelector = null, $options = null) {
         if (\func_num_args() == 1) {
-            if (!\is_null($keySelector) && !\is_callable($keySelector)) {
+            if ((null !== $keySelector) && !\is_callable($keySelector)) {
                 // swap values
 
                 $options     = $keySelector;
@@ -1362,13 +1361,13 @@ abstract class EnumerableBase extends \System\Object implements IEnumerable {
             }
         }
 
-        if (\is_null($keySelector)) {
+        if (null === $keySelector) {
             $keySelector = function($key) {
                 return $key;
             };
         }
 
-        if (\is_null($options)) {
+        if (null === $options) {
             $options = 0;
         }
 
@@ -1390,8 +1389,8 @@ abstract class EnumerableBase extends \System\Object implements IEnumerable {
                                    $elementSelector = null) {
 
         $elements = $this;
-        if (!\is_null($elementSelector)) {
-            $elements = $this->select($elementSelector);
+        if (null !== $elementSelector) {
+            $elements = $elements->select($elementSelector);
         }
 
         return new Lookup($elements->groupBy($keySelector,
@@ -1452,10 +1451,10 @@ abstract class EnumerableBase extends \System\Object implements IEnumerable {
      * {@inheritDoc}
      */
     public function unserialize($serialized) {
-        $arr = \json_decode($serialized, true);
+        $iterator = static::asIterator(\json_decode($serialized, true),
+                                       true);
 
-        $this->__construct(new \ArrayIterator($arr));
-        unset($arr);
+        $this->__construct($iterator);
     }
 
     /**

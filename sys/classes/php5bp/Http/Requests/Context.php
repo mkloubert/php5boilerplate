@@ -86,7 +86,7 @@ class Context extends \php5bp\Object implements ContextInterface {
 
         return $this->uploadedFiles()
                     ->lastOrDefault(function(UploadedFileInterface $x) use ($name) {
-                                        return \trim(\strtolower($x->field())) == $name;
+                                        return \trim(\strtolower($x->field())) === $name;
                                     });
     }
 
@@ -114,7 +114,7 @@ class Context extends \php5bp\Object implements ContextInterface {
 
         $name = \trim(\strtolower($name));
         foreach ($arr as $key => $value) {
-            if (\trim(\strtolower($key)) == $name) {
+            if (\trim(\strtolower($key)) === $name) {
                 // last wins
 
                 $found  = true;

@@ -49,7 +49,7 @@ class TableGateway extends \Zend\Db\TableGateway\TableGateway {
      * @throws InvalidArgumentException
      */
     public function __construct($table, $adapter = null, $features = null, ResultSetInterface $resultSetPrototype = null, Sql $sql = null) {
-        if (\is_null($adapter)) {
+        if (null === $adapter) {
             // create default instance
             $adapter = \php5bp::db();
         }

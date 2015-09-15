@@ -48,7 +48,7 @@ class SimpleView extends ViewBase {
      */
     public function __construct($dir = null) {
         $dir = \trim($dir);
-        if ('' == $dir) {
+        if ('' === $dir) {
             $dir = \PHP5BP_DIR_VIEWS;
         }
 
@@ -80,7 +80,7 @@ class SimpleView extends ViewBase {
         $result = false;
 
         $dir = \str_replace('.', \DIRECTORY_SEPARATOR, \trim($name));
-        if ('' != $dir) {
+        if ('' !== $dir) {
             $dir = \realpath($this->dir() . \DIRECTORY_SEPARATOR . $dir);
             if (false !== $dir) {
                 // renderer

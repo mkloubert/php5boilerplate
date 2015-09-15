@@ -73,7 +73,7 @@ abstract class CachableRowBase extends \php5bp\Object {
      */
     public function cache() {
         $result = $this->_cache;
-        if (\is_null($result)) {
+        if (null === $result) {
             $result = \php5bp::cache();
         }
 
@@ -184,7 +184,7 @@ abstract class CachableRowBase extends \php5bp\Object {
      */
     public function db() {
         $result = $this->_db;
-        if (\is_null($result)) {
+        if (null === $result) {
             $result = \php5bp::db();
         }
 
@@ -286,7 +286,7 @@ abstract class CachableRowBase extends \php5bp\Object {
      * @return array The data or (false) if the row does not exist anymore.
      */
     public function row() {
-        if (\is_null($this->_row)) {
+        if (null === $this->_row) {
             $cache    = $this->cache();
             $cacheKey = $this->cacheKey();
 
@@ -296,7 +296,7 @@ abstract class CachableRowBase extends \php5bp\Object {
             }
         }
 
-        if (\is_null($this->_row)) {
+        if (null === $this->_row) {
             $this->_row = $this->readRow();
 
             $cache->setItem($cacheKey, $this->_row);
@@ -349,7 +349,7 @@ abstract class CachableRowBase extends \php5bp\Object {
             return $value;
         }
 
-        if (\is_null($value)) {
+        if (null === $value) {
             $value = array();
         }
 

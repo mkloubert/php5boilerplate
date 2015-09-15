@@ -145,7 +145,7 @@ class Context extends \php5bp\Object implements ContextInterface {
      */
     public function setHeader($name, $value) {
         $name = static::normalizeHeaderName($name);
-        if ('' == $name) {
+        if ('' === $name) {
             return $this->setCode($value);
         }
 

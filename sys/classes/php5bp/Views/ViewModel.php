@@ -32,8 +32,8 @@ class ViewModel extends \Zend\View\Model\ViewModel {
     /**
      * Initializes a new instance of that class.
      *
-     * @param  null|array|Traversable $variables
-     * @param  array|Traversable $options
+     * @param  null|array|\Traversable $variables
+     * @param  array|\Traversable $options
      */
     public function __construct($variables = null, $options = null) {
         parent::__construct($variables, $options);

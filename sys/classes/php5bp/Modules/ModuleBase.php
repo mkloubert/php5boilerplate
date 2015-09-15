@@ -130,7 +130,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
 
                 foreach ($sources as $src) {
                     $src = \trim(\strtolower($src));
-                    if ('' == $src) {
+                    if ('' === $src) {
                         $src = $defaultSrc;
                     }
 
@@ -201,7 +201,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                 $execCtx->Config = $meta['config'];
             }
 
-            if (\is_null($execCtx->Config)) {
+            if (null === $execCtx->Config) {
                 $execCtx->Config = array();
             }
 
@@ -217,7 +217,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                 if (\array_key_exists('actions', $appConf['modules'])) {
                     // $appConf['modules']['actions']['source']
                     if (\array_key_exists('source', $appConf['modules']['actions'])) {
-                        $allowedActionVarSource = $appConf['modules']['actions']['source'];
+                        $allowedActionVarSources = $appConf['modules']['actions']['source'];
                     }
 
                     // $appConf['modules']['actions']['var']
@@ -233,7 +233,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                 if (\array_key_exists('actions', $meta['module'])) {
                     // $meta['module']['actions']['source']
                     if (\array_key_exists('source', $meta['module']['actions'])) {
-                        $allowedActionVarSource = $meta['module']['actions']['source'];
+                        $allowedActionVarSources = $meta['module']['actions']['source'];
                     }
 
                     // $meta['module']['actions']['var']
@@ -244,16 +244,16 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
             }
 
             $actionVar = \trim($actionVar);
-            if ('' == $actionVar) {
+            if ('' === $actionVar) {
                 $actionVar = static::DEFAULT_VAR_NAME_ACTION;
             }
 
-            if (\is_null($allowedActionVarSources)) {
+            if (null === $allowedActionVarSources) {
                 // set default
                 $allowedActionVarSources = array('request');
             }
 
-            if (!\is_array($allowedActionVarSource)) {
+            if (!\is_array($allowedActionVarSources)) {
                 $allowedActionVarSources = \explode(static::LIST_SEPARATOR, $allowedActionVarSources);
             }
 
@@ -321,7 +321,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                     $methodResult = null;
 
                     $actionName = \trim(\strtolower($execCtx->getAction()));
-                    if ('' == $actionName) {
+                    if ('' === $actionName) {
                         $invokeDefault = true;
                     }
                     else {
@@ -337,9 +337,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                                                         ->select(function($x) {
                                                                      return \trim($x);
                                                                  })
-                                                        ->distinct(function($x, $y) {
-                                                                       return \strtolower($x) == \strtolower($y);
-                                                                   })
+                                                        ->distinct("\\strcasecmp")
                                                         ->toArray(function($key, $value) {
                                                                       return $value;
                                                                   });
@@ -349,7 +347,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                                                      ->singleOrDefault(function($x, $ctx) use ($actionName) {
                                                                            $key = \is_array($x) ? $ctx->key : $x;
 
-                                                                           return \trim(\strtolower($key)) == $actionName;
+                                                                           return \trim(\strtolower($key)) === $actionName;
                                                                        }, false);
                         }
 
@@ -395,7 +393,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                                         $actionArgs = Enumerable::create(\explode(static::LIST_SEPARATOR, $actionEntry['args']))
                                                                 ->select(function ($x) {
                                                                              $x = \trim($x);
-                                                                             if ('' == $x) {
+                                                                             if ('' === $x) {
                                                                                  return null;
                                                                              }
 
@@ -409,7 +407,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                                     }
                                 }
 
-                                if (\is_null($actionArgs)) {
+                                if (null === $actionArgs) {
                                     // set default
                                     $actionArgs = array();
                                 }
@@ -439,29 +437,29 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                                     }
 
                                     $argName = \trim($argName);
-                                    if ('' == $argName) {
+                                    if ('' === $argName) {
                                         //TODO: throw exception
                                         continue;
                                     }
 
-                                    if (!\is_null($argSources)) {
+                                    if (null !== $argSources) {
                                         if (!\is_array($argSources)) {
                                             $argSources = \explode(static::LIST_SEPARATOR, $argSources);
                                         }
                                     }
 
-                                    if (!\is_null($argTransformers)) {
+                                    if (null !== $argTransformers) {
                                         if (!\is_array($argTransformers)) {
                                             $argTransformers = \explode(static::LIST_SEPARATOR, $argTransformers);
                                         }
                                     }
 
-                                    if (\is_null($argSources)) {
+                                    if (null === $argSources) {
                                         // set default
                                         $argSources = array('vars', 'request');
                                     }
 
-                                    if (\is_null($argTransformers)) {
+                                    if (null === $argTransformers) {
                                         // set default
                                         $argTransformers = array();
                                     }
@@ -489,7 +487,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                                 \call_user_func_array($setupExecutionContext,
                                                       array(&$actionMethodArgs));
 
-                                if (\is_null($actionMethodArgs)) {
+                                if (null === $actionMethodArgs) {
                                     $actionMethodArgs = array();
                                 }
 
@@ -513,10 +511,10 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                         $result = $this->execute($execCtx);
                     }
 
-                    if (!\is_null($methodResult)) {
+                    if (null !== $methodResult) {
                         // custom result defined
 
-                        if (\is_null($result)) {
+                        if (null === $result) {
                             // overwrite
                             $result = $methodResult;
                         }
@@ -533,7 +531,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
             catch (\Exception $ex) {
                 $exception = $ex;
 
-                if (\is_null($exceptionHandler)) {
+                if (null === $exceptionHandler) {
                     throw $ex;
                 }
                 else {
@@ -547,11 +545,11 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                 // response code
                 {
                     $respCode = $execCtx->response()->getCode();
-                    if (\is_null($respCode)) {
+                    if (null === $respCode) {
                         $respCode = $this->getDefaultHttpResponseCode($execCtx);
                     }
 
-                    if (!\is_null($respCode)) {
+                    if (null !== $respCode) {
                         \header(':', true, $respCode);
                     }
                 }

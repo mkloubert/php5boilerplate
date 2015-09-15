@@ -132,7 +132,7 @@ class Context extends \php5bp\Object implements ContextInterface {
                                       return Context::normalizeConfigName($ctx->key);
                                   })
                          ->singleOrDefault(function($x) use ($name) {
-                                               return $x == $name;
+                                               return $x === $name;
                                            }, false);
 
         if (false !== $key) {
@@ -260,9 +260,9 @@ class Context extends \php5bp\Object implements ContextInterface {
      */
     public function sendAsDownload($filename, $mime = null) {
         $filename = \trim($filename);
-        if ('' != $filename) {
+        if ('' !== $filename) {
             $mime = \trim($mime);
-            if ('' == $mime) {
+            if ('' === $mime) {
                 $mime = \php5bp::getMimeByFilename($filename);
             }
 
@@ -282,7 +282,7 @@ class Context extends \php5bp\Object implements ContextInterface {
      */
     public function setAction($actionName) {
         $actionName = \trim($actionName);
-        if ('' == $actionName) {
+        if ('' === $actionName) {
             $actionName = null;
         }
 
@@ -311,7 +311,7 @@ class Context extends \php5bp\Object implements ContextInterface {
      */
     public function setTitle($title) {
         $title = \trim($title);
-        if ('' == $title) {
+        if ('' === $title) {
             $title = null;
         }
 
@@ -374,7 +374,7 @@ class Context extends \php5bp\Object implements ContextInterface {
      */
     public function setView($viewName) {
         $viewName = \trim($viewName);
-        if ('' == $viewName) {
+        if ('' === $viewName) {
             $viewName = null;
         }
 

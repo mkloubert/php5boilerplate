@@ -43,7 +43,7 @@ class RowGateway extends \Zend\Db\RowGateway\RowGateway {
      * @throws ZendInvalidArgumentException
      */
     public function __construct($primaryKeyColumn, $table, $adapterOrSql = null) {
-        if (\is_null($adapterOrSql)) {
+        if (null === $adapterOrSql) {
             $adapterOrSql = \php5bp::db();
         }
 

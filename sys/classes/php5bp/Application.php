@@ -34,6 +34,10 @@ use \System\Linq\Enumerable;
  */
 class Application extends Object implements ApplicationInterface {
     /**
+     * Allowed chars for a module name.
+     */
+    const ALLOWED_MODULE_NAME_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_/';
+    /**
      * Default class of a meta provider.
      */
     const DEFAULT_MODULE_META_PROVIDER = '\php5bp\Modules\Meta\Provider';
@@ -96,7 +100,7 @@ class Application extends Object implements ApplicationInterface {
         }
 
         $providerClass = \trim($providerClass);
-        if ('' == $providerClass) {
+        if ('' === $providerClass) {
             $providerClass = static::DEFAULT_MODULE_META_PROVIDER;
         }
 
@@ -121,7 +125,7 @@ class Application extends Object implements ApplicationInterface {
         }
 
         $providerClass = \trim($providerClass);
-        if ('' == $providerClass) {
+        if ('' === $providerClass) {
             $providerClass = \php5bp\Modules\Scripts\Provider::class;
         }
 
@@ -143,22 +147,14 @@ class Application extends Object implements ApplicationInterface {
      * @return string The parsed value.
      */
     protected static function normalizeModuleName($moduleName) {
-        $chars = Enumerable::create(\trim($moduleName));
+        $chars     = \trim($moduleName);
+        $charCount = \count($chars);
 
         $moduleName = '';
-        foreach ($chars as $c) {
-            // a-z
-            // A-Z
-            // 0-9
-            // _
-            // /
-            $appendChar = ((\ord($c) >= \ord('a')) && (\ord($c) <= \ord('z'))) ||
-                          ((\ord($c) >= \ord('A')) && (\ord($c) <= \ord('Z'))) ||
-                          ((\ord($c) >= \ord('0')) && (\ord($c) <= \ord('9'))) ||
-                          ($c == '_') ||
-                          ($c == static::MODULE_NAME_SEPARATOR);
+        for ($i = 0; $i < $charCount; $i++) {
+            $c = $chars[$i];
 
-            if ($appendChar) {
+            if (false !== \strpos(static::ALLOWED_MODULE_NAME_CHARS, $c)) {
                 $moduleName .= $c;
             }
         }
@@ -210,7 +206,7 @@ class Application extends Object implements ApplicationInterface {
         }
 
         $moduleVar = \trim($moduleVar);
-        if ('' == $moduleVar) {
+        if ('' === $moduleVar) {
             // set default
             $moduleVar = 'module';
         }
@@ -221,7 +217,7 @@ class Application extends Object implements ApplicationInterface {
         }
 
         $moduleName = static::normalizeModuleName($moduleName);
-        if ('' == $moduleName) {
+        if ('' === $moduleName) {
             $defaultModuleName = null;
 
             // try get custom default module
@@ -233,7 +229,7 @@ class Application extends Object implements ApplicationInterface {
             }
 
             $defaultModuleName = static::normalizeModuleName($defaultModuleName);  // custom default?
-            if ('' == $defaultModuleName) {
+            if ('' === $defaultModuleName) {
                 // use system default
                 $defaultModuleName = static::DEFAULT_MODULE_NAME;
             }
@@ -315,13 +311,13 @@ class Application extends Object implements ApplicationInterface {
                         }
 
                         $renderMethod = \trim($renderMethod);
-                        if ('' == $renderMethod) {
+                        if ('' === $renderMethod) {
                             // set default
                             $renderMethod = static::DEFAULT_MODULE_METHOD_RENDER;
                         }
 
                         $updateContextMethod = \trim($updateContextMethod);
-                        if ('' != $updateContextMethod) {
+                        if ('' === $updateContextMethod) {
                             // default
                             $updateContextMethod = static::DEFAULT_MODULE_METHOD_UPDATECONTEXT;
                         }

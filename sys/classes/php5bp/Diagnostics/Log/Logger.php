@@ -53,7 +53,7 @@ class Logger extends \Zend\Log\Logger {
     public function log($priority, $message, $extra = array()) {
         $timestamp = new \DateTime();
 
-        if ($this->writers->count() === 0) {
+        if (0 === $this->writers->count()) {
             throw new \Zend\Log\Exception\RuntimeException('No log writer specified');
         }
 

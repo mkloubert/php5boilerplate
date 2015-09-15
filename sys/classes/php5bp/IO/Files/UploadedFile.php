@@ -99,7 +99,7 @@ class UploadedFile extends LocalFileBase implements UploadedFileInterface {
             $result = \trim(\strtolower($this->_fileEntry['type']));
         }
 
-        if ('' == $result) {
+        if ('' === $result) {
             $result = static::MIME_TYPE_DEFAULT;
         }
 

@@ -99,14 +99,14 @@ abstract class FileBase extends \php5bp\Object implements FileInterface {
         }
 
         $name = \trim($name);
-        if ('' == $name) {
+        if ('' === $name) {
             $pi = \pathinfo($this->name());
 
             $name = $pi['filename'];
         }
 
         $extension = \trim($extension);
-        if ('' == $extension) {
+        if ('' === $extension) {
             $extension = $this->suggestedExtension();
         }
 
@@ -132,7 +132,7 @@ abstract class FileBase extends \php5bp\Object implements FileInterface {
                 // find extension by MIME type
                 $result = Enumerable::create($files['mime'])
                                     ->where(function($x, $ctx) use ($mime) {
-                                                return \trim(\strtolower($ctx->key)) == $mime;
+                                                return \trim(\strtolower($ctx->key)) === $mime;
                                             })
                                     ->selectMany(function($extensions) {
                                                      if ($extensions instanceof \Traversable) {
@@ -150,7 +150,7 @@ abstract class FileBase extends \php5bp\Object implements FileInterface {
             }
         }
 
-        if (\is_null($result)) {
+        if (null === $result) {
             // use "real" file extension
             $result = $this->extension();
         }

@@ -286,6 +286,8 @@ abstract class CachableRowBase extends \php5bp\Object {
      * @return array The data or (false) if the row does not exist anymore.
      */
     public function row() {
+        /* @var ZendCacheStorageInterface $cache */
+
         if (null === $this->_row) {
             $cache    = $this->cache();
             $cacheKey = $this->cacheKey();
@@ -350,19 +352,14 @@ abstract class CachableRowBase extends \php5bp\Object {
         }
 
         if (null === $value) {
-            $value = array();
+            return array();
         }
 
-        if (!\is_array($value)) {
-            if ($value instanceof \Traversable) {
-                $value = \iterator_to_array($value);
-            }
-            else {
-                $value = array($value);
-            }
+        if ($value instanceof \Traversable) {
+            return \iterator_to_array($value);
         }
 
-        return $value;
+        return array($value);
     }
 
     /**

@@ -501,7 +501,7 @@ final class php5bp {
     /**
      * Gets the current time.
      *
-     * @return DateTime The current time.
+     * @return DateTimeInterface The current time.
      */
     public static function now() {
         if (null === static::$_now) {

@@ -70,9 +70,9 @@ if ('undefined' === typeof Array.prototype.isEmpty) {
      * @readOnly
      */
     Object.defineProperty(Array.prototype, 'isEmpty', {
-       get: function() {
-           return this.length < 1;
-       }
+        get: function() {
+            return this.length < 1;
+        }
     });
 }
 
@@ -623,9 +623,9 @@ $MJK_PHP5_BOILERPLATE.events = {};
                  * @readonly
                  */
                 Object.defineProperty(ctx, 'index', {
-                   get: function() {
-                       return i;
-                   }
+                    get: function() {
+                        return i;
+                    }
                 });
 
                 /**
@@ -1073,12 +1073,18 @@ $MJK_PHP5_BOILERPLATE.events = {};
          * Wraps one or more iterator items to simple functions.
          *
          * @param {Number} [...index] One or more zero based indexes.
+         *                            If no index is defined, the current index is used.
          *
          * @returns {mixed} If there is only one index defined, the function is returned.
          *                  Otherwise an array with functions.
          */
         result.wrap = function() {
-            var wrappedFuncs = this.wrapArray(arguments);
+            var indexes = arguments;
+            if (indexes.length < 1) {
+                indexes = [currentIndex];
+            }
+
+            var wrappedFuncs = this.wrapArray(indexes);
 
             if (1 == wrappedFuncs.length) {
                 return wrappedFuncs[0];
@@ -1156,7 +1162,7 @@ $MJK_PHP5_BOILERPLATE.events = {};
         });
 
         /**
-         * Gets the iterator has reached the end or not.
+         * Gets if the iterator has reached the end or not.
          *
          * @property eof
          * @type Boolean
@@ -1169,7 +1175,7 @@ $MJK_PHP5_BOILERPLATE.events = {};
         });
 
         /**
-         * Gets the iterator has currently an item to invoke or not.
+         * Gets if the iterator has currently an item to invoke or not.
          *
          * @property hasNext
          * @type Boolean
@@ -1359,13 +1365,11 @@ $MJK_PHP5_BOILERPLATE.events = {};
  * @type Date
  * @readOnly
  */
-Object.defineProperty($MJK_PHP5_BOILERPLATE,
-                      'now',
-                      {
-                          get: function() {
-                              return new Date();
-                          }
-                      });
+Object.defineProperty($MJK_PHP5_BOILERPLATE, 'now', {
+    get: function() {
+        return new Date();
+    }
+});
 
 /**
  * Gets the current UTC time.
@@ -1374,16 +1378,14 @@ Object.defineProperty($MJK_PHP5_BOILERPLATE,
  * @type Date
  * @readOnly
  */
-Object.defineProperty($MJK_PHP5_BOILERPLATE,
-                      'nowUTC',
-                      {
-                          get: function() {
-                              var n = this.now;
+Object.defineProperty($MJK_PHP5_BOILERPLATE, 'nowUTC', {
+    get: function() {
+        var n = this.now;
 
-                              return new Date(n.getUTCFullYear(), n.getUTCMonth(), n.getUTCDate(),
-                                              n.getUTCHours(), n.getUTCMinutes(), n.getUTCSeconds(), n.getUTCMilliseconds());
-                          }
-                      });
+        return new Date(n.getUTCFullYear(), n.getUTCMonth(), n.getUTCDate(),
+                        n.getUTCHours(), n.getUTCMinutes(), n.getUTCSeconds(), n.getUTCMilliseconds());
+    }
+});
 
 // vars, elements and functions
 {
@@ -1426,21 +1428,21 @@ Object.defineProperty($MJK_PHP5_BOILERPLATE,
      * @return {Boolean} Loaded actions were processed or not.
      */
     $MJK_PHP5_BOILERPLATE.processOnLoadedActions = function() {
-        if ($MJK_PHP5_BOILERPLATE.events.pageLoaded) {
-            var e = {
-                'time': $MJK_PHP5_BOILERPLATE.now
-            };
-
-            e.invokeDefault = function() {
-                $MJK_PHP5_BOILERPLATE.events.__defaultPageLoaded(e);
-            };
-
-            $MJK_PHP5_BOILERPLATE.events.pageLoaded(e);
-
-            return true;
+        if (!$MJK_PHP5_BOILERPLATE.events.pageLoaded) {
+            return false;
         }
 
-        return false;
+        var e = {
+            'time': $MJK_PHP5_BOILERPLATE.now
+        };
+
+        e.invokeDefault = function() {
+            $MJK_PHP5_BOILERPLATE.events.__defaultPageLoaded(e);
+        };
+
+        $MJK_PHP5_BOILERPLATE.events.pageLoaded(e);
+
+        return true;
     };
 
     /**
@@ -1471,19 +1473,19 @@ Object.defineProperty($MJK_PHP5_BOILERPLATE,
 
         if (opts.onLoaded) {
             this.addOnLoaded(function() {
-                var ctx = {
-                    'selector': getSelector()
-                };
+                var ctx = {};
+
+                Object.defineProperty(ctx, 'selector', {
+                    get: getSelector
+                });
 
                 opts.onLoaded(ctx);
             });
         }
 
-        Object.defineProperty(this.elements,
-                              jQuery.trim(name),
-                              {
-                                  get: getSelector
-                              });
+        Object.defineProperty(this.elements, jQuery.trim(name), {
+            get: getSelector
+        });
 
         return this;
     };
@@ -1498,13 +1500,11 @@ Object.defineProperty($MJK_PHP5_BOILERPLATE,
      * @chainable
      */
     $MJK_PHP5_BOILERPLATE.addFunction = function(name, func) {
-        Object.defineProperty(this.funcs,
-                              jQuery.trim(name),
-                              {
-                                  get: function() {
-                                      return $MJK_PHP5_BOILERPLATE.asFunc(func);
-                                  }
-                              });
+        Object.defineProperty(this.funcs, jQuery.trim(name), {
+            get: function() {
+                return $MJK_PHP5_BOILERPLATE.asFunc(func);
+            }
+        });
 
         return this;
     };
@@ -1519,11 +1519,9 @@ Object.defineProperty($MJK_PHP5_BOILERPLATE,
      * @chainable
      */
     $MJK_PHP5_BOILERPLATE.addVar = function(name, value) {
-        Object.defineProperty(this.vars,
-                              jQuery.trim(name),
-                              {
-                                  get: $MJK_PHP5_BOILERPLATE.asFunc(value)
-                              });
+        Object.defineProperty(this.vars, jQuery.trim(name), {
+            get: $MJK_PHP5_BOILERPLATE.asFunc(value)
+        });
 
         return this;
     };

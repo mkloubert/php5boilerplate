@@ -19,7 +19,7 @@
  * License along with this software.                                                                                  *
  **********************************************************************************************************************/
 
-use \System\String as ClrString;
+use \System\ClrString;
 use \System\Linq\Enumerable;
 
 

@@ -258,8 +258,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
             }
 
             // action name
-            $actionName = \call_user_func($getVarFromSource,
-                                          $allowedActionVarSources, $actionVar, 'request');
+            $actionName = $getVarFromSource($allowedActionVarSources, $actionVar, 'request');
 
             // do not change default view
             $initialView = false;
@@ -271,6 +270,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
             $wasExecuted = null;
             $exception = null;
 
+            /* @var callable $exceptionHandler */
             $exceptionHandler = null;
             $executionMode = null;
             $packAdditionalActionArgs = false;
@@ -465,13 +465,11 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                                     }
 
                                     // argument value
-                                    $argValue = \call_user_func($getVarFromSource,
-                                                                $argSources, $argName, 'vars');
+                                    $argValue = $getVarFromSource($argSources, $argName, 'vars');
 
                                     // transform value
                                     foreach ($argTransformers as $at) {
-                                        $argValue = \call_user_func($at,
-                                                                    $argValue);
+                                        $argValue = $at($argValue);
                                     }
 
                                     $additionalActionArgs[] = $argValue;
@@ -506,7 +504,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                     }
 
                     if ($invokeDefault) {
-                        \call_user_func($setupExecutionContext);
+                        $setupExecutionContext();
 
                         $result = $this->execute($execCtx);
                     }
@@ -535,8 +533,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                     throw $ex;
                 }
                 else {
-                    \call_user_func($exceptionHandler,
-                                    $ex, $execCtx);
+                    $exceptionHandler($ex, $execCtx);
                 }
             }
             finally {

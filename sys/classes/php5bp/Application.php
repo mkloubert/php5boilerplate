@@ -148,7 +148,7 @@ class Application extends Object implements ApplicationInterface {
      */
     protected static function normalizeModuleName($moduleName) {
         $chars     = \trim($moduleName);
-        $charCount = \count($chars);
+        $charCount = \strlen($chars);
 
         $moduleName = '';
         for ($i = 0; $i < $charCount; $i++) {
@@ -324,17 +324,14 @@ class Application extends Object implements ApplicationInterface {
 
                         // update module context
                         if (\method_exists($module, $updateContextMethod)) {
-                            \call_user_func(array($module, $updateContextMethod),
-                                            $moduleCtx);
+                            $module->$updateContextMethod($moduleCtx);
                         }
 
                         // execute and render
                         if (\method_exists($module, $renderMethod)) {
                             $found = true;
 
-                            $result = \call_user_func(array($module, $renderMethod),
-                                                      $moduleCtx);
-
+                            $result = $module->$renderMethod($moduleCtx);
                             if (!$result instanceof \Exception) {
                                 echo $result;
                             }

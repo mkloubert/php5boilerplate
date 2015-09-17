@@ -237,8 +237,7 @@ abstract class CachableRowBase extends \php5bp\Object {
 
         // invoke events
         foreach ($this->_deletedEvents as $event) {
-            \call_user_func($event,
-                            $this, $ctx);
+            $event($this, $ctx);
         }
     }
 

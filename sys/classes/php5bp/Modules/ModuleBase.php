@@ -102,6 +102,90 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
     }
 
     /**
+     * Returns the value of a variable from a source.
+     *
+     * @param ModuleExecutionContext $ctx The underlying execution context.
+     * @param array|\Traversable $sources The allowed sources.
+     * @param string $var The name of the variable.
+     * @param string $defaultSrc The name of the default source.
+     *
+     * @return mixed The value of $var.
+     */
+    protected function getVarFromSource(ModuleExecutionContext $ctx, $sources, $var, $defaultSrc) {
+        $defaultSrc = \trim(\strtolower($defaultSrc));
+
+        $result = null;
+
+        foreach ($sources as $src) {
+            $src = \trim(\strtolower($src));
+            if ('' === $src) {
+                $src = $defaultSrc;
+            }
+
+            $found = false;
+
+            switch ($src) {
+                case 'vars':
+                    $result = $ctx->getVar($var, $result, $found);
+                    break;
+
+                case 'request':
+                    $result = $ctx->request()->request($var, $result, $found);
+                    break;
+
+                case 'post':
+                    $result = $ctx->request()->post($var, $result, $found);
+                    break;
+
+                case 'get':
+                    $result = $ctx->request()->get($var, $result, $found);
+                    break;
+
+                case 'files':
+                    $result = $ctx->request()->file($var);
+                    if ($result instanceof UploadedFileInterface) {
+                        $found = true;
+                    }
+                    break;
+
+                case 'session':
+                    $result = $ctx->request()->session($var, $result, $found);
+                    break;
+
+                case 'cookies':
+                    $result = $ctx->request()->cookie($var, $result, $found);
+                    break;
+
+                case 'headers':
+                    $result = $ctx->request()->header($var, $result, $found);
+                    break;
+
+                case 'globals':
+                    $result = \php5bp::getVar($var, $result, $found);
+                    break;
+
+                case 'server':
+                    $result = $ctx->request()->server($var, $result, $found);
+                    break;
+
+                case 'environment':
+                    $result = $ctx->request()->env($var, $result, $found);
+                    break;
+
+                default:
+                    //TODO throw exception
+                    break;
+            }
+
+            if ($found) {
+                break;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Prepares the arguments for an execution method.
      *
      * @param ModuleExecutionContext $ctx The underlying execution context.
@@ -126,80 +210,6 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
             $execCtx           = new \php5bp\Modules\Execution\Context();
             $execCtx->Request  = new \php5bp\Http\Requests\Context();
             $execCtx->Response = new \php5bp\Http\Responses\Context();
-
-            $getVarFromSource = function($sources, $var, $defaultSrc) use ($execCtx) {
-                $defaultSrc = \trim(\strtolower($defaultSrc));
-
-                $result = null;
-
-                foreach ($sources as $src) {
-                    $src = \trim(\strtolower($src));
-                    if ('' === $src) {
-                        $src = $defaultSrc;
-                    }
-
-                    $found = false;
-
-                    switch ($src) {
-                        case 'vars':
-                            $result = $execCtx->getVar($var, $result, $found);
-                            break;
-
-                        case 'request':
-                            $result = $execCtx->request()->request($var, $result, $found);
-                            break;
-
-                        case 'post':
-                            $result = $execCtx->request()->post($var, $result, $found);
-                            break;
-
-                        case 'get':
-                            $result = $execCtx->request()->get($var, $result, $found);
-                            break;
-
-                        case 'files':
-                            $result = $execCtx->request()->file($var);
-                            if ($result instanceof UploadedFileInterface) {
-                                $found = true;
-                            }
-                            break;
-
-                        case 'session':
-                            $result = $execCtx->request()->session($var, $result, $found);
-                            break;
-
-                        case 'cookies':
-                            $result = $execCtx->request()->cookie($var, $result, $found);
-                            break;
-
-                        case 'headers':
-                            $result = $execCtx->request()->header($var, $result, $found);
-                            break;
-
-                        case 'globals':
-                            $result = \php5bp::getVar($var, $result, $found);
-                            break;
-
-                        case 'server':
-                            $result = $execCtx->request()->server($var, $result, $found);
-                            break;
-
-                        case 'environment':
-                            $result = $execCtx->request()->env($var, $result, $found);
-                            break;
-
-                        default:
-                            //TODO throw exception
-                            break;
-                    }
-
-                    if ($found) {
-                        break;
-                    }
-                }
-
-                return $result;
-            };
 
             if (\array_key_exists('config', $meta)) {
                 $execCtx->Config = $meta['config'];
@@ -262,7 +272,8 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
             }
 
             // action name
-            $actionName = $getVarFromSource($allowedActionVarSources, $actionVar, 'request');
+            $actionName = $this->getVarFromSource($execCtx,
+                                                  $allowedActionVarSources, $actionVar, 'request');
 
             // do not change default view
             $initialView = false;
@@ -472,7 +483,8 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                                 }
 
                                 // argument value
-                                $argValue = $getVarFromSource($argSources, $argName, 'vars');
+                                $argValue = $this->getVarFromSource($execCtx,
+                                                                    $argSources, $argName, 'vars');
 
                                 // transform value
                                 foreach ($argTransformers as $at) {

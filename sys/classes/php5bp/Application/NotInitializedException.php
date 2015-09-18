@@ -30,7 +30,7 @@ namespace php5bp\Application;
  */
 class NotInitializedException extends \php5bp\Exception {
     /**
-     * @var \php5bp\Application
+     * @var \php5bp\ApplicationInterface
      */
     protected $_app;
 
@@ -53,7 +53,7 @@ class NotInitializedException extends \php5bp\Exception {
     /**
      * Gets the underlying application object.
      *
-     * @return \php5bp\Application The app object.
+     * @return \php5bp\ApplicationInterface The app object.
      */
     public function app() {
         return $this->_app;

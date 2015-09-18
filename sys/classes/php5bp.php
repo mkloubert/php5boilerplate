@@ -33,6 +33,10 @@ final class php5bp {
      * Default name of the application class.
      */
     const DEFAULT_APPLICATION_CLASS = '\php5bp\Application';
+    /**
+     * List separator expression.
+     */
+    const LIST_SEPARATOR = ';';
 
 
     /**
@@ -572,13 +576,50 @@ final class php5bp {
             $algo = $conf['algo'];
         }
 
+        $prefix = null;
+        $suffix = null;
+
         if (array_key_exists('salt', $conf)) {
             if (array_key_exists('prefix', $conf['salt'])) {
-                $prefixSalt = $conf['salt']['prefix'];
+                $prefix = $conf['salt']['prefix'];
+                if (null !== $prefix) {
+                    if (!is_array($prefix)) {
+                        $prefixValue = $prefix;
+
+                        $prefix = array(
+                            'provider' => function() use ($prefixValue) {
+                                return $prefixValue;
+                            },
+                        );
+                    }
+                }
             }
 
             if (array_key_exists('suffix', $conf['salt'])) {
-                $suffixSalt = $conf['salt']['suffix'];
+                $suffix = $conf['salt']['suffix'];
+                if (null !== $suffix) {
+                    if (!is_array($suffix)) {
+                        $suffixValue = $suffix;
+
+                        $suffix = array(
+                            'provider' => function() use ($suffixValue) {
+                                return $suffixValue;
+                            },
+                        );
+                    }
+                }
+            }
+        }
+
+        if (null !== $prefix) {
+            if (array_key_exists('provider', $prefix)) {
+                $prefixSalt = $prefix['provider']($nameOrRawOutput);
+            }
+        }
+
+        if (null !== $suffix) {
+            if (array_key_exists('provider', $suffix)) {
+                $suffixSalt = $suffix['provider']($nameOrRawOutput);
             }
         }
 
@@ -594,7 +635,7 @@ final class php5bp {
 
         if (null !== $transformers) {
             if (!\is_array($transformers)) {
-                $transformers = \explode(';', $transformers);
+                $transformers = \explode(static::LIST_SEPARATOR, $transformers);
             }
 
             foreach ($transformers as $t) {

@@ -1,7 +1,0 @@
-<config>
-    <algo>md5</algo>
-    <salt>
-        <prefix>abc</prefix>
-        <suffix>012</suffix>
-    </salt>
-</config>

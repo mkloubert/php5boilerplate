@@ -587,6 +587,21 @@ final class php5bp {
             $algo = 'md5';
         }
 
+        $transformers = null;
+        if (array_key_exists('transformer', $conf)) {
+            $transformers = $conf['transformer'];
+        }
+
+        if (null !== $transformers) {
+            if (!\is_array($transformers)) {
+                $transformers = \explode(';', $transformers);
+            }
+
+            foreach ($transformers as $t) {
+                $str = $t($str);
+            }
+        }
+
         return hash($algo,
                     $prefixSalt . $str . $suffixSalt,
                     $rawOutput);

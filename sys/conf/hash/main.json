@@ -1,0 +1,8 @@
+{
+  "algo": "sha256",
+  "salt": {
+    "prefix": "abc",
+    "suffix": "012"
+  },
+  "transformer": ["\\strval"]
+}

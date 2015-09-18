@@ -153,12 +153,39 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                 case 'provider':
                 case 'func':
                 case 'function':
-                case 'method':
                 case 'callable':
-                    $funcRes = \call_user_func_array($var,
-                                                     array(&$found, $ctx, $this, $result));
-                    if ($found) {
-                        $result = $funcRes;
+                    if (\is_callable($var)) {
+                        $found = true;
+
+                        $funcRes = \call_user_func_array($var,
+                                                         array($ctx, $result, &$found, $this));
+
+                        if ($found) {
+                            $result = $funcRes;
+                        }
+                    }
+                    break;
+
+                case 'module':
+                    $moduleMethodName = \trim($var);
+
+                    $moduleMethod = null;
+                    foreach (array($this, \get_class($this)) as $module) {
+                        if (\method_exists($module, $moduleMethodName)) {
+                            $moduleMethod = array($module, $moduleMethodName);
+                            break;
+                        }
+                    }
+
+                    if (null !== $moduleMethod) {
+                        $found = true;
+
+                        $funcRes = \call_user_func_array($var,
+                                                         array($ctx, $result, &$found, $this));
+
+                        if ($found) {
+                            $result = $funcRes;
+                        }
                     }
                     break;
 

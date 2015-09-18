@@ -383,12 +383,11 @@ final class php5bp {
      * @return bool Ends with expression or not.
      */
     public static function endsWith($str, $expr, $ignoreCase = false) {
-        $func = !$ignoreCase ? 'strpos' : 'stripos';
+        $func = !$ignoreCase ? '\\strpos' : '\\stripos';
 
         return static::isNullOrEmpty($expr) ||
                (($temp = strlen($str) - strlen($expr)) >= 0 &&
-                call_user_func($func,
-                               $str, $expr, $temp) !== false);
+                $func($str, $expr, $temp) !== false);
     }
 
     /**
@@ -612,13 +611,13 @@ final class php5bp {
         }
 
         if (null !== $prefix) {
-            if (array_key_exists('provider', $prefix)) {
+            if (isset($prefix['provider'])) {
                 $prefixSalt = $prefix['provider']($nameOrRawOutput);
             }
         }
 
         if (null !== $suffix) {
-            if (array_key_exists('provider', $suffix)) {
+            if (isset($suffix['provider'])) {
                 $suffixSalt = $suffix['provider']($nameOrRawOutput);
             }
         }
@@ -764,7 +763,7 @@ final class php5bp {
         if (null === static::$_now) {
             static::$_now = new DateTime();
 
-            if (array_key_exists('REQUEST_TIME', $_SERVER)) {
+            if (isset($_SERVER['REQUEST_TIME'])) {
                 static::$_now->setTimestamp($_SERVER['REQUEST_TIME']);
             }
         }
@@ -841,10 +840,9 @@ final class php5bp {
      * @return bool Starts with expression or not.
      */
     public static function startsWith($str, $expr, $ignoreCase = false) {
-        $func = !$ignoreCase ? 'strpos' : 'stripos';
+        $func = !$ignoreCase ? '\\strpos' : '\\stripos';
 
-        return 0 === call_user_func($func,
-                                    $str, $expr);
+        return 0 === $func($str, $expr);
     }
 
     /**

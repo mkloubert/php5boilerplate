@@ -38,10 +38,6 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
      */
     const DEFAULT_VAR_NAME_ACTION = 'action';
     /**
-     * Name of the generic action method.
-     */
-    const GENERIC_ACTION_METHOD = '__call';
-    /**
      * List separator expression.
      */
     const LIST_SEPARATOR = ';';
@@ -72,6 +68,41 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
      * @return mixed If (false) is returned: ModuleBase::execute() will not be invoked.
      */
     protected function beforeExecute(ModuleExecutionContext $ctx) {
+    }
+
+    /**
+     * Calls a method from that object / class.
+     *
+     * @param string $methodName The name of the method to call.
+     * @param array $args The arguments for the method.
+     * @param bool $found The variable where to write if method was found or not.
+     *
+     * @return mixed The result of the method.
+     */
+    protected function callMyMethod($methodName, array $args = array(), &$found = null) {
+        $found = false;
+        $cls   = new \ReflectionObject($this);
+
+        $methodName = \trim($methodName);
+
+        foreach (array($methodName, '__call', '__callStatic') as $i => $mn) {
+            if (!$cls->hasMethod($mn)) {
+                continue;
+            }
+
+            $found = true;
+
+            $method = $cls->getMethod($mn);
+
+            $methodArgs = $args;
+            if ($i > 0) {
+                // magic method
+                $methodArgs = array($methodName, $methodArgs);
+            }
+
+            return $method->invokeArgs(!$method->isStatic() ? $this : null,
+                                       $methodArgs);
+        }
     }
 
     /**
@@ -167,25 +198,12 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                     break;
 
                 case 'module':
-                    $moduleMethodName = \trim($var);
+                    $methodResult = $this->callMyMethod(\trim($var),
+                                                        array($ctx, $result, &$found, $this),
+                                                        $found);
 
-                    $moduleMethod = null;
-                    foreach (array($this, \get_class($this)) as $module) {
-                        if (\method_exists($module, $moduleMethodName)) {
-                            $moduleMethod = array($module, $moduleMethodName);
-                            break;
-                        }
-                    }
-
-                    if (null !== $moduleMethod) {
-                        $found = true;
-
-                        $funcRes = \call_user_func_array($moduleMethod,
-                                                         array($ctx, $result, &$found, $this));
-
-                        if ($found) {
-                            $result = $funcRes;
-                        }
+                    if ($found) {
+                        $result = $methodResult;
                     }
                     break;
 
@@ -551,18 +569,10 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                                 $actionMethodArgs = array();
                             }
 
-                            if (!\method_exists($this, $actionMethod)) {
-                                if (\method_exists($this, static::GENERIC_ACTION_METHOD)) {
-                                    // use magic method
-
-                                    $actionMethodArgs = array($actionMethod, $actionMethodArgs);
-                                    $actionMethod     = static::GENERIC_ACTION_METHOD;
-                                }
+                            $result = $this->callMyMethod($actionMethod, $actionMethodArgs, $actionMethodFound);
+                            if (!$actionMethodFound) {
+                                //TODO throw exception
                             }
-
-                            // execute
-                            $result = \call_user_func_array(array($this, $actionMethod),
-                                                            $actionMethodArgs);
                         }
                         else {
                             //TODO throw exception

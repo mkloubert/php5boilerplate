@@ -38,10 +38,10 @@ class NotInitializedException extends \php5bp\Exception {
     /**
      * Initializes a new instance of that class.
      *
-     * @param \php5bp\Application $app The underlying application.
+     * @param \php5bp\ApplicationInterface $app The underlying application.
      * @param \Exception $innerException The inner exception.
      */
-    public function __construct(\php5bp\Application $app, \Exception $innerException) {
+    public function __construct(\php5bp\ApplicationInterface $app, \Exception $innerException) {
         $this->_app = $app;
 
         parent::__construct($innerException->message,

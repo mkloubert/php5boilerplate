@@ -51,13 +51,13 @@ final class php5bp {
      * @var array
      */
     private static $_configExtensions = array(
-        'json' => '\Zend\Config\Reader\Json',
-        'php'  => '\php5bp\Config\Reader\PhpArray',
-        'xml'  => '\Zend\Config\Reader\Xml',
-        'ini'  => '\Zend\Config\Reader\Ini',
-        'yml'  => '\Zend\Config\Reader\Yaml',
-        'yaml'  => '\Zend\Config\Reader\Yaml',
-        'properties'  => '\Zend\Config\Reader\JavaProperties',
+        'json' => \Zend\Config\Reader\Json::class,
+        'php'  => \php5bp\Config\Reader\PhpArray::class,
+        'xml'  => \Zend\Config\Reader\Xml::class,
+        'ini'  => \Zend\Config\Reader\Ini::class,
+        'yml'  => \Zend\Config\Reader\Yaml::class,
+        'yaml'  => \Zend\Config\Reader\Yaml::class,
+        'properties'  => \Zend\Config\Reader\JavaProperties::class,
     );
     private static $_logger;
     /**
@@ -246,6 +246,53 @@ final class php5bp {
     }
 
     /**
+     * Returns the global crypter.
+     *
+     * @param bool $setKey The key from configuration or not.
+     *
+     * @return \Zend\Crypt\BlockCipher The created instance.
+     */
+    public static function crypter($setKey = true) {
+        $adapter = null;
+        $options = null;
+        static::getEncryptionData($key);
+
+        $appConf = static::appConf();
+        if (is_array($appConf)) {
+            if (isset($appConf['encryption'])) {
+                if (isset($appConf['encryption']['crypter'])) {
+                    if (isset($appConf['encryption']['crypter']['adapter'])) {
+                        $adapter = $appConf['encryption']['crypter']['adapter'];
+                    }
+
+                    if (isset($appConf['encryption']['crypter']['options'])) {
+                        $options = $appConf['encryption']['crypter']['options'];
+                    }
+                }
+            }
+        }
+
+        $adapter = trim(strtolower($adapter));
+        if ('' === $adapter) {
+            $adapter = 'mcrypt';
+
+            if (null === $options) {
+                $options = ['algo' => 'aes'];
+            }
+        }
+
+        $result = \Zend\Crypt\BlockCipher::factory($adapter, $options);
+
+        if ($setKey) {
+            if (null !== $key) {
+                $result->setKey($key);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Returns a new database adapter.
      *
      * @param string $name The name of the configuration storage.
@@ -265,6 +312,62 @@ final class php5bp {
         }
 
         return new \php5bp\Db\Adapter($dbConf);
+    }
+
+    /**
+     * Decrypts a string.
+     *
+     * @param string $encStr The string to decrypt.
+     * @param bool $isBase64 $str is Base64 encoded or not.
+     *
+     * @return string The decrypted string.
+     */
+    public static function decrypt($encStr, $isBase64 = true) {
+        if ($isBase64) {
+            $encStr = \trim($encStr);
+            if ('' !== $encStr) {
+                $encStr = base64_decode($encStr);
+            }
+            else {
+                $encStr = null;
+            }
+        }
+
+        static::getEncryptionData($key, $prefixSize, $suffixSize);
+
+        $crypter = static::crypter(false);
+        $crypter->setKey($key);
+
+        $str = $crypter->decrypt($encStr);
+        return substr($str,
+                      $prefixSize,
+                      strlen($str) - $prefixSize - $suffixSize);
+    }
+
+    /**
+     * Encrypts a string.
+     *
+     * @param string $str The string to encrypt.
+     * @param bool $returnBase64 Return encrypted data Base64 encoded or not.
+     *
+     * @return string The encrypted string.
+     */
+    public static function encrypt($str, $returnBase64 = true) {
+        static::getEncryptionData($key, $prefixSize, $suffixSize, $saltChars);
+
+        $crypter = static::crypter(false);
+        $crypter->setKey($key);
+
+        if (static::isNullOrEmpty($saltChars)) {
+            $saltChars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+        }
+
+        $result = $crypter->encrypt(static::randChars($prefixSize, $saltChars) .
+                                    strval($str) .
+                                    static::randChars($suffixSize, $saltChars));
+
+        return $returnBase64 ? base64_encode($result)
+                             : $result;
     }
 
     /**
@@ -298,6 +401,48 @@ final class php5bp {
      */
     public static function formatArray($format, $args = null) {
         return ClrString::formatArray($format, $args);
+    }
+
+    /**
+     * Returns all data for global encryption / decryption.
+     *
+     * @param string &$key The variable where to write the crypter key to.
+     * @param int &$prefixSize The variable where to write the prefix salt size to.
+     * @param int &$suffixSize The variable where to write the suffix salt size to.
+     * @param string &$saltChars The variable where to write the allowed chars for salting a string.
+     */
+    protected static function getEncryptionData(
+        &$key = null,
+        &$prefixSize = null,
+        &$suffixSize = null,
+        &$saltChars = null
+    ) {
+        $appConf = static::appConf();
+        if (!is_array($appConf)) {
+            return;
+        }
+
+        if (!isset($appConf['encryption'])) {
+            return;
+        }
+
+        if (isset($appConf['encryption']['key'])) {
+            $key = base64_decode($appConf['encryption']['key']);
+        }
+
+        if (isset($appConf['encryption']['salt'])) {
+            if (isset($appConf['encryption']['salt']['chars'])) {
+                $saltChars = $appConf['encryption']['salt']['chars'];
+            }
+
+            if (isset($appConf['encryption']['salt']['prefix_size'])) {
+                $prefixSize = $appConf['encryption']['salt']['prefix_size'];
+            }
+
+            if (isset($appConf['encryption']['salt']['suffix_size'])) {
+                $suffixSize = $appConf['encryption']['salt']['suffix_size'];
+            }
+        }
     }
 
     /**
@@ -544,6 +689,22 @@ final class php5bp {
      */
     public static function outputEncoding() {
         return iconv_get_encoding('output_encoding');
+    }
+
+    /**
+     * Returns a random string.
+     *
+     * @param int $count The number of characters.
+     * @param string $chars The chars to use.
+     *
+     * @return string The random string.
+     */
+    public static function randChars($count, $chars = 'abcdefghijklmnopqrstuvxyzABCDEFGHIJKLMNOPQRSTUVXYZ0123456789') {
+        return Enumerable::buildRandom($count)
+                         ->select(function($x) use ($chars) {
+                                      return $chars[$x % strlen($chars)];
+                                  })
+                         ->concatToString();
     }
 
     /**

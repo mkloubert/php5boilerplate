@@ -11,6 +11,12 @@ class TestModule extends ModuleBase {
         echo "test";
     }
 
+    public function __call($method, $args) {
+        if ($args != null) {
+
+        }
+    }
+
     public function test2Action(ModuleExecutionContext $ctx, array $args, array &$result) {
         $result['code'] = 666;
 

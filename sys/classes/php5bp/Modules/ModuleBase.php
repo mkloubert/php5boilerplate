@@ -38,6 +38,10 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
      */
     const DEFAULT_VAR_NAME_ACTION = 'action';
     /**
+     * Name of the generic action method.
+     */
+    const GENERIC_ACTION_METHOD = '__call';
+    /**
      * List separator expression.
      */
     const LIST_SEPARATOR = ';';
@@ -380,123 +384,130 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                             }
 
                             $actionMethod = \trim($actionMethod);
-                            if ('' != $actionMethod) {
-                                $actionMethodArgs = array($execCtx);
-                                $this->prepareInitialExecutionMethodArgs($execCtx, $actionMethodArgs);
+                            if ('' === $actionMethod) {
+                                $actionMethod = $actionName;
+                            }
 
-                                $actionArgs = null;
-                                if (\array_key_exists('args', $actionEntry)) {
-                                    if (\is_array($actionEntry['args'])) {
-                                        $actionArgs = $actionEntry['args'];
-                                    }
-                                    else {
-                                        $actionArgs = Enumerable::create(\explode(static::LIST_SEPARATOR, $actionEntry['args']))
-                                                                ->select(function ($x) {
-                                                                             $x = \trim($x);
-                                                                             if ('' === $x) {
-                                                                                 return null;
-                                                                             }
+                            $actionMethodArgs = array($execCtx);
+                            $this->prepareInitialExecutionMethodArgs($execCtx, $actionMethodArgs);
 
-                                                                             $result         = array();
-                                                                             $result['name'] = $x;
+                            $actionArgs = null;
+                            if (\array_key_exists('args', $actionEntry)) {
+                                if (\is_array($actionEntry['args'])) {
+                                    $actionArgs = $actionEntry['args'];
+                                }
+                                else {
+                                    $actionArgs = Enumerable::create(\explode(static::LIST_SEPARATOR, $actionEntry['args']))
+                                                            ->select(function ($x) {
+                                                                         $x = \trim($x);
+                                                                         if ('' === $x) {
+                                                                             return null;
+                                                                         }
 
-                                                                             return $result;
-                                                                         })
-                                                                ->ofType('array')
-                                                                ->toArray();
+                                                                         $result         = array();
+                                                                         $result['name'] = $x;
+
+                                                                         return $result;
+                                                                     })
+                                                            ->ofType('array')
+                                                            ->toArray();
+                                }
+                            }
+
+                            if (null === $actionArgs) {
+                                // set default
+                                $actionArgs = array();
+                            }
+
+                            $additionalActionArgs = array();
+                            foreach ($actionArgs as $aa) {
+                                $argName         = null;
+                                $argSources      = null;
+                                $argTransformers = null;
+
+                                if (!\is_array($aa)) {
+                                    $aa = array(
+                                        'name' => $aa,
+                                    );
+                                }
+
+                                if (\array_key_exists('name', $aa)) {
+                                    $argName = $aa['name'];
+                                }
+
+                                if (\array_key_exists('source', $aa)) {
+                                    $argSources = $aa['source'];
+                                }
+
+                                if (\array_key_exists('transformer', $aa)) {
+                                    $argTransformers = $aa['transformer'];
+                                }
+
+                                $argName = \trim($argName);
+                                if ('' === $argName) {
+                                    //TODO: throw exception
+                                    continue;
+                                }
+
+                                if (null !== $argSources) {
+                                    if (!\is_array($argSources)) {
+                                        $argSources = \explode(static::LIST_SEPARATOR, $argSources);
                                     }
                                 }
 
-                                if (null === $actionArgs) {
+                                if (null !== $argTransformers) {
+                                    if (!\is_array($argTransformers)) {
+                                        $argTransformers = \explode(static::LIST_SEPARATOR, $argTransformers);
+                                    }
+                                }
+
+                                if (null === $argSources) {
                                     // set default
-                                    $actionArgs = array();
+                                    $argSources = array('vars', 'request');
                                 }
 
-                                $additionalActionArgs = array();
-                                foreach ($actionArgs as $aa) {
-                                    $argName         = null;
-                                    $argSources      = null;
-                                    $argTransformers = null;
-
-                                    if (!\is_array($aa)) {
-                                        $aa = array(
-                                            'name' => $aa,
-                                        );
-                                    }
-
-                                    if (\array_key_exists('name', $aa)) {
-                                        $argName = $aa['name'];
-                                    }
-
-                                    if (\array_key_exists('source', $aa)) {
-                                        $argSources = $aa['source'];
-                                    }
-
-                                    if (\array_key_exists('transformer', $aa)) {
-                                        $argTransformers = $aa['transformer'];
-                                    }
-
-                                    $argName = \trim($argName);
-                                    if ('' === $argName) {
-                                        //TODO: throw exception
-                                        continue;
-                                    }
-
-                                    if (null !== $argSources) {
-                                        if (!\is_array($argSources)) {
-                                            $argSources = \explode(static::LIST_SEPARATOR, $argSources);
-                                        }
-                                    }
-
-                                    if (null !== $argTransformers) {
-                                        if (!\is_array($argTransformers)) {
-                                            $argTransformers = \explode(static::LIST_SEPARATOR, $argTransformers);
-                                        }
-                                    }
-
-                                    if (null === $argSources) {
-                                        // set default
-                                        $argSources = array('vars', 'request');
-                                    }
-
-                                    if (null === $argTransformers) {
-                                        // set default
-                                        $argTransformers = array();
-                                    }
-
-                                    // argument value
-                                    $argValue = $getVarFromSource($argSources, $argName, 'vars');
-
-                                    // transform value
-                                    foreach ($argTransformers as $at) {
-                                        $argValue = $at($argValue);
-                                    }
-
-                                    $additionalActionArgs[] = $argValue;
+                                if (null === $argTransformers) {
+                                    // set default
+                                    $argTransformers = array();
                                 }
 
-                                if ($packAdditionalActionArgs) {
-                                    $additionalActionArgs = array($additionalActionArgs);
+                                // argument value
+                                $argValue = $getVarFromSource($argSources, $argName, 'vars');
+
+                                // transform value
+                                foreach ($argTransformers as $at) {
+                                    $argValue = $at($argValue);
                                 }
 
-                                $actionMethodArgs = \array_merge($actionMethodArgs,
-                                                                 $additionalActionArgs);
-
-                                \call_user_func_array($setupExecutionContext,
-                                                      array(&$actionMethodArgs));
-
-                                if (null === $actionMethodArgs) {
-                                    $actionMethodArgs = array();
-                                }
-
-                                // execute
-                                $result = \call_user_func_array(array($this, $actionMethod),
-                                                                $actionMethodArgs);
+                                $additionalActionArgs[] = $argValue;
                             }
-                            else {
-                                // use default
-                                $invokeDefault = true;
+
+                            if ($packAdditionalActionArgs) {
+                                $additionalActionArgs = array($additionalActionArgs);
                             }
+
+                            $actionMethodArgs = \array_merge($actionMethodArgs,
+                                                             $additionalActionArgs);
+
+                            \call_user_func_array($setupExecutionContext,
+                                                  array(&$actionMethodArgs));
+
+                            if (null === $actionMethodArgs) {
+                                $actionMethodArgs = array();
+                            }
+
+                            if (!\method_exists($this, $actionMethod)) {
+                                if (\method_exists($this, static::GENERIC_ACTION_METHOD)) {
+                                    // use magic method
+
+                                    $actionMethodArgs = array($actionMethod, $actionMethodArgs);
+                                    $actionMethod     = static::GENERIC_ACTION_METHOD;
+                                }
+                            }
+
+                            // execute
+                            $result = \call_user_func_array(array($this, $actionMethod),
+                                                            $actionMethodArgs);
                         }
                         else {
                             //TODO throw exception

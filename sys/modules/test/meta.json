@@ -26,6 +26,19 @@
     "test3": {
       "method": "test3Action",
       "mode": "json"
+    },
+    "wurst": {
+      "args": [
+        "module",
+        "a",
+        {
+          "name": "b",
+          "source": "get;vars",
+          "transformer": ["\\strtolower", "\\ucwords"]
+        }
+      ],
+      "mode": "json",
+      "packArgs": true
     }
   },
   "methods": {

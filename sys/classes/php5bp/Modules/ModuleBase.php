@@ -106,7 +106,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
      *
      * @param ModuleExecutionContext $ctx The underlying execution context.
      * @param array|\Traversable $sources The allowed sources.
-     * @param string $var The name of the variable.
+     * @param mixed $var The variable (name / callable / etc.).
      * @param string $defaultSrc The name of the default source.
      *
      * @return mixed The value of $var.
@@ -147,6 +147,18 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                     $result = $ctx->request()->file($var);
                     if ($result instanceof UploadedFileInterface) {
                         $found = true;
+                    }
+                    break;
+
+                case 'provider':
+                case 'func':
+                case 'function':
+                case 'method':
+                case 'callable':
+                    $funcRes = \call_user_func_array($var,
+                                                     array(&$found, $result));
+                    if ($found) {
+                        $result = $funcRes;
                     }
                     break;
 
@@ -217,7 +229,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
             $execCtx->Request  = new \php5bp\Http\Requests\Context();
             $execCtx->Response = new \php5bp\Http\Responses\Context();
 
-            if (\array_key_exists('config', $meta)) {
+            if (isset($meta['config'])) {
                 $execCtx->Config = $meta['config'];
             }
 
@@ -232,40 +244,36 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
             $allowedActionVarSources = null;
 
             // get module default settings from app config
-            if (\array_key_exists('modules', $appConf)) {
-                // $appConf['modules']['actions']
-                if (\array_key_exists('actions', $appConf['modules'])) {
-                    // $appConf['modules']['actions']['source']
-                    if (\array_key_exists('source', $appConf['modules']['actions'])) {
+            if (isset($appConf['modules'])) {
+                if (isset($appConf['modules']['actions'])) {
+                    if (isset($appConf['modules']['actions']['source'])) {
                         $allowedActionVarSources = $appConf['modules']['actions']['source'];
                     }
 
-                    // $appConf['modules']['actions']['var']
-                    if (\array_key_exists('var', $appConf['modules']['actions'])) {
+                    if (isset($appConf['modules']['actions']['var'])) {
                         $actionVar = $appConf['modules']['actions']['var'];
                     }
                 }
             }
 
             // get module default settings from module meta
-            if (\array_key_exists('module', $meta)) {
-                // $meta['module']['actions']
-                if (\array_key_exists('actions', $meta['module'])) {
-                    // $meta['module']['actions']['source']
-                    if (\array_key_exists('source', $meta['module']['actions'])) {
+            if (isset($meta['module'])) {
+                if (isset($meta['module']['actions'])) {
+                    if (isset($meta['module']['actions']['source'])) {
                         $allowedActionVarSources = $meta['module']['actions']['source'];
                     }
 
-                    // $meta['module']['actions']['var']
-                    if (\array_key_exists('var', $meta['module']['actions'])) {
+                    if (isset($meta['module']['actions']['var'])) {
                         $actionVar = $meta['module']['actions']['var'];
                     }
                 }
             }
 
-            $actionVar = \trim($actionVar);
-            if ('' === $actionVar) {
-                $actionVar = static::DEFAULT_VAR_NAME_ACTION;
+            if ((null === $actionVar) || \is_string($actionVar)) {
+                $actionVar = \trim($actionVar);
+                if ('' === $actionVar) {
+                    $actionVar = static::DEFAULT_VAR_NAME_ACTION;
+                }
             }
 
             if (null === $allowedActionVarSources) {
@@ -296,11 +304,11 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
             $executionMode = null;
             $packAdditionalActionArgs = false;
 
-            if (\array_key_exists('mode', $meta)) {
+            if (isset($meta['mode'])) {
                 $executionMode = $meta['mode'];
             }
 
-            if (\array_key_exists('view', $meta)) {
+            if (isset($meta['view'])) {
                 $initialView = $meta['view'];
             }
 
@@ -349,7 +357,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                         $actionEntry = false;
 
                         // find matching action entry
-                        if (\array_key_exists('actions', $meta)) {
+                        if (isset($meta['actions'])) {
                             $actionList = $meta['actions'];
                             if (!\is_array($actionList)) {
                                 // get action list from ; separated string
@@ -381,22 +389,22 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                                 );
                             }
 
-                            if (\array_key_exists('method', $actionEntry)) {
+                            if (isset($actionEntry['method'])) {
                                 $actionMethod = $actionEntry['method'];
                             }
 
                             // action specific MODE
-                            if (\array_key_exists('mode', $actionEntry)) {
+                            if (isset($actionEntry['mode'])) {
                                 $executionMode = $actionEntry['mode'];
                             }
 
                             // pack args
-                            if (\array_key_exists('packArgs', $actionEntry)) {
+                            if (isset($actionEntry['packArgs'])) {
                                 $packAdditionalActionArgs = $actionEntry['packArgs'];
                             }
 
                             // action specific VIEW
-                            if (\array_key_exists('view', $actionEntry)) {
+                            if (isset($actionEntry['view'])) {
                                 $initialView = $actionEntry['view'];
                             }
 
@@ -409,7 +417,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                             $this->prepareInitialExecutionMethodArgs($execCtx, $actionMethodArgs);
 
                             $actionArgs = null;
-                            if (\array_key_exists('args', $actionEntry)) {
+                            if (isset($actionEntry['args'])) {
                                 if (\is_array($actionEntry['args'])) {
                                     $actionArgs = $actionEntry['args'];
                                 }
@@ -448,22 +456,24 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                                     );
                                 }
 
-                                if (\array_key_exists('name', $aa)) {
+                                if (isset($aa['name'])) {
                                     $argName = $aa['name'];
                                 }
 
-                                if (\array_key_exists('source', $aa)) {
+                                if (isset($aa['source'])) {
                                     $argSources = $aa['source'];
                                 }
 
-                                if (\array_key_exists('transformer', $aa)) {
+                                if (isset($aa['transformer'])) {
                                     $argTransformers = $aa['transformer'];
                                 }
 
-                                $argName = \trim($argName);
-                                if ('' === $argName) {
-                                    //TODO: throw exception
-                                    continue;
+                                if ((null === $argName) || \is_string($argName)) {
+                                    $argName = \trim($argName);
+                                    if ('' === $argName) {
+                                        //TODO: throw exception
+                                        continue;
+                                    }
                                 }
 
                                 if (null !== $argSources) {

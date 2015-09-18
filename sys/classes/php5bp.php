@@ -258,16 +258,15 @@ final class php5bp {
         static::getEncryptionData($key);
 
         $appConf = static::appConf();
-        if (is_array($appConf)) {
-            if (isset($appConf['encryption'])) {
-                if (isset($appConf['encryption']['crypter'])) {
-                    if (isset($appConf['encryption']['crypter']['adapter'])) {
-                        $adapter = $appConf['encryption']['crypter']['adapter'];
-                    }
 
-                    if (isset($appConf['encryption']['crypter']['options'])) {
-                        $options = $appConf['encryption']['crypter']['options'];
-                    }
+        if (isset($appConf['encryption'])) {
+            if (isset($appConf['encryption']['crypter'])) {
+                if (isset($appConf['encryption']['crypter']['adapter'])) {
+                    $adapter = $appConf['encryption']['crypter']['adapter'];
+                }
+
+                if (isset($appConf['encryption']['crypter']['options'])) {
+                    $options = $appConf['encryption']['crypter']['options'];
                 }
             }
         }
@@ -418,9 +417,6 @@ final class php5bp {
         &$saltChars = null
     ) {
         $appConf = static::appConf();
-        if (!is_array($appConf)) {
-            return;
-        }
 
         if (!isset($appConf['encryption'])) {
             return;
@@ -761,12 +757,11 @@ final class php5bp {
         }
 
         $result = trim($result);
-        if ('' == $result) {
+        if ('' === $result) {
             $result = sys_get_temp_dir();
         }
-        else {
-            $result = realpath($result);
-        }
+
+        $result = realpath($result);
 
         if (false !== $result) {
             $result .= DIRECTORY_SEPARATOR;

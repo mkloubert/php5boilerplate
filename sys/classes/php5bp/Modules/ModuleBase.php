@@ -81,18 +81,25 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
      */
     protected function callMyMethod($methodName, array $args = array(), &$found = null) {
         $found = false;
-        $cls   = new \ReflectionObject($this);
+        $cls   = \get_class($this);
 
         $methodName = \trim($methodName);
 
-        foreach (array($methodName, '__call', '__callStatic') as $i => $mn) {
-            if (!$cls->hasMethod($mn)) {
+        $possibleMethods = array(
+            array($this, $methodName),
+            array($cls, '__call'),
+            array($cls, '__callStatic'),
+        );
+
+        foreach ($possibleMethods as $i => $m) {
+            $objOrClass = $m[0];
+            $method     = $m[1];
+
+            if (!\method_exists($objOrClass, $method)) {
                 continue;
             }
 
             $found = true;
-
-            $method = $cls->getMethod($mn);
 
             $methodArgs = $args;
             if ($i > 0) {
@@ -100,8 +107,8 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                 $methodArgs = array($methodName, $methodArgs);
             }
 
-            return $method->invokeArgs(!$method->isStatic() ? $this : null,
-                                       $methodArgs);
+            return \call_user_func_array(array($objOrClass, $method),
+                                         $methodArgs);
         }
     }
 
@@ -181,9 +188,9 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                     }
                     break;
 
-                case 'provider':
                 case 'func':
                 case 'function':
+                case 'provider':
                 case 'callable':
                     if (\is_callable($var)) {
                         $found = true;

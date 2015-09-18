@@ -125,6 +125,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
             $found = false;
 
             switch ($src) {
+                case 'var':
                 case 'vars':
                     $result = $ctx->getVar($var, $result, $found);
                     break;
@@ -141,6 +142,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                     $result = $ctx->request()->get($var, $result, $found);
                     break;
 
+                case 'file':
                 case 'files':
                     $result = $ctx->request()->file($var);
                     if ($result instanceof UploadedFileInterface) {
@@ -152,14 +154,17 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                     $result = $ctx->request()->session($var, $result, $found);
                     break;
 
+                case 'cookie':
                 case 'cookies':
                     $result = $ctx->request()->cookie($var, $result, $found);
                     break;
 
+                case 'header':
                 case 'headers':
                     $result = $ctx->request()->header($var, $result, $found);
                     break;
 
+                case 'global':
                 case 'globals':
                     $result = \php5bp::getVar($var, $result, $found);
                     break;
@@ -168,6 +173,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                     $result = $ctx->request()->server($var, $result, $found);
                     break;
 
+                case 'env':
                 case 'environment':
                     $result = $ctx->request()->env($var, $result, $found);
                     break;

@@ -180,7 +180,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                     if (null !== $moduleMethod) {
                         $found = true;
 
-                        $funcRes = \call_user_func_array($var,
+                        $funcRes = \call_user_func_array($moduleMethod,
                                                          array($ctx, $result, &$found, $this));
 
                         if ($found) {

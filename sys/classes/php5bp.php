@@ -533,6 +533,66 @@ final class php5bp {
     }
 
     /**
+     * Hashes a string.
+     *
+     * @param string $str The string to hash.
+     * @param string|bool $nameOrRawOutput The name of the configuration to use.
+     *                                     If only 2 arguments are submitted and this value is a boolean,
+     *                                     it will be used as value for $rawOutput by setting the configuration
+     *                                     storage name to default.
+     * @param bool $rawOutput Return as raw binary data or as hex string.
+     *
+     * @return string The hash or (false) if an error occurred.
+     */
+    public static function hash($str, $nameOrRawOutput = 'main', $rawOutput = false) {
+        if (2 == func_num_args()) {
+            if (is_bool($nameOrRawOutput)) {
+                // use $nameOrRawOutput for $rawOutput
+
+                $rawOutput       = $nameOrRawOutput;
+                $nameOrRawOutput = 'main';
+            }
+        }
+
+        $nameOrRawOutput = trim($nameOrRawOutput);
+        if ('' === $nameOrRawOutput) {
+            return false;
+        }
+
+        $algo       = null;
+        $prefixSalt = null;
+        $suffixSalt = null;
+
+        $conf = static::conf('hash.' . $nameOrRawOutput);
+        if (!is_array($conf)) {
+            $conf = array();
+        }
+
+        if (array_key_exists('algo', $conf)) {
+            $algo = $conf['algo'];
+        }
+
+        if (array_key_exists('salt', $conf)) {
+            if (array_key_exists('prefix', $conf['salt'])) {
+                $prefixSalt = $conf['salt']['prefix'];
+            }
+
+            if (array_key_exists('suffix', $conf['salt'])) {
+                $suffixSalt = $conf['salt']['suffix'];
+            }
+        }
+
+        $algo = trim(strtolower($algo));
+        if ('' === $algo) {
+            $algo = 'md5';
+        }
+
+        return hash($algo,
+                    $prefixSalt . $str . $suffixSalt,
+                    $rawOutput);
+    }
+
+    /**
      * Checks if a variable exists.
      *
      * @param string $name The name of the variable.

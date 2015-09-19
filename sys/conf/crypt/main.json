@@ -1,0 +1,14 @@
+{
+  "crypter": {
+    "adapter": "mcrypt",
+    "options": {
+      "algo": "aes"
+    }
+  },
+  "key": "YWJj",
+  "salt": {
+    "chars": "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+    "prefix_size": 5,
+    "suffix_size": 12
+  }
+}

@@ -34,6 +34,10 @@ final class php5bp {
      */
     const DEFAULT_APPLICATION_CLASS = '\php5bp\Application';
     /**
+     * Name of a default config (sub)storage.
+     */
+    const DEFAULT_CONFIG_NAME = 'main';
+    /**
      * List separator expression.
      */
     const LIST_SEPARATOR = ';';
@@ -123,9 +127,9 @@ final class php5bp {
      *
      * @return \Zend\Cache\Storage\StorageInterface The adapter or (false) if input data is invalid.
      */
-    public static function cache($name = 'main') {
+    public static function cache($name = self::DEFAULT_CONFIG_NAME) {
         $name = trim($name);
-        if ('' == $name) {
+        if ('' === $name) {
             return false;
         }
 
@@ -255,23 +259,35 @@ final class php5bp {
      *
      * @param bool $setKey The key from configuration or not.
      *
-     * @return \Zend\Crypt\BlockCipher The created instance.
+     * @return \Zend\Crypt\BlockCipher The created instance or (false) if an error occurred.
      */
-    public static function crypter($setKey = true) {
+    public static function crypter($nameOrSetKey = self::DEFAULT_CONFIG_NAME, $setKey = true) {
+        if (1 == func_num_args()) {
+            if (is_bool($nameOrSetKey)) {
+                // swap values
+
+                $setKey       = $nameOrSetKey;
+                $nameOrSetKey = self::DEFAULT_CONFIG_NAME;
+            }
+        }
+
         $adapter = null;
         $options = null;
-        static::getEncryptionData($key);
 
-        $appConf = static::appConf();
+        if (false === static::getEncryptionData($nameOrSetKey, $key)) {
+            return false;
+        }
 
-        if (isset($appConf['encryption'])) {
-            if (isset($appConf['encryption']['crypter'])) {
-                if (isset($appConf['encryption']['crypter']['adapter'])) {
-                    $adapter = $appConf['encryption']['crypter']['adapter'];
+        $conf = static::config('crypt.' . $nameOrSetKey);
+
+        if (is_array($conf)) {
+            if (isset($conf['crypter'])) {
+                if (isset($conf['crypter']['adapter'])) {
+                    $adapter = $conf['crypter']['adapter'];
                 }
 
-                if (isset($appConf['encryption']['crypter']['options'])) {
-                    $options = $appConf['encryption']['crypter']['options'];
+                if (isset($conf['crypter']['options'])) {
+                    $options = $conf['crypter']['options'];
                 }
             }
         }
@@ -304,9 +320,9 @@ final class php5bp {
      * @return \php5bp\Db\Adapter The new connection.
      *                            (false) indicates that name is invalid.
      */
-    public static function db($name = 'main') {
+    public static function db($name = self::DEFAULT_CONFIG_NAME) {
         $name = trim($name);
-        if ('' == $name) {
+        if ('' === $name) {
             return false;
         }
 
@@ -322,11 +338,32 @@ final class php5bp {
      * Decrypts a string.
      *
      * @param string $encStr The string to decrypt.
+     * @param string|bool $nameOrIsBase64 The name of the configuration storage.
+     *                                    If only 2 arguments are submitted and that value is a boolean
+     *                                    it is handled as value for $isBase64 and is set to default.
      * @param bool $isBase64 $str is Base64 encoded or not.
      *
-     * @return string The decrypted string.
+     * @return string The decrypted string or (false) if an error occurred.
      */
-    public static function decrypt($encStr, $isBase64 = true) {
+    public static function decrypt($encStr, $nameOrIsBase64 = self::DEFAULT_CONFIG_NAME, $isBase64 = true) {
+        if (2 == func_num_args()) {
+            if (is_bool($nameOrIsBase64)) {
+                // swap values
+
+                $isBase64       = $nameOrIsBase64;
+                $nameOrIsBase64 = self::DEFAULT_CONFIG_NAME;
+            }
+        }
+
+        $crypter = static::crypter($nameOrIsBase64, false);
+        if (false === $crypter) {
+            return false;
+        }
+
+        static::getEncryptionData($nameOrIsBase64, $key, $prefixSize, $suffixSize);
+
+        $crypter->setKey($key);
+
         if ($isBase64) {
             $encStr = \trim($encStr);
             if ('' !== $encStr) {
@@ -336,11 +373,6 @@ final class php5bp {
                 $encStr = null;
             }
         }
-
-        static::getEncryptionData($key, $prefixSize, $suffixSize);
-
-        $crypter = static::crypter(false);
-        $crypter->setKey($key);
 
         $str = $crypter->decrypt($encStr);
         return substr($str,
@@ -352,14 +384,30 @@ final class php5bp {
      * Encrypts a string.
      *
      * @param string $str The string to encrypt.
+     * @param string|bool $nameOrReturnBase64 The name of the configuration storage.
+     *                                        If only 2 arguments are submitted and that value is a boolean
+     *                                        it is handled as value for $returnBase64 and is set to default.
      * @param bool $returnBase64 Return encrypted data Base64 encoded or not.
      *
-     * @return string The encrypted string.
+     * @return string The encrypted string or (false) if an error occurred.
      */
-    public static function encrypt($str, $returnBase64 = true) {
-        static::getEncryptionData($key, $prefixSize, $suffixSize, $saltChars);
+    public static function encrypt($str, $nameOrReturnBase64 = self::DEFAULT_CONFIG_NAME, $returnBase64 = true) {
+        if (2 == func_num_args()) {
+            if (is_bool($nameOrReturnBase64)) {
+                // swap values
 
-        $crypter = static::crypter(false);
+                $returnBase64       = $nameOrReturnBase64;
+                $nameOrReturnBase64 = self::DEFAULT_CONFIG_NAME;
+            }
+        }
+
+        $crypter = static::crypter($nameOrReturnBase64, false);
+        if (false === $crypter) {
+            return false;
+        }
+
+        static::getEncryptionData($nameOrReturnBase64, $key, $prefixSize, $suffixSize, $saltChars);
+
         $crypter->setKey($key);
 
         if (static::isNullOrEmpty($saltChars)) {
@@ -413,36 +461,44 @@ final class php5bp {
      * @param int &$prefixSize The variable where to write the prefix salt size to.
      * @param int &$suffixSize The variable where to write the suffix salt size to.
      * @param string &$saltChars The variable where to write the allowed chars for salting a string.
+     *
+     * @return bool Is (false) if $name is invalid; otherwise (true).
      */
     protected static function getEncryptionData(
+        $name,
         &$key = null,
         &$prefixSize = null,
         &$suffixSize = null,
         &$saltChars = null
     ) {
-        $appConf = static::appConf();
-
-        if (!isset($appConf['encryption'])) {
-            return;
+        $name = \trim($name);
+        if ('' === $name) {
+            return false;
         }
 
-        if (isset($appConf['encryption']['key'])) {
-            $key = base64_decode($appConf['encryption']['key']);
+        $conf = static::conf('crypt.' . $name);
+
+        if (is_array($conf)) {
+            if (isset($conf['key'])) {
+                $key = base64_decode(trim($conf['key']));
+            }
+
+            if (isset($conf['salt'])) {
+                if (isset($conf['salt']['chars'])) {
+                    $saltChars = $conf['salt']['chars'];
+                }
+
+                if (isset($conf['salt']['prefix_size'])) {
+                    $prefixSize = $conf['salt']['prefix_size'];
+                }
+
+                if (isset($conf['salt']['suffix_size'])) {
+                    $suffixSize = $conf['salt']['suffix_size'];
+                }
+            }
         }
 
-        if (isset($appConf['encryption']['salt'])) {
-            if (isset($appConf['encryption']['salt']['chars'])) {
-                $saltChars = $appConf['encryption']['salt']['chars'];
-            }
-
-            if (isset($appConf['encryption']['salt']['prefix_size'])) {
-                $prefixSize = $appConf['encryption']['salt']['prefix_size'];
-            }
-
-            if (isset($appConf['encryption']['salt']['suffix_size'])) {
-                $suffixSize = $appConf['encryption']['salt']['suffix_size'];
-            }
-        }
+        return true;
     }
 
     /**
@@ -548,13 +604,13 @@ final class php5bp {
      *
      * @return string The hash or (false) if an error occurred.
      */
-    public static function hash($str, $nameOrRawOutput = 'main', $rawOutput = false) {
+    public static function hash($str, $nameOrRawOutput = self::DEFAULT_CONFIG_NAME, $rawOutput = false) {
         if (2 == func_num_args()) {
             if (is_bool($nameOrRawOutput)) {
                 // use $nameOrRawOutput for $rawOutput
 
                 $rawOutput       = $nameOrRawOutput;
-                $nameOrRawOutput = 'main';
+                $nameOrRawOutput = self::DEFAULT_CONFIG_NAME;
             }
         }
 

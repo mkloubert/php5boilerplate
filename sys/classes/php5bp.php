@@ -88,7 +88,8 @@ final class php5bp {
             $className = '';
 
             $appConf = static::appConf();
-            if (array_key_exists('class', $appConf)) {
+
+            if (isset($appConf['class'])) {
                 $className = $appConf['class'];
             }
 
@@ -466,7 +467,7 @@ final class php5bp {
 
             $files = static::conf('known.files');
             if (is_array($files)) {
-                if (array_key_exists('mime', $files)) {
+                if (isset($files['mime'])) {
                     // find MIME by extension
                     $result = Enumerable::create($files['mime'])
                                         ->select(function($extensions, $ctx) {
@@ -571,15 +572,15 @@ final class php5bp {
             $conf = array();
         }
 
-        if (array_key_exists('algo', $conf)) {
+        if (isset($conf['algo'])) {
             $algo = $conf['algo'];
         }
 
         $prefix = null;
         $suffix = null;
 
-        if (array_key_exists('salt', $conf)) {
-            if (array_key_exists('prefix', $conf['salt'])) {
+        if (isset($conf['salt'])) {
+            if (isset($conf['salt']['prefix'])) {
                 $prefix = $conf['salt']['prefix'];
                 if (null !== $prefix) {
                     if (!is_array($prefix)) {
@@ -594,7 +595,7 @@ final class php5bp {
                 }
             }
 
-            if (array_key_exists('suffix', $conf['salt'])) {
+            if (isset($conf['salt']['suffix'])) {
                 $suffix = $conf['salt']['suffix'];
                 if (null !== $suffix) {
                     if (!is_array($suffix)) {
@@ -628,7 +629,7 @@ final class php5bp {
         }
 
         $transformers = null;
-        if (array_key_exists('transformer', $conf)) {
+        if (isset($conf['transformer'])) {
             $transformers = $conf['transformer'];
         }
 
@@ -695,7 +696,7 @@ final class php5bp {
      */
     public static function isDebug() {
         $appConf = static::appConf();
-        if (array_key_exists('debug', $appConf)) {
+        if (isset($appConf['debug'])) {
             return boolval($appConf['debug']);
         }
 
@@ -863,9 +864,8 @@ final class php5bp {
         $appConf = static::appConf();
 
         // custom directory?
-        if (array_key_exists('dirs', $appConf)) {
-            // $appConf['dirs']['temp']
-            if (array_key_exists('temp', $appConf['dirs'])) {
+        if (isset($appConf['dirs'])) {
+            if (isset($appConf['dirs']['temp'])) {
                 $result = $appConf['dirs']['temp'];
             }
         }

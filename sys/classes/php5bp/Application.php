@@ -89,11 +89,9 @@ class Application extends Object implements ApplicationInterface {
         $appConf = \php5bp::appConf();
 
         // custom provider?
-        if (\array_key_exists('modules', $appConf)) {
-            // $appConf['modules']['meta']
-            if (\array_key_exists('meta', $appConf['modules'])) {
-                // $appConf['modules']['meta']['provider']
-                if (\array_key_exists('provider', $appConf['modules']['meta'])) {
+        if (isset($appConf['modules'])) {
+            if (isset($appConf['modules']['meta'])) {
+                if (isset($appConf['modules']['meta']['provider'])) {
                     $providerClass = $appConf['modules']['meta']['provider'];
                 }
             }
@@ -118,8 +116,8 @@ class Application extends Object implements ApplicationInterface {
     protected function getModuleScriptProvider(array $meta) {
         $providerClass = null;
 
-        if (\array_key_exists('module', $meta)) {
-            if (\array_key_exists('scriptProvider', $meta['module'])) {
+        if (isset($meta['module'])) {
+            if (isset($meta['module']['scriptProvider'])) {
                 $providerClass = $meta['module']['scriptProvider'];
             }
         }
@@ -198,9 +196,8 @@ class Application extends Object implements ApplicationInterface {
 
         // custom module variable
         $moduleVar = null;
-        if (\array_key_exists('modules', $appConf)) {
-            // $appConf['modules']['var']
-            if (\array_key_exists('var', $appConf['modules'])) {
+        if (isset($appConf['modules'])) {
+            if (isset($appConf['modules']['var'])) {
                 $moduleVar = $appConf['modules']['var'];
             }
         }
@@ -212,8 +209,8 @@ class Application extends Object implements ApplicationInterface {
         }
 
         $moduleName = null;
-        if (\array_key_exists($moduleVar, $_GET)) {
-            $moduleName = $_GET[$moduleVar];
+        if (isset($_REQUEST[$moduleVar])) {
+            $moduleName = $_REQUEST[$moduleVar];
         }
 
         $moduleName = static::normalizeModuleName($moduleName);
@@ -221,9 +218,8 @@ class Application extends Object implements ApplicationInterface {
             $defaultModuleName = null;
 
             // try get custom default module
-            if (\array_key_exists('modules', $appConf)) {
-                // $appConf['modules']['default']
-                if (\array_key_exists('default', $appConf['modules'])) {
+            if (isset($appConf['modules'])) {
+                if (isset($appConf['modules']['default'])) {
                     $defaultModuleName = $appConf['modules']['default'];
                 }
             }
@@ -261,7 +257,7 @@ class Application extends Object implements ApplicationInterface {
             if (false !== $moduleScriptPath) {
                 // module class defined?
                 $moduleClass = null;
-                if (\array_key_exists('class', $moduleMeta)) {
+                if (isset($moduleMeta['class'])) {
                     $moduleClass = $moduleMeta['class'];
                 }
 
@@ -282,30 +278,25 @@ class Application extends Object implements ApplicationInterface {
                         $updateContextMethod = '';
 
                         // try get custom methods from app config
-                        if (\array_key_exists('modules', $appConf)) {
-                            // $appConf['modules']['methods']
-                            if (\array_key_exists('methods', $appConf['modules'])) {
-                                // $appConf['modules']['methods']['render']
-                                if (\array_key_exists('render', $appConf['modules']['methods'])) {
+                        if (isset($appConf['modules'])) {
+                            if (isset($appConf['modules']['methods'])) {
+                                if (isset($appConf['modules']['methods']['render'])) {
                                     $renderMethod = $appConf['modules']['methods']['render'];
                                 }
 
-                                // $appConf['modules']['methods']['updateContext']
-                                if (\array_key_exists('updateContext', $appConf['modules']['methods'])) {
+                                if (isset($appConf['modules']['methods']['updateContext'])) {
                                     $updateContextMethod = $appConf['modules']['methods']['updateContext'];
                                 }
                             }
                         }
 
                         // try get custom methods from meta data
-                        if (\array_key_exists('methods', $moduleMeta)) {
-                            // $moduleMeta['methods']['render']
-                            if (\array_key_exists('render', $moduleMeta['methods'])) {
+                        if (isset($moduleMeta['methods'])) {
+                            if (isset($moduleMeta['methods']['render'])) {
                                 $renderMethod = $moduleMeta['methods']['render'];
                             }
 
-                            // $moduleMeta['methods']['updateContext']
-                            if (\array_key_exists('updateContext', $moduleMeta['methods'])) {
+                            if (isset($moduleMeta['methods']['updateContext'])) {
                                 $updateContextMethod = $moduleMeta['methods']['updateContext'];
                             }
                         }

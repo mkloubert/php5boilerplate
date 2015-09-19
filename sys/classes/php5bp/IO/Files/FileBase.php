@@ -126,7 +126,7 @@ abstract class FileBase extends \php5bp\Object implements FileInterface {
 
         $files = \php5bp::conf('known.files');
         if (\is_array($files)) {
-            if (\array_key_exists('mime', $files)) {
+            if (isset($files['mime'])) {
                 $mime = \trim(\strtolower($this->mime()));
 
                 // find extension by MIME type

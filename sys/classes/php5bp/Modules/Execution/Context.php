@@ -297,8 +297,8 @@ class Context extends \php5bp\Object implements ContextInterface {
         $viewName = static::DEFAULT_VIEW_DEFAULT;
 
         $appConf = \php5bp::appConf();
-        if (\array_key_exists('views', $appConf)) {
-            if (\array_key_exists('default', $appConf['views'])) {
+        if (isset($appConf['views'])) {
+            if (isset($appConf['views']['default'])) {
                 $viewName = $appConf['views']['default'];
             }
         }
@@ -345,8 +345,9 @@ class Context extends \php5bp\Object implements ContextInterface {
         $viewName = static::DEFAULT_VIEW_JSON;
 
         $appConf = \php5bp::appConf();
-        if (\array_key_exists('views', $appConf)) {
-            if (\array_key_exists('json', $appConf['views'])) {
+
+        if (isset($appConf['views'])) {
+            if (isset($appConf['views']['json'])) {
                 $viewName = $appConf['views']['json'];
             }
         }
@@ -389,8 +390,9 @@ class Context extends \php5bp\Object implements ContextInterface {
         $viewName = static::DEFAULT_VIEW_NULL;
 
         $appConf = \php5bp::appConf();
-        if (\array_key_exists('views', $appConf)) {
-            if (\array_key_exists('null', $appConf['views'])) {
+
+        if (isset($appConf['views'])) {
+            if (isset($appConf['views']['null'])) {
                 $viewName = $appConf['views']['null'];
             }
         }

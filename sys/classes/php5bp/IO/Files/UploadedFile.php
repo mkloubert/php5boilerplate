@@ -95,7 +95,7 @@ class UploadedFile extends LocalFileBase implements UploadedFileInterface {
     public function mime() {
         $result = '';
 
-        if (\array_key_exists('type', $this->_fileEntry)) {
+        if (isset($this->_fileEntry['type'])) {
             $result = \trim(\strtolower($this->_fileEntry['type']));
         }
 

@@ -30,8 +30,8 @@ define('PHP5BP_SHUTDOWN', true, false);
 $shutdownFiles = Enumerable::scanDir(PHP5BP_DIR_SHUTDOWN);
 if (false !== $shutdownFiles) {
     $shutdownFiles = $shutdownFiles->where(function($x) {
-                                               return Enumerable::TYPE_FILE == $x->type &&
-                                                      '.php' == substr($x->fullPath, -4);
+                                               return Enumerable::TYPE_FILE === $x->type &&
+                                                      '.php' === substr($x->fullPath, -4);
                                            });
 
     foreach ($shutdownFiles as $sdf) {

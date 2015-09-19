@@ -62,8 +62,8 @@ spl_autoload_register(function($clsName) {
 $bootstrapFiles = Enumerable::scanDir(PHP5BP_DIR_BOOTSTRAP);
 if (false !== $bootstrapFiles) {
     $bootstrapFiles = $bootstrapFiles->where(function($x) {
-                                                 return Enumerable::TYPE_FILE == $x->type &&
-                                                        '.php' == substr($x->fullPath, -4);
+                                                 return Enumerable::TYPE_FILE === $x->type &&
+                                                        '.php' === substr($x->fullPath, -4);
                                              });
 
     foreach ($bootstrapFiles as $bsf) {

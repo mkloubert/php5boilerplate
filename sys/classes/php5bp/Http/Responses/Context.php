@@ -130,7 +130,7 @@ class Context extends \php5bp\Object implements ContextInterface {
      */
     public function setContentType($mime) {
         $mime = \trim(\strtolower($mime));
-        if ('' != $mime) {
+        if ('' !== $mime) {
             $this->setHeader(static::HEADER_CONTENT_TYPE, $mime);
         }
         else {

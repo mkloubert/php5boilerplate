@@ -20,6 +20,6 @@ class TestModule extends ModuleBase {
     public function test2Action(ModuleExecutionContext $ctx, array $args, array &$result) {
         $result['code'] = 666;
 
-        echo "test";
+        // echo "test";
     }
 }

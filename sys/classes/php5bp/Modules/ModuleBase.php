@@ -86,12 +86,13 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
         $methodName = \trim($methodName);
 
         $possibleMethods = array(
-            array($this, $methodName),
-            array($cls, '__call'),
-            array($cls, '__callStatic'),
+            array($this, $methodName   , false),
+            array($cls , $methodName   , false),
+            array($this, '__call'      , true),
+            array($cls , '__callStatic', true),
         );
 
-        foreach ($possibleMethods as $i => $m) {
+        foreach ($possibleMethods as $m) {
             $objOrClass = $m[0];
             $method     = $m[1];
 
@@ -102,7 +103,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
             $found = true;
 
             $methodArgs = $args;
-            if ($i > 0) {
+            if ($m[2]) {
                 // magic method
                 $methodArgs = array($methodName, $methodArgs);
             }
@@ -133,10 +134,10 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
      *
      * @param ModuleExecutionContext $ctx The underlying execution context.
      *
-     * @return int The response code.
+     * @return int The response code or (null) to set none.
      */
     protected function getDefaultHttpResponseCode(ModuleExecutionContext $ctx) {
-        return 200;
+        return null;
     }
 
     /**
@@ -205,7 +206,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                     break;
 
                 case 'module':
-                    $methodResult = $this->callMyMethod(\trim($var),
+                    $methodResult = $this->callMyMethod($var,
                                                         array($ctx, $result, &$found, $this),
                                                         $found);
 
@@ -636,7 +637,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
 
                 // headers
                 foreach ($execCtx->response()->headers() as $hn => $hv) {
-                    \header($hn . ': ' . \strval($hv), true);
+                    \header($hn . ': ' . \strval($hv));
                 }
             }
 

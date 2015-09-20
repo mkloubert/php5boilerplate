@@ -647,7 +647,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
             }
 
             $viewName = \trim($execCtx->getView());
-            if ('' != $viewName) {
+            if ('' !== $viewName) {
                 $view = new \php5bp\Views\SimpleView();
 
                 // initialize with defaults

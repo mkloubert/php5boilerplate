@@ -151,17 +151,13 @@ class Application extends Object implements ApplicationInterface {
      * @return string The parsed value.
      */
     protected static function normalizeModuleName($moduleName) {
-        $chars     = \trim($moduleName);
-        $charCount = \strlen($chars);
+        $allowedModuleNameChars = static::ALLOWED_MODULE_NAME_CHARS;
 
-        $moduleName = '';
-        for ($i = 0; $i < $charCount; $i++) {
-            $c = $chars[$i];
-
-            if (false !== \strpos(static::ALLOWED_MODULE_NAME_CHARS, $c)) {
-                $moduleName .= $c;
-            }
-        }
+        $moduleName = Enumerable::create(\trim($moduleName))
+                                ->where(function($x) use ($allowedModuleNameChars) {
+                                            return false !== \strpos($allowedModuleNameChars, $x);
+                                        })
+                                ->concatToString();
 
         // normalize duplicate separator chars
         while (false !== \strpos($moduleName, static::MODULE_NAME_SEPARATOR . static::MODULE_NAME_SEPARATOR)) {

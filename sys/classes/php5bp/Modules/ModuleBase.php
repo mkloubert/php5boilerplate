@@ -130,6 +130,24 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
     protected abstract function execute(ModuleExecutionContext $ctx);
 
     /**
+     * Returns the default list of sources where to look for the value of an action argument.
+     *
+     * @return array The list of sources.
+     */
+    protected function getDefaultActionArgumentSources() {
+        return array('var', 'request');
+    }
+
+    /**
+     * Returns the default list of sources where to look for the action name.
+     *
+     * @return array The list of sources.
+     */
+    protected function getDefaultActionNameSources() {
+        return array('request');
+    }
+
+    /**
      * Returns the default HTTP response code.
      *
      * @param ModuleExecutionContext $ctx The underlying execution context.
@@ -331,7 +349,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
 
             if (null === $allowedActionVarSources) {
                 // set default
-                $allowedActionVarSources = array('request');
+                $allowedActionVarSources = $this->getDefaultActionNameSources();
             }
 
             if (!\is_array($allowedActionVarSources)) {
@@ -543,7 +561,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
 
                                 if (null === $argSources) {
                                     // set default
-                                    $argSources = array('vars', 'request');
+                                    $argSources = $this->getDefaultActionArgumentSources();
                                 }
 
                                 if (null === $argTransformers) {
@@ -553,7 +571,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
 
                                 // argument value
                                 $argValue = $this->getVarFromSource($execCtx,
-                                                                    $argSources, $argName, 'vars');
+                                                                    $argSources, $argName, 'var');
 
                                 // transform value
                                 foreach ($argTransformers as $at) {

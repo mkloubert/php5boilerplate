@@ -282,7 +282,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
             $execCtx->Request  = new \php5bp\Http\Requests\Context();
             $execCtx->Response = new \php5bp\Http\Responses\Context();
 
-            if (isset($meta['config'])) {
+            if (\array_key_exists('config', $meta)) {
                 $execCtx->Config = $meta['config'];
             }
 
@@ -299,11 +299,11 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
             // get module default settings from app config
             if (isset($appConf['modules'])) {
                 if (isset($appConf['modules']['actions'])) {
-                    if (isset($appConf['modules']['actions']['source'])) {
+                    if (\array_key_exists('source', $appConf['modules']['actions'])) {
                         $allowedActionVarSources = $appConf['modules']['actions']['source'];
                     }
 
-                    if (isset($appConf['modules']['actions']['var'])) {
+                    if (\array_key_exists('var', $appConf['modules']['actions'])) {
                         $actionVar = $appConf['modules']['actions']['var'];
                     }
                 }
@@ -312,11 +312,11 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
             // get module default settings from module meta
             if (isset($meta['module'])) {
                 if (isset($meta['module']['actions'])) {
-                    if (isset($meta['module']['actions']['source'])) {
+                    if (\array_key_exists('source', $meta['module']['actions'])) {
                         $allowedActionVarSources = $meta['module']['actions']['source'];
                     }
 
-                    if (isset($meta['module']['actions']['var'])) {
+                    if (\array_key_exists('var', $meta['module']['actions'])) {
                         $actionVar = $meta['module']['actions']['var'];
                     }
                 }
@@ -357,11 +357,11 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
             $executionMode = null;
             $packAdditionalActionArgs = false;
 
-            if (isset($meta['mode'])) {
+            if (\array_key_exists('mode', $meta)) {
                 $executionMode = $meta['mode'];
             }
 
-            if (isset($meta['view'])) {
+            if (\array_key_exists('view', $meta)) {
                 $initialView = $meta['view'];
             }
 
@@ -410,7 +410,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                         $actionEntry = false;
 
                         // find matching action entry
-                        if (isset($meta['actions'])) {
+                        if (\array_key_exists('actions', $meta)) {
                             $actionList = $meta['actions'];
                             if (!\is_array($actionList)) {
                                 // get action list from ; separated string
@@ -442,22 +442,22 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                                 );
                             }
 
-                            if (isset($actionEntry['method'])) {
+                            if (\array_key_exists('method', $actionEntry)) {
                                 $actionMethod = $actionEntry['method'];
                             }
 
                             // action specific MODE
-                            if (isset($actionEntry['mode'])) {
+                            if (\array_key_exists('mode', $actionEntry)) {
                                 $executionMode = $actionEntry['mode'];
                             }
 
                             // pack args
-                            if (isset($actionEntry['packArgs'])) {
+                            if (\array_key_exists('packArgs', $actionEntry)) {
                                 $packAdditionalActionArgs = $actionEntry['packArgs'];
                             }
 
                             // action specific VIEW
-                            if (isset($actionEntry['view'])) {
+                            if (\array_key_exists('view', $actionEntry)) {
                                 $initialView = $actionEntry['view'];
                             }
 
@@ -470,7 +470,7 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                             $this->prepareInitialExecutionMethodArgs($execCtx, $actionMethodArgs);
 
                             $actionArgs = null;
-                            if (isset($actionEntry['args'])) {
+                            if (\array_key_exists('args', $actionEntry)) {
                                 if (\is_array($actionEntry['args'])) {
                                     $actionArgs = $actionEntry['args'];
                                 }
@@ -509,15 +509,15 @@ abstract class ModuleBase extends \php5bp\Object implements ModuleInterface {
                                     );
                                 }
 
-                                if (isset($aa['name'])) {
+                                if (\array_key_exists('name', $aa)) {
                                     $argName = $aa['name'];
                                 }
 
-                                if (isset($aa['source'])) {
+                                if (\array_key_exists('source', $aa)) {
                                     $argSources = $aa['source'];
                                 }
 
-                                if (isset($aa['transformer'])) {
+                                if (\array_key_exists('transformer', $aa)) {
                                     $argTransformers = $aa['transformer'];
                                 }
 

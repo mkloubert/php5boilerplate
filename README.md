@@ -271,7 +271,7 @@ class UserRow extends \php5bp\Db\CachableRowBase {
     
     // the list of values that represent
     // the primary key value
-    protected abstract function ids() {
+    protected function ids() {
         return array($this->_id);
     }
     
